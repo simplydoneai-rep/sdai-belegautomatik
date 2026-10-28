@@ -143,7 +143,7 @@ Umgesetzt mit Claude Code. Plan: `docs/plan-machbarkeitstest.md`, Bericht: `docs
 
 **Entscheidungen** (`docs/entscheidungen/`): nur Text an die KI, kein Bild; Zusammensetzung Testbelege und Goldstandard; Pseudonymisierung ohne Presidio bis Phase 1; regelbasierter Platzhalter-Anbieter; Python 3.14 für den Test, Ziel 3.12. Dazu eine Entscheidungsregel für die Anbieterwahl (Bericht, Abschnitt 5).
 
-**Git:** Repository eingerichtet (`.gitignore`, `.env.example`), Remote `https://github.com/SimplyDoneAI/sdai-belegautomatik.git` eingetragen. Das Repository war bei GitHub noch nicht erreichbar (nicht angelegt oder keine Anmeldung); Hochladen steht aus.
+**Git:** Repository eingerichtet (`.gitignore`, `.gitattributes`, `.env.example`) und zu GitHub hochgeladen: `https://github.com/simplydoneai-rep/sdai-belegautomatik` (privat).
 
 **Verfahrensdokumentation:** Keine Änderung nötig, es werden noch keine echten Belege verarbeitet. Wird mit Phase 0 angelegt.
 
