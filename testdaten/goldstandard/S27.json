@@ -1,0 +1,58 @@
+{
+  "id": "S27",
+  "quelle": "synthetisch",
+  "client_id": "M5",
+  "merkmale": [
+    "Bruttopreise über 250 €",
+    "19 %"
+  ],
+  "layout": "modern",
+  "dokumente": [
+    {
+      "pfad": "synthetisch/S27_backstube24.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Backstube24 Versand GmbH",
+    "invoice_number": "B24-1029-3381",
+    "invoice_date": "2026-10-29",
+    "currency": "EUR",
+    "net_total": "350.00",
+    "tax_total": "66.50",
+    "gross_total": "416.50",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Gärkörbe Peddigrohr rund, 1 kg",
+        "quantity": "20",
+        "unit": "Stück",
+        "unit_price": "10.00",
+        "net_amount": "200.00",
+        "tax_rate": "19",
+        "account_skr03": "4985"
+      },
+      {
+        "description": "Lochbleche 60 x 40 cm",
+        "quantity": "6",
+        "unit": "Stück",
+        "unit_price": "25.00",
+        "net_amount": "150.00",
+        "tax_rate": "19",
+        "account_skr03": "4985"
+      }
+    ]
+  },
+  "sensible_werte": [
+    "Bäckerei Kornfeld KG",
+    "Jonas Kornfeld",
+    "Marktplatz 7",
+    "DE999100005",
+    "DE19 9999 9999 0027 0999 27",
+    "buchhaltung@backstube24-beispiel.de",
+    "+49 911 4459 127",
+    "241/127/50351",
+    "Mira Sander"
+  ]
+}

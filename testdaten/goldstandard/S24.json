@@ -1,0 +1,59 @@
+{
+  "id": "S24",
+  "quelle": "synthetisch",
+  "client_id": "M4",
+  "merkmale": [
+    "Englisch",
+    "Reverse Charge EU-Leistung"
+  ],
+  "layout": "englisch",
+  "dokumente": [
+    {
+      "pfad": "synthetisch/S24_northwind.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Northwind Analytics B.V.",
+    "invoice_number": "INV-2026-11-0042",
+    "invoice_date": "2026-11-02",
+    "currency": "EUR",
+    "net_total": "510.00",
+    "tax_total": "0.00",
+    "gross_total": "510.00",
+    "reverse_charge": true,
+    "lines": [
+      {
+        "description": "Analytics platform subscription, November 2026",
+        "quantity": "1",
+        "unit": "month",
+        "unit_price": "420.00",
+        "net_amount": "420.00",
+        "tax_rate": "0",
+        "account_skr03": "4964"
+      },
+      {
+        "description": "Additional user seats",
+        "quantity": "5",
+        "unit": "seat",
+        "unit_price": "18.00",
+        "net_amount": "90.00",
+        "tax_rate": "0",
+        "account_skr03": "4964"
+      }
+    ]
+  },
+  "sensible_werte": [
+    "Pixelwerk Design GmbH",
+    "Lea Brandt",
+    "Kreativhof 3",
+    "DE999100004",
+    "DE88 9999 9999 0024 0888 24",
+    "billing@northwind-beispiel.nl",
+    "+31 20 999 0024",
+    "241/124/50312",
+    "Sanne de Vries",
+    "Pieter van Dam"
+  ]
+}

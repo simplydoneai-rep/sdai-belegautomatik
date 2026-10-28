@@ -1,0 +1,67 @@
+{
+  "id": "S29",
+  "quelle": "synthetisch",
+  "client_id": "M2",
+  "merkmale": [
+    "Bewirtungsbeleg",
+    "Kleinbetragsrechnung"
+  ],
+  "layout": "bon",
+  "dokumente": [
+    {
+      "pfad": "synthetisch/S29_gasthaus.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Gasthaus Zum Krug GmbH",
+    "invoice_number": null,
+    "invoice_date": "2026-10-28",
+    "currency": "EUR",
+    "net_total": "52.00",
+    "tax_total": "9.88",
+    "gross_total": "61.88",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Rinderroulade mit Klößen",
+        "quantity": "2",
+        "unit": null,
+        "unit_price": "20.00",
+        "net_amount": "40.00",
+        "tax_rate": "19",
+        "account_skr03": "4650"
+      },
+      {
+        "description": "Apfelschorle 0,4 l",
+        "quantity": "2",
+        "unit": null,
+        "unit_price": "4.00",
+        "net_amount": "8.00",
+        "tax_rate": "19",
+        "account_skr03": "4650"
+      },
+      {
+        "description": "Espresso",
+        "quantity": "2",
+        "unit": null,
+        "unit_price": "2.00",
+        "net_amount": "4.00",
+        "tax_rate": "19",
+        "account_skr03": "4650"
+      }
+    ]
+  },
+  "sensible_werte": [
+    "Kfz-Technik Albrecht GmbH",
+    "Tobias Albrecht",
+    "Gewerbering 4",
+    "DE999100002",
+    "DE33 9999 9999 0029 1073 29",
+    "buchhaltung@gasthaus-beispiel.de",
+    "+49 911 4493 129",
+    "241/129/50377",
+    "Tom Wirth"
+  ]
+}

@@ -64,6 +64,22 @@ def test_personen_beim_lieferanten() -> None:
     assert "Backstubenweg 8" in text
 
 
+@pytest.mark.parametrize(
+    ("line", "name"),
+    [("Managing director: Pieter van Dam · IBAN", "Dam"), ("Attn: Sanne de Vries", "Vries"),
+     ("Geschäftsführer: Anna von Berg", "Berg"), ("CEO: John Smith", "Smith")],
+)
+def test_personen_englisch_und_namenszusaetze(line: str, name: str) -> None:
+    text, _ = run(line)
+    assert "[PERSON_" in text and name not in text
+
+
+def test_unterschrift_nach_grussformel_und_wiederholung() -> None:
+    text, _ = run("Mit freundlichen Grüßen\n\nDoris Engel\nHausverwaltung Rosenhof GmbH\nGeschäftsführerin: Doris Engel")
+    assert "Engel" not in text
+    assert "Hausverwaltung Rosenhof GmbH" in text
+
+
 def test_ocr_verlesener_geschaeftsfuehrer() -> None:
     text, _ = run("Olehmeister GmbH Geschansfohrer: Berod Oter Amtsgericht")
     assert "Berod" not in text

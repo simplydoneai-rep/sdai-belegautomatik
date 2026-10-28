@@ -35,14 +35,14 @@ GRUPPEN = {
     "xml": "E-Rechnung XML (KoSIT)",
     "pdf_synth": "PDF mit Text (synthetisch)",
     "pdf_kosit": "PDF mit Text (KoSIT-Sichtbeleg)",
-    "scan": "Scan (Bild, schief, verrauscht)",
+    "scan": "Scan / Foto",
 }
 
 
 def gruppe(r: dict[str, Any]) -> str:
     if r["art"] == "xml":
         return "xml"
-    if r["art"] == "scan":
+    if r["art"] in ("scan", "foto"):
         return "scan"
     return "pdf_kosit" if r["quelle"] == "kosit" else "pdf_synth"
 
@@ -59,6 +59,10 @@ def build(run_dir: Path) -> str:
 
     out.append(f"**Lauf:** `{run_dir.name}` · Belege: {lauf['belege']} · gemessene Anbieter: "
                f"{', '.join(anbieter)}")
+    modelle = {k: v for k, v in (lauf.get("modelle") or {}).items() if v}
+    if modelle:
+        out.append("")
+        out.append("**Modelle:** " + "; ".join(f"`{k}` = `{v}`" for k, v in modelle.items()))
     if lauf.get("uebersprungen"):
         out.append("")
         out.append("**Nicht gemessen:** " + "; ".join(f"`{k}` ({v})" for k, v in lauf["uebersprungen"].items()))
@@ -78,6 +82,24 @@ def build(run_dir: Path) -> str:
             cells.append(f"{pct(ok, total)} ({len(sel)})" if sel else "–")
         out.append(f"| `{a}` | " + " | ".join(cells) + f" | **{pct(tok, ttot)}** |")
     out += ["", "In Klammern: Zahl der Belege. Zielwert Phase A: mindestens 90 % bei sauberen PDFs.", ""]
+
+    # 1b. Pflichtfelder je Layout (nur KI-Strecke)
+    layouts = sorted({r.get("layout", "–") for r in rows if r["art"] != "xml"})
+    ki_a = [a for a in anbieter if a != "erechnung"]
+    out += ["### Pflichtfelder je Layout (PDF, Scan, Foto)", "",
+            "| Layout | Belege | " + " | ".join(f"`{a}`" for a in ki_a) + " |",
+            "|---|---|" + "---|" * len(ki_a)]
+    for lay in layouts:
+        cells = []
+        n = 0
+        for a in ki_a:
+            sel = [r for r in rows if r["anbieter"] == a and r["art"] != "xml" and r.get("layout", "–") == lay]
+            n = max(n, len(sel))
+            ok = sum(sum(r["vergleich"]["felder"].values()) for r in sel)
+            cells.append(pct(ok, len(sel) * len(PFLICHTFELDER)))
+        out.append(f"| {lay} | {n} | " + " | ".join(cells) + " |")
+    out += ["", "Layout „klassisch“ ist die Vorlage, auf die der Platzhalter abgestimmt ist. Die übrigen Layouts zeigen, "
+            "wie gut ein Anbieter mit fremden Rechnungsbildern umgeht.", ""]
 
     # 2. Trefferquote je Feld
     out += ["### Trefferquote je Feld (ohne XML)", "", "| Feld | " + " | ".join(f"`{a}`" for a in anbieter if a != "erechnung") + " |",
@@ -124,7 +146,7 @@ def build(run_dir: Path) -> str:
     out += ["### Laufzeit je Beleg", "", "| Schritt | Mittelwert | Maximum |", "|---|---|---|"]
     for label, sel in (("XML parsen", [r["laufzeit_s"] for r in rows if r["art"] == "xml"]),
                        ("PDF-Textlayer lesen", [r["lesezeit_s"] for r in seen.values() if r["methode"] == "textlayer"]),
-                       ("Texterkennung docTR (CPU)", [r["lesezeit_s"] for r in seen.values() if r["methode"] == "ocr"])):
+                       ("Texterkennung docTR (CPU), Scan und Foto", [r["lesezeit_s"] for r in seen.values() if r["methode"] == "ocr"])):
         if sel:
             out.append(f"| {label} | {mean(sel):.2f} s | {max(sel):.2f} s |")
     for a in ki:
@@ -138,15 +160,21 @@ def build(run_dir: Path) -> str:
             "|---|---|---|---|---|"]
     est_in = mean(r["token_ein_geschaetzt"] for r in seen.values()) if seen else 0
     est_out = mean(r["token_aus_geschaetzt"] for r in seen.values()) if seen else 0
+    any_measured = [r for r in rows if r["anbieter"] in KI_ANBIETER and r["token_ein"]]
+    if any_measured:  # gemessene Tokenzahl eines Anbieters ist die bessere Schätzung für die übrigen
+        est_in = mean(r["token_ein"] for r in any_measured)
+        est_out = mean(r["token_aus"] for r in any_measured)
+    run_prices = lauf.get("preise_eur_je_mio") or {}
     for a in KI_ANBIETER:
-        pin, pout = price_per_million(a)
+        pin, pout = run_prices.get(a) or price_per_million(a)
         measured = [r for r in rows if r["anbieter"] == a and r["token_ein"]]
         if measured:
             tin, tout = mean(r["token_ein"] for r in measured), mean(r["token_aus"] for r in measured)
+            cost = mean(r["kosten_eur"] for r in measured)
             basis = f"gemessen ({len(measured)} Aufrufe)"
         else:
-            tin, tout, basis = est_in, est_out, "Schätzung aus Promptlänge, noch nicht gemessen"
-        cost = (tin * pin + tout * pout) / 1_000_000
+            tin, tout, basis = est_in, est_out, "Schätzung, noch nicht gemessen"
+            cost = (tin * pin + tout * pout) / 1_000_000
         out.append(f"| `{a}` | {pin:.2f} € / {pout:.2f} € | {tin:,.0f} / {tout:,.0f} | {cost:.4f} € | {basis} |")
     out += ["", "Hinzu kommen Serverkosten für Texterkennung und Anwendung (siehe `docs/kosten.md`).", ""]
 

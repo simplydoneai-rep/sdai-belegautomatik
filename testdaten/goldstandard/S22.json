@@ -1,0 +1,59 @@
+{
+  "id": "S22",
+  "quelle": "synthetisch",
+  "client_id": "M1",
+  "merkmale": [
+    "Schlussrechnung mit Abschlag",
+    "19 %"
+  ],
+  "layout": "klassisch",
+  "dokumente": [
+    {
+      "pfad": "synthetisch/S22_elektro.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Elektro Funkenflug GmbH",
+    "invoice_number": "EF-2026-0388",
+    "invoice_date": "2026-10-24",
+    "currency": "EUR",
+    "net_total": "1338.50",
+    "tax_total": "254.32",
+    "gross_total": "1592.82",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Elektroarbeiten Gastraum, Gesellenstunden",
+        "quantity": "14",
+        "unit": "Std",
+        "unit_price": "68.00",
+        "net_amount": "952.00",
+        "tax_rate": "19",
+        "account_skr03": "4260"
+      },
+      {
+        "description": "Installationsmaterial lt. Aufmaß",
+        "quantity": "1",
+        "unit": "pauschal",
+        "unit_price": "386.50",
+        "net_amount": "386.50",
+        "tax_rate": "19",
+        "account_skr03": "4260"
+      }
+    ]
+  },
+  "sensible_werte": [
+    "Café Sonnenblick GmbH",
+    "Sabine Kowalczyk",
+    "Lindenallee 12",
+    "DE999100001",
+    "DE74 9999 9999 0022 0814 22",
+    "buchhaltung@elektro-beispiel.de",
+    "+49 911 4374 122",
+    "241/122/50286",
+    "Stefan Brandl",
+    "Stefan Brandl"
+  ]
+}

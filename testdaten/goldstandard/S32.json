@@ -1,0 +1,60 @@
+{
+  "id": "S32",
+  "quelle": "synthetisch",
+  "client_id": "M5",
+  "merkmale": [
+    "Viele Nummern auf dem Beleg",
+    "GWG",
+    "19 %"
+  ],
+  "layout": "klassisch",
+  "dokumente": [
+    {
+      "pfad": "synthetisch/S32_it-systemhaus.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "IT-Systemhaus Bitbrücke GmbH",
+    "invoice_number": "8812",
+    "invoice_date": "2026-10-31",
+    "currency": "EUR",
+    "net_total": "929.00",
+    "tax_total": "176.51",
+    "gross_total": "1105.51",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Notebook 14 Zoll, 16 GB RAM, 512 GB SSD",
+        "quantity": "1",
+        "unit": "Stück",
+        "unit_price": "749.00",
+        "net_amount": "749.00",
+        "tax_rate": "19",
+        "account_skr03": "0480"
+      },
+      {
+        "description": "Wartungsvertrag Kassensystem, 4. Quartal 2026",
+        "quantity": "1",
+        "unit": "Quartal",
+        "unit_price": "180.00",
+        "net_amount": "180.00",
+        "tax_rate": "19",
+        "account_skr03": "4806"
+      }
+    ]
+  },
+  "sensible_werte": [
+    "Bäckerei Kornfeld KG",
+    "Jonas Kornfeld",
+    "Marktplatz 7",
+    "DE999100005",
+    "DE54 9999 9999 0032 1184 32",
+    "buchhaltung@it-systemhaus-beispiel.de",
+    "+49 911 4544 132",
+    "241/132/50416",
+    "Emre Kaya",
+    "Nora Busch"
+  ]
+}

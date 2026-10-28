@@ -95,6 +95,8 @@ def main() -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "lauf.json").write_text(
         json.dumps({"anbieter": list(providers), "uebersprungen": skipped, "belege": len(golds),
+                    "modelle": {k: getattr(v, "model_id", None) or getattr(v, "model", None) for k, v in providers.items()},
+                    "preise_eur_je_mio": {k: list(price_per_million(k)) for k in providers},
                     "start": datetime.now().isoformat(timespec="seconds")}, ensure_ascii=False, indent=2),
         encoding="utf-8",
     )
@@ -107,8 +109,9 @@ def main() -> None:
             for doc in gold["dokumente"]:
                 path = TESTDATEN / doc["pfad"]
                 expected = {**gold["erwartet"], **doc.get("abweichend", {})}
+                layout = gold.get("layout") or ("klassisch" if gold["quelle"] == "synthetisch" else "kosit")
                 base = {"id": gold["id"], "quelle": gold["quelle"], "art": doc["art"], "datei": doc["pfad"],
-                        "merkmale": gold.get("merkmale", [])}
+                        "layout": layout, "merkmale": gold.get("merkmale", [])}
 
                 if doc["art"] == "xml":
                     t0 = time.perf_counter()

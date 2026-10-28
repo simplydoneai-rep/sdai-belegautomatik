@@ -1,0 +1,294 @@
+{
+  "id": "S25",
+  "quelle": "synthetisch",
+  "client_id": "M1",
+  "merkmale": [
+    "Mehrseitig",
+    "28 Positionen",
+    "7 % und 19 %"
+  ],
+  "layout": "modern",
+  "dokumente": [
+    {
+      "pfad": "synthetisch/S25_gastro-ring.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Gastro-Ring Großmarkt GmbH",
+    "invoice_number": "GR-778120",
+    "invoice_date": "2026-10-26",
+    "currency": "EUR",
+    "net_total": "1114.22",
+    "tax_total": "131.77",
+    "gross_total": "1245.99",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Rapsöl 10 l Kanister",
+        "quantity": "2",
+        "unit": "Kanister",
+        "unit_price": "21.90",
+        "net_amount": "43.80",
+        "tax_rate": "7",
+        "account_skr03": "3300"
+      },
+      {
+        "description": "Weizenmehl Type 405, 10 kg",
+        "quantity": "3",
+        "unit": "Sack",
+        "unit_price": "6.40",
+        "net_amount": "19.20",
+        "tax_rate": "7",
+        "account_skr03": "3300"
+      },
+      {
+        "description": "Zucker fein, 10 kg",
+        "quantity": "1",
+        "unit": "Sack",
+        "unit_price": "11.20",
+        "net_amount": "11.20",
+        "tax_rate": "7",
+        "account_skr03": "3300"
+      },
+      {
+        "description": "Vollmilch 3,5 %, 12 x 1 l",
+        "quantity": "4",
+        "unit": "Karton",
+        "unit_price": "13.08",
+        "net_amount": "52.32",
+        "tax_rate": "7",
+        "account_skr03": "3300"
+      },
+      {
+        "description": "Sahne 30 %, 10 x 1 l",
+        "quantity": "2",
+        "unit": "Karton",
+        "unit_price": "29.50",
+        "net_amount": "59.00",
+        "tax_rate": "7",
+        "account_skr03": "3300"
+      },
+      {
+        "description": "Butter, 10 x 250 g",
+        "quantity": "3",
+        "unit": "Karton",
+        "unit_price": "18.90",
+        "net_amount": "56.70",
+        "tax_rate": "7",
+        "account_skr03": "3300"
+      },
+      {
+        "description": "Eier Freiland Gr. L, 180 Stück",
+        "quantity": "1",
+        "unit": "Lage",
+        "unit_price": "52.20",
+        "net_amount": "52.20",
+        "tax_rate": "7",
+        "account_skr03": "3300"
+      },
+      {
+        "description": "Kaffeebohnen Crema, 6 kg",
+        "quantity": "1",
+        "unit": "Karton",
+        "unit_price": "98.40",
+        "net_amount": "98.40",
+        "tax_rate": "7",
+        "account_skr03": "3300"
+      },
+      {
+        "description": "Tee Auswahl, 6 x 100 Beutel",
+        "quantity": "1",
+        "unit": "Karton",
+        "unit_price": "32.40",
+        "net_amount": "32.40",
+        "tax_rate": "7",
+        "account_skr03": "3300"
+      },
+      {
+        "description": "Kakao Pulver, 1 kg",
+        "quantity": "2",
+        "unit": "Dose",
+        "unit_price": "9.80",
+        "net_amount": "19.60",
+        "tax_rate": "7",
+        "account_skr03": "3300"
+      },
+      {
+        "description": "Orangensaft 6 x 1 l",
+        "quantity": "5",
+        "unit": "Kiste",
+        "unit_price": "10.80",
+        "net_amount": "54.00",
+        "tax_rate": "19",
+        "account_skr03": "3400"
+      },
+      {
+        "description": "Mineralwasser still 12 x 0,75 l",
+        "quantity": "6",
+        "unit": "Kiste",
+        "unit_price": "7.90",
+        "net_amount": "47.40",
+        "tax_rate": "19",
+        "account_skr03": "3400"
+      },
+      {
+        "description": "Cola 24 x 0,33 l",
+        "quantity": "3",
+        "unit": "Kiste",
+        "unit_price": "16.80",
+        "net_amount": "50.40",
+        "tax_rate": "19",
+        "account_skr03": "3400"
+      },
+      {
+        "description": "Apfelschorle 24 x 0,33 l",
+        "quantity": "3",
+        "unit": "Kiste",
+        "unit_price": "13.20",
+        "net_amount": "39.60",
+        "tax_rate": "19",
+        "account_skr03": "3400"
+      },
+      {
+        "description": "Croissants TK, 60 Stück",
+        "quantity": "2",
+        "unit": "Karton",
+        "unit_price": "24.60",
+        "net_amount": "49.20",
+        "tax_rate": "7",
+        "account_skr03": "3300"
+      },
+      {
+        "description": "Brezeln TK, 80 Stück",
+        "quantity": "2",
+        "unit": "Karton",
+        "unit_price": "19.20",
+        "net_amount": "38.40",
+        "tax_rate": "7",
+        "account_skr03": "3300"
+      },
+      {
+        "description": "Tomaten, 6 kg",
+        "quantity": "2",
+        "unit": "Kiste",
+        "unit_price": "14.40",
+        "net_amount": "28.80",
+        "tax_rate": "7",
+        "account_skr03": "3300"
+      },
+      {
+        "description": "Gurken, 12 Stück",
+        "quantity": "2",
+        "unit": "Kiste",
+        "unit_price": "8.40",
+        "net_amount": "16.80",
+        "tax_rate": "7",
+        "account_skr03": "3300"
+      },
+      {
+        "description": "Käse Gouda in Scheiben, 1 kg",
+        "quantity": "4",
+        "unit": "Packung",
+        "unit_price": "11.60",
+        "net_amount": "46.40",
+        "tax_rate": "7",
+        "account_skr03": "3300"
+      },
+      {
+        "description": "Schinken gekocht, 1 kg",
+        "quantity": "3",
+        "unit": "Packung",
+        "unit_price": "13.90",
+        "net_amount": "41.70",
+        "tax_rate": "7",
+        "account_skr03": "3300"
+      },
+      {
+        "description": "Servietten 3-lagig, 1000 Stück",
+        "quantity": "2",
+        "unit": "Karton",
+        "unit_price": "17.50",
+        "net_amount": "35.00",
+        "tax_rate": "19",
+        "account_skr03": "4980"
+      },
+      {
+        "description": "Coffee-to-go-Becher 0,3 l, 1000 Stück",
+        "quantity": "1",
+        "unit": "Karton",
+        "unit_price": "64.00",
+        "net_amount": "64.00",
+        "tax_rate": "19",
+        "account_skr03": "4980"
+      },
+      {
+        "description": "Deckel für Becher, 1000 Stück",
+        "quantity": "1",
+        "unit": "Karton",
+        "unit_price": "29.00",
+        "net_amount": "29.00",
+        "tax_rate": "19",
+        "account_skr03": "4980"
+      },
+      {
+        "description": "Spülmaschinentabs, 200 Stück",
+        "quantity": "1",
+        "unit": "Eimer",
+        "unit_price": "38.90",
+        "net_amount": "38.90",
+        "tax_rate": "19",
+        "account_skr03": "4980"
+      },
+      {
+        "description": "Handseife 5 l",
+        "quantity": "2",
+        "unit": "Kanister",
+        "unit_price": "12.50",
+        "net_amount": "25.00",
+        "tax_rate": "19",
+        "account_skr03": "4980"
+      },
+      {
+        "description": "Müllbeutel 120 l, 250 Stück",
+        "quantity": "1",
+        "unit": "Karton",
+        "unit_price": "22.80",
+        "net_amount": "22.80",
+        "tax_rate": "19",
+        "account_skr03": "4980"
+      },
+      {
+        "description": "Frischhaltefolie 300 m",
+        "quantity": "2",
+        "unit": "Rolle",
+        "unit_price": "9.60",
+        "net_amount": "19.20",
+        "tax_rate": "19",
+        "account_skr03": "4980"
+      },
+      {
+        "description": "Alufolie 150 m",
+        "quantity": "2",
+        "unit": "Rolle",
+        "unit_price": "11.40",
+        "net_amount": "22.80",
+        "tax_rate": "19",
+        "account_skr03": "4980"
+      }
+    ]
+  },
+  "sensible_werte": [
+    "Café Sonnenblick GmbH",
+    "Sabine Kowalczyk",
+    "Lindenallee 12",
+    "DE999100001",
+    "DE95 9999 9999 0025 0925 25",
+    "buchhaltung@gastro-ring-beispiel.de",
+    "+49 911 4425 125",
+    "241/125/50325",
+    "Tanja Lehner",
+    "Holger Fink"
+  ]
+}

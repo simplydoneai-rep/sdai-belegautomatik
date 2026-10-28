@@ -54,8 +54,17 @@ _TAXNO = re.compile(r"(?i)\b(?:Steuer-?(?:nr|nummer)\.?|St\.?-?Nr\.?)[:\s]*([\d 
 _VATID = re.compile(r"\b(?:DE\s?\d{9}|ATU\d{8}|[A-Z]{2}[A-Z0-9]{8,12})\b")
 _PERSON = re.compile(
     r"\b(?:Herrn?|Frau|Hr\.|Fr\.|Ansprechpartner(?:in)?:?|Sachbearbeiter(?:in)?:?|Fahrer:?|Kontakt:?"
-    r"|Gesch\w{0,4}f\w{0,2}hr(?:er|erin|ung)?:?|Inhaber(?:in)?:?|GF:?|Vorstand:?)[ \t]+"
-    r"((?:Dr\.[ ]|Prof\.[ ])?[A-ZÄÖÜ][a-zäöüß]+(?:[ ][A-ZÄÖÜ][a-zäöüß-]+){0,2})"
+    r"|Gesch\w{0,4}f\w{0,2}hr(?:er|erin|ung)?:?|Inhaber(?:in)?:?|GF:?|Vorstand:?"
+    r"|Mr\.?|Mrs\.?|Ms\.?|Attn\.?:?|Contact(?: person)?:?|(?:Managing )?[Dd]irector:?|CEO:?|Owner:?)[ \t]+"
+    r"((?:Dr\.[ ]|Prof\.[ ])?[A-ZÄÖÜ][a-zäöüß]+"
+    r"(?:[ ](?:(?:van|von|de|der|den|du|zu|ter)[ ])?[A-ZÄÖÜ][a-zäöüß-]+){0,2})"
+)
+# Name in der Zeile nach einer Grußformel (Unterschrift ohne Hinweiswort)
+_SIGNATURE = re.compile(
+    r"(?im:(?:mit )?freundlichen gr[üu](?:ß|ss)en|freundliche gr[üu](?:ß|ss)e|viele gr[üu](?:ß|ss)e"
+    r"|kind regards|best regards|sincerely|yours faithfully)[,.]?[ \t]*\n(?:[ \t]*\n)*[ \t]*"
+    r"((?:Dr\.[ ]|Prof\.[ ])?[A-ZÄÖÜ][a-zäöüß]+(?:[ ](?:(?:van|von|de|der|den|zu)[ ])?[A-ZÄÖÜ][a-zäöüß-]+){1,2})[ \t]*$",
+    re.M,
 )
 _ACCOUNTNO = re.compile(r"(?i)\b(?:Konto-?(?:nr|nummer)\.?|Kto\.?-?Nr\.?)[:\s]*(\d{5,12})")
 
@@ -156,6 +165,11 @@ def pseudonymize(
     text = _sub_group(_TAXNO, text, reg, "STEUERNR", group=1)
     text = _sub_group(_ACCOUNTNO, text, reg, "KONTO", group=1)
     text = _sub_group(_PERSON, text, reg, "PERSON", group=1)
+    text = _sub_group(_SIGNATURE, text, reg, "PERSON", group=1)
+    # Einmal erkannte Personennamen auch an Stellen ohne Hinweiswort ersetzen.
+    for placeholder, value in list(reg.mapping.items()):
+        if placeholder.startswith("[PERSON_") and len(value) >= 5:
+            text = text.replace(value, placeholder)
     text = _PHONE.sub(
         lambda m: m.group(0).replace(m.group(1) or m.group(2), reg.token("TELEFON", (m.group(1) or m.group(2)).strip())),
         text,

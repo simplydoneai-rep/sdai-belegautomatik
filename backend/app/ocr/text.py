@@ -19,6 +19,8 @@ import pymupdf
 MIN_TEXT_CHARS = 40  # weniger Text im Textlayer → als Scan behandeln
 OCR_DPI = 300
 DESKEW_SIGN = 1.0  # Vorzeichen des docTR-Winkels relativ zu OpenCV, per Test geprüft
+MAX_SIDE = 2600  # Pixel; größere Fotos werden vorher verkleinert
+MIN_CONFIDENCE = 0.8  # darunter wird eine andere Seitenlage versucht
 
 Word = tuple[float, float, float, float, str]  # x0, y0, x1, y1, Text (y nach unten)
 
@@ -90,17 +92,45 @@ def deskew(image: np.ndarray) -> np.ndarray:
     return cv2.warpAffine(image, m, (w, h), flags=cv2.INTER_CUBIC, borderValue=(255, 255, 255))
 
 
+def limit_size(image: np.ndarray, max_side: int = MAX_SIDE) -> np.ndarray:
+    """Verkleinert große Fotos (Handykamera), damit die Texterkennung nicht unnötig lange rechnet."""
+    import cv2
+
+    h, w = image.shape[:2]
+    scale = max_side / max(h, w)
+    if scale >= 1:
+        return image
+    return cv2.resize(image, (int(w * scale), int(h * scale)), interpolation=cv2.INTER_AREA)
+
+
+def _ocr_page(image: np.ndarray) -> tuple[list[Word], float]:
+    """Liest eine Seite; gibt Wörter und die mittlere Erkennungssicherheit (0–1) zurück."""
+    page = _predictor()([image]).pages[0]
+    words: list[Word] = []
+    confs: list[float] = []
+    for block in page.blocks:
+        for line in block.lines:
+            for word in line.words:
+                (x0, y0), (x1, y1) = word.geometry
+                words.append((x0 * 1000, y0 * 1000, x1 * 1000, y1 * 1000, word.value))
+                confs.append(float(word.confidence))
+    return words, (sum(confs) / len(confs) if confs else 0.0)
+
+
 def ocr_images(images: list[np.ndarray]) -> str:
-    predictor = _predictor()
-    result = predictor([deskew(img) for img in images])
+    """Texterkennung je Seite. Ist die Sicherheit gering (z. B. Blatt verkehrt herum eingezogen),
+    werden 180°, 90° und 270° versucht und die Lage mit der höchsten Sicherheit genommen."""
     pages = []
-    for page in result.pages:
-        words: list[Word] = []
-        for block in page.blocks:
-            for line in block.lines:
-                for word in line.words:
-                    (x0, y0), (x1, y1) = word.geometry
-                    words.append((x0 * 1000, y0 * 1000, x1 * 1000, y1 * 1000, word.value))
+    for img in images:
+        img = deskew(limit_size(img))
+        words, conf = _ocr_page(img)
+        if conf < MIN_CONFIDENCE:
+            for k in (2, 1, 3):
+                cand_words, cand_conf = _ocr_page(np.ascontiguousarray(np.rot90(img, k)))
+                if cand_conf > conf:
+                    words, conf = cand_words, cand_conf
+                if conf >= MIN_CONFIDENCE:
+                    break
         pages.append("\n".join(rows_from_words(words)))
     return "\n\f\n".join(pages)
 

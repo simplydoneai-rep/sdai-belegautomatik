@@ -1,0 +1,59 @@
+{
+  "id": "S31",
+  "quelle": "synthetisch",
+  "client_id": "M4",
+  "merkmale": [
+    "Scan auf dem Kopf",
+    "7 % und 19 %"
+  ],
+  "layout": "modern",
+  "dokumente": [
+    {
+      "pfad": "synthetisch/S31_satz.pdf",
+      "art": "scan"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Satz & Druck Pixelnord GmbH",
+    "invoice_number": "PN-4412",
+    "invoice_date": "2026-10-30",
+    "currency": "EUR",
+    "net_total": "1396.00",
+    "tax_total": "166.84",
+    "gross_total": "1562.84",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Broschüre Firmenchronik, 48 Seiten, Auflage 200",
+        "quantity": "200",
+        "unit": "Stück",
+        "unit_price": "4.10",
+        "net_amount": "820.00",
+        "tax_rate": "7",
+        "account_skr03": "4610"
+      },
+      {
+        "description": "Gestaltung und Satz",
+        "quantity": "8",
+        "unit": "Std",
+        "unit_price": "72.00",
+        "net_amount": "576.00",
+        "tax_rate": "19",
+        "account_skr03": "4610"
+      }
+    ]
+  },
+  "sensible_werte": [
+    "Pixelwerk Design GmbH",
+    "Lea Brandt",
+    "Kreativhof 3",
+    "DE999100004",
+    "DE47 9999 9999 0031 1147 31",
+    "buchhaltung@satz-beispiel.de",
+    "+49 911 4527 131",
+    "241/131/50403",
+    "Leon Faber",
+    "Greta Faber"
+  ]
+}

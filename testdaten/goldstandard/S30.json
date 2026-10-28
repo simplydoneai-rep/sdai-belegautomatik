@@ -1,0 +1,68 @@
+{
+  "id": "S30",
+  "quelle": "synthetisch",
+  "client_id": "M3",
+  "merkmale": [
+    "Handyfoto",
+    "Kassenbon",
+    "Kleinbetragsrechnung"
+  ],
+  "layout": "bon",
+  "dokumente": [
+    {
+      "pfad": "synthetisch/S30_baumarkt.jpg",
+      "art": "foto"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Baumarkt Holzweg GmbH",
+    "invoice_number": null,
+    "invoice_date": "2026-10-29",
+    "currency": "EUR",
+    "net_total": "56.00",
+    "tax_total": "10.64",
+    "gross_total": "66.64",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Schleifscheiben K120, 10 St.",
+        "quantity": "3",
+        "unit": null,
+        "unit_price": "5.00",
+        "net_amount": "15.00",
+        "tax_rate": "19",
+        "account_skr03": "4980"
+      },
+      {
+        "description": "Arbeitshandschuhe Gr. 10",
+        "quantity": "2",
+        "unit": null,
+        "unit_price": "10.00",
+        "net_amount": "20.00",
+        "tax_rate": "19",
+        "account_skr03": "4980"
+      },
+      {
+        "description": "Silikon transparent 310 ml",
+        "quantity": "3",
+        "unit": null,
+        "unit_price": "7.00",
+        "net_amount": "21.00",
+        "tax_rate": "19",
+        "account_skr03": "4980"
+      }
+    ]
+  },
+  "sensible_werte": [
+    "Holzbau Brenner GmbH",
+    "Martina Brenner",
+    "Sägewerkstraße 9",
+    "DE999100003",
+    "DE40 9999 9999 0030 1110 30",
+    "buchhaltung@baumarkt-beispiel.de",
+    "+49 911 4510 130",
+    "241/130/50390",
+    "Ulf Hager"
+  ]
+}

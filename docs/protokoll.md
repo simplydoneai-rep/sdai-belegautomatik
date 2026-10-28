@@ -147,6 +147,20 @@ Umgesetzt mit Claude Code. Plan: `docs/plan-machbarkeitstest.md`, Bericht: `docs
 
 **Verfahrensdokumentation:** Keine Änderung nötig, es werden noch keine echten Belege verarbeitet. Wird mit Phase 0 angelegt.
 
+## 28.10.2026 – Konten, Zusatzbelege und erste KI-Messung
+
+**Konten:**
+- STACKIT: Kundenkonto für Simply Done AI beantragt, Prüfung durch STACKIT läuft.
+- AWS: Konto auf bezahlten Tarif umgestellt (Guthaben 100 $ bleibt), erweiterte Funktionen aktiviert (nicht umkehrbar; hartes Ausgabenlimit entfällt dadurch), Budget-Alarm 20 $ im Verwaltungskonto, Anthropic-Formular eingereicht, langfristiger Bedrock-API-Schlüssel (30 Tage) in `.env`. Claude Sonnet 5 und 5.5 sind für das neue Konto noch gesperrt („not available for this account“), Sonnet 4.6 funktioniert.
+
+**Zusatzbelege:** 12 Belege mit fremden Layouts (modern, englisch, Kassenbon, Brief, Handyfoto, Scan auf dem Kopf), zusammen jetzt 42 Belege. Entscheidung: `docs/entscheidungen/2026-10-28_zusatzbelege.md`.
+
+**Dabei gefunden und behoben:** Texterkennung las verkehrt herum gescannte Seiten nicht (jetzt automatische Lageerkennung). Pseudonymisierung übersah englische Hinweiswörter, Namenszusätze („van“) und Namen unter Grußformeln. 90 Tests grün.
+
+**Erste KI-Messung (Claude Sonnet 4.6, Bedrock Frankfurt):** 99,2 % richtige Pflichtfelder über alle 42 Belege, 100 % bei allen fremden Layouts, Sachkonto 88,5 % ohne Lernen, 1,2 Cent je Beleg. Zielwert 90 % klar erreicht, **Abbruchkriterium Phase A nicht erreicht**. Pseudonymisierung: 0 von 364 sensiblen Werten bei der KI. Bericht: `docs/machbarkeitstest-bericht.md`.
+
+**Offen:** STACKIT-Messung nach Freischaltung, dann Anbieterwahl nach der Regel im Bericht (Abschnitt 5). Freischaltung Claude Sonnet 5.5 bei AWS anfragen.
+
 ## Nächste Schritte
 
 Die aktuelle Aufgabenliste steht in `docs/projektplan.md`, Abschnitt 10. Die Liste unten ist der Stand vom 28.10.2026 vor dem Projektplan.

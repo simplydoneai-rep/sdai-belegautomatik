@@ -7,6 +7,10 @@
   },
   "konten": [
     [
+      "0480",
+      "Geringwertige Wirtschaftsgueter"
+    ],
+    [
       "3100",
       "Fremdleistungen"
     ],
@@ -97,6 +101,10 @@
     [
       "4980",
       "Sonstiger Betriebsbedarf"
+    ],
+    [
+      "4985",
+      "Werkzeuge und Kleingeraete"
     ]
   ]
 }

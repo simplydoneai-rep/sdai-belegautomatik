@@ -1,0 +1,59 @@
+{
+  "id": "S21",
+  "quelle": "synthetisch",
+  "client_id": "M4",
+  "merkmale": [
+    "Layout modern",
+    "19 %"
+  ],
+  "layout": "modern",
+  "dokumente": [
+    {
+      "pfad": "synthetisch/S21_lichtwerk.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Lichtwerk Fotostudio GmbH",
+    "invoice_number": "LW-26-0147",
+    "invoice_date": "2026-10-23",
+    "currency": "EUR",
+    "net_total": "1340.00",
+    "tax_total": "254.60",
+    "gross_total": "1594.60",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Fotoproduktion Imagekampagne, Studiotag",
+        "quantity": "1",
+        "unit": "Tag",
+        "unit_price": "950.00",
+        "net_amount": "950.00",
+        "tax_rate": "19",
+        "account_skr03": "4610"
+      },
+      {
+        "description": "Bildbearbeitung und Retusche",
+        "quantity": "6",
+        "unit": "Std",
+        "unit_price": "65.00",
+        "net_amount": "390.00",
+        "tax_rate": "19",
+        "account_skr03": "4610"
+      }
+    ]
+  },
+  "sensible_werte": [
+    "Pixelwerk Design GmbH",
+    "Lea Brandt",
+    "Kreativhof 3",
+    "DE999100004",
+    "DE67 9999 9999 0021 0777 21",
+    "buchhaltung@lichtwerk-beispiel.de",
+    "+49 911 4357 121",
+    "241/121/50273",
+    "Clara Weiß",
+    "Clara Weiß"
+  ]
+}

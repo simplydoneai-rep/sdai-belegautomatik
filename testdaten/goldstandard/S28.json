@@ -1,0 +1,60 @@
+{
+  "id": "S28",
+  "quelle": "synthetisch",
+  "client_id": "M4",
+  "merkmale": [
+    "Brief ohne Tabelle",
+    "Miete",
+    "19 %"
+  ],
+  "layout": "brief",
+  "dokumente": [
+    {
+      "pfad": "synthetisch/S28_hausverwaltung.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Hausverwaltung Rosenhof GmbH",
+    "invoice_number": "MI-2026-11-04",
+    "invoice_date": "2026-10-28",
+    "currency": "EUR",
+    "net_total": "1510.00",
+    "tax_total": "286.90",
+    "gross_total": "1796.90",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Gewerbemiete Büroeinheit 2. OG, November 2026",
+        "quantity": "1",
+        "unit": "Monat",
+        "unit_price": "1450.00",
+        "net_amount": "1450.00",
+        "tax_rate": "19",
+        "account_skr03": "4210"
+      },
+      {
+        "description": "Tiefgaragenstellplatz Nr. 14, November 2026",
+        "quantity": "1",
+        "unit": "Monat",
+        "unit_price": "60.00",
+        "net_amount": "60.00",
+        "tax_rate": "19",
+        "account_skr03": "4210"
+      }
+    ]
+  },
+  "sensible_werte": [
+    "Pixelwerk Design GmbH",
+    "Lea Brandt",
+    "Kreativhof 3",
+    "DE999100004",
+    "DE26 9999 9999 0028 1036 28",
+    "buchhaltung@hausverwaltung-beispiel.de",
+    "+49 911 4476 128",
+    "241/128/50364",
+    "Doris Engel",
+    "Doris Engel"
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "id": "S23",
+  "quelle": "synthetisch",
+  "client_id": "M2",
+  "merkmale": [
+    "Kassenbon",
+    "Kleinbetragsrechnung"
+  ],
+  "layout": "bon",
+  "dokumente": [
+    {
+      "pfad": "synthetisch/S23_tankhof.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Tankhof Regnitzgrund GmbH",
+    "invoice_number": null,
+    "invoice_date": "2026-10-25",
+    "currency": "EUR",
+    "net_total": "65.00",
+    "tax_total": "12.35",
+    "gross_total": "77.35",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Super E10 39,91 l x 1,789",
+        "quantity": "1",
+        "unit": null,
+        "unit_price": "60.00",
+        "net_amount": "60.00",
+        "tax_rate": "19",
+        "account_skr03": "4530"
+      },
+      {
+        "description": "Scheibenreiniger 1 l",
+        "quantity": "1",
+        "unit": null,
+        "unit_price": "5.00",
+        "net_amount": "5.00",
+        "tax_rate": "19",
+        "account_skr03": "4530"
+      }
+    ]
+  },
+  "sensible_werte": [
+    "Kfz-Technik Albrecht GmbH",
+    "Tobias Albrecht",
+    "Gewerbering 4",
+    "DE999100002",
+    "DE81 9999 9999 0023 0851 23",
+    "buchhaltung@tankhof-beispiel.de",
+    "+49 911 4391 123",
+    "241/123/50299",
+    "Ralf Kuhn"
+  ]
+}
