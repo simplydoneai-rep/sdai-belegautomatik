@@ -1,0 +1,57 @@
+{
+  "id": "K01.21",
+  "quelle": "kosit",
+  "client_id": "M6",
+  "merkmale": [
+    "Reverse Charge (Kategorie AE)"
+  ],
+  "dokumente": [
+    {
+      "pfad": "kosit/01.21a-INVOICE_ubl.xml",
+      "art": "xml",
+      "abweichend": {
+        "supplier_name": "Mustermann GmbH"
+      }
+    },
+    {
+      "pfad": "kosit/01.21a-INVOICE_uncefact.xml",
+      "art": "xml",
+      "abweichend": {
+        "supplier_name": "Mustermann GmbH"
+      }
+    },
+    {
+      "pfad": "kosit_sicht/01.21a-sicht.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Montagebau Rehberg GmbH",
+    "invoice_number": "18383",
+    "invoice_date": "2020-11-27",
+    "currency": "EUR",
+    "net_total": "233.00",
+    "tax_total": "0.00",
+    "gross_total": "233.00",
+    "reverse_charge": true,
+    "lines": [
+      {
+        "description": "Tür Instandsetzung",
+        "quantity": "4",
+        "unit": "Std",
+        "unit_price": "52.00",
+        "net_amount": "208.00",
+        "tax_rate": "0",
+        "account_skr03": null
+      }
+    ]
+  },
+  "sensible_werte": [
+    "Musterverwaltung Lohberg GmbH",
+    "Felix Raabe",
+    "Am Rathausplatz 1",
+    "DE32 9999 9999 0106 3922 06",
+    "+49 951 7006 55"
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "id": "S08",
+  "quelle": "synthetisch",
+  "client_id": "M4",
+  "merkmale": [
+    "19 %",
+    "Lizenz"
+  ],
+  "dokumente": [
+    {
+      "pfad": "synthetisch/S08_cloudkontor.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "CloudKontor Software GmbH",
+    "invoice_number": "CK-INV-77031",
+    "invoice_date": "2026-10-01",
+    "currency": "EUR",
+    "net_total": "1860.00",
+    "tax_total": "353.40",
+    "gross_total": "2213.40",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Designsoftware Pro, Jahreslizenz 11/2026–10/2027",
+        "quantity": "3",
+        "unit": "Lizenz",
+        "unit_price": "540.00",
+        "net_amount": "1620.00",
+        "tax_rate": "19",
+        "account_skr03": "4964"
+      },
+      {
+        "description": "Support- und Wartungspaket, 12 Monate",
+        "quantity": "1",
+        "unit": "Jahr",
+        "unit_price": "240.00",
+        "net_amount": "240.00",
+        "tax_rate": "19",
+        "account_skr03": "4806"
+      }
+    ]
+  },
+  "sensible_werte": [
+    "Pixelwerk Design GmbH",
+    "Lea Brandt",
+    "Kreativhof 3",
+    "DE999100004",
+    "DE66 9999 9999 0008 0296 08",
+    "buchhaltung@cloudkontor-beispiel.de",
+    "+49 911 4136 108",
+    "241/108/50104",
+    "Nina Okafor",
+    "Sebastian Ruhl"
+  ]
+}

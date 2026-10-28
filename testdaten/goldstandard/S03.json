@@ -1,0 +1,75 @@
+{
+  "id": "S03",
+  "quelle": "synthetisch",
+  "client_id": "M2",
+  "merkmale": [
+    "19 %"
+  ],
+  "dokumente": [
+    {
+      "pfad": "synthetisch/S03_teilezentrum.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Teilezentrum Nordring GmbH",
+    "invoice_number": "TZN-261004-07",
+    "invoice_date": "2026-10-04",
+    "currency": "EUR",
+    "net_total": "342.90",
+    "tax_total": "65.15",
+    "gross_total": "408.05",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Bremsscheibe vorne belüftet",
+        "quantity": "2",
+        "unit": "Stück",
+        "unit_price": "64.50",
+        "net_amount": "129.00",
+        "tax_rate": "19",
+        "account_skr03": "3400"
+      },
+      {
+        "description": "Bremsbeläge Satz Vorderachse",
+        "quantity": "1",
+        "unit": "Satz",
+        "unit_price": "48.90",
+        "net_amount": "48.90",
+        "tax_rate": "19",
+        "account_skr03": "3400"
+      },
+      {
+        "description": "Motoröl 5W-30 Longlife",
+        "quantity": "20",
+        "unit": "l",
+        "unit_price": "6.80",
+        "net_amount": "136.00",
+        "tax_rate": "19",
+        "account_skr03": "3400"
+      },
+      {
+        "description": "Ölfilter",
+        "quantity": "4",
+        "unit": "Stück",
+        "unit_price": "7.25",
+        "net_amount": "29.00",
+        "tax_rate": "19",
+        "account_skr03": "3400"
+      }
+    ]
+  },
+  "sensible_werte": [
+    "Kfz-Technik Albrecht GmbH",
+    "Tobias Albrecht",
+    "Gewerbering 4",
+    "DE999100002",
+    "DE31 9999 9999 0003 0111 03",
+    "buchhaltung@teilezentrum-beispiel.de",
+    "+49 911 4051 103",
+    "241/103/50039",
+    "Svenja Haase",
+    "Dirk Bremer"
+  ]
+}

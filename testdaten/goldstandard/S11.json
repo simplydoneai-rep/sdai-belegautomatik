@@ -1,0 +1,66 @@
+{
+  "id": "S11",
+  "quelle": "synthetisch",
+  "client_id": "M4",
+  "merkmale": [
+    "Kleinbetragsrechnung"
+  ],
+  "dokumente": [
+    {
+      "pfad": "synthetisch/S11_buerowelt.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Bürowelt Kranich e.K.",
+    "invoice_number": null,
+    "invoice_date": "2026-10-17",
+    "currency": "EUR",
+    "net_total": "70.00",
+    "tax_total": "13.30",
+    "gross_total": "83.30",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Kopierpapier A4, 500 Blatt",
+        "quantity": "2",
+        "unit": "Pck",
+        "unit_price": "10.00",
+        "net_amount": "20.00",
+        "tax_rate": "19",
+        "account_skr03": "4930"
+      },
+      {
+        "description": "Tonerkassette schwarz",
+        "quantity": "1",
+        "unit": "Stück",
+        "unit_price": "40.00",
+        "net_amount": "40.00",
+        "tax_rate": "19",
+        "account_skr03": "4930"
+      },
+      {
+        "description": "Kugelschreiber blau, 10er",
+        "quantity": "1",
+        "unit": "Pck",
+        "unit_price": "10.00",
+        "net_amount": "10.00",
+        "tax_rate": "19",
+        "account_skr03": "4930"
+      }
+    ]
+  },
+  "sensible_werte": [
+    "Pixelwerk Design GmbH",
+    "Lea Brandt",
+    "Kreativhof 3",
+    "DE999100004",
+    "DE80 9999 9999 0010 0370 10",
+    "buchhaltung@buerowelt-beispiel.de",
+    "+49 911 4170 110",
+    "241/110/50130",
+    "Ingrid Kranich",
+    "Ingrid Kranich"
+  ]
+}

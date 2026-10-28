@@ -1,0 +1,102 @@
+{
+  "_meta": {
+    "kontenrahmen": "SKR03",
+    "zweck": "Erlaubte Kontenliste fuer den Machbarkeitstest (Auswahl typischer Aufwandskonten)",
+    "quelle": "DATEV SKR03, Kontenbezeichnungen sinngemaess; Abgleich mit der offiziellen DATEV-Kontenrahmenliste steht aus",
+    "stand": "2026-10-28"
+  },
+  "konten": [
+    [
+      "3100",
+      "Fremdleistungen"
+    ],
+    [
+      "3120",
+      "Bauleistungen eines im Inland ansaessigen Unternehmers 19 % VSt und 19 % USt (13b)"
+    ],
+    [
+      "3300",
+      "Wareneingang 7 % Vorsteuer"
+    ],
+    [
+      "3400",
+      "Wareneingang 19 % Vorsteuer"
+    ],
+    [
+      "3425",
+      "Innergemeinschaftlicher Erwerb 19 % Vorsteuer und 19 % Umsatzsteuer"
+    ],
+    [
+      "4210",
+      "Miete"
+    ],
+    [
+      "4240",
+      "Gas, Strom, Wasser"
+    ],
+    [
+      "4250",
+      "Reinigung"
+    ],
+    [
+      "4260",
+      "Instandhaltung betrieblicher Raeume"
+    ],
+    [
+      "4360",
+      "Versicherungen"
+    ],
+    [
+      "4530",
+      "Laufende Kfz-Betriebskosten"
+    ],
+    [
+      "4540",
+      "Kfz-Reparaturen"
+    ],
+    [
+      "4610",
+      "Werbekosten"
+    ],
+    [
+      "4650",
+      "Bewirtungskosten"
+    ],
+    [
+      "4805",
+      "Reparaturen und Instandhaltung von anderen Anlagen und Betriebs- und Geschaeftsausstattung"
+    ],
+    [
+      "4806",
+      "Wartungskosten fuer Hard- und Software"
+    ],
+    [
+      "4910",
+      "Porto"
+    ],
+    [
+      "4920",
+      "Telefon"
+    ],
+    [
+      "4930",
+      "Buerobedarf"
+    ],
+    [
+      "4940",
+      "Zeitschriften, Buecher (Fachliteratur)"
+    ],
+    [
+      "4950",
+      "Rechts- und Beratungskosten"
+    ],
+    [
+      "4964",
+      "Aufwendungen fuer die zeitlich befristete Ueberlassung von Rechten (Lizenzen, Konzessionen)"
+    ],
+    [
+      "4980",
+      "Sonstiger Betriebsbedarf"
+    ]
+  ]
+}

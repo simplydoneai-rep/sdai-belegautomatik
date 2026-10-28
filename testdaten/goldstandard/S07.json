@@ -1,0 +1,66 @@
+{
+  "id": "S07",
+  "quelle": "synthetisch",
+  "client_id": "M4",
+  "merkmale": [
+    "19 %"
+  ],
+  "dokumente": [
+    {
+      "pfad": "synthetisch/S07_druckerei.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Druckerei Feinschnitt GmbH",
+    "invoice_number": "DF-2026-0931",
+    "invoice_date": "2026-10-14",
+    "currency": "EUR",
+    "net_total": "344.00",
+    "tax_total": "65.36",
+    "gross_total": "409.36",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Flyer DIN A5, 4/4-farbig, 135 g",
+        "quantity": "5000",
+        "unit": "Stück",
+        "unit_price": "0.042",
+        "net_amount": "210.00",
+        "tax_rate": "19",
+        "account_skr03": "4610"
+      },
+      {
+        "description": "Visitenkarten 85 x 55 mm",
+        "quantity": "500",
+        "unit": "Stück",
+        "unit_price": "0.09",
+        "net_amount": "45.00",
+        "tax_rate": "19",
+        "account_skr03": "4610"
+      },
+      {
+        "description": "Roll-up Display 85 x 200 cm",
+        "quantity": "1",
+        "unit": "Stück",
+        "unit_price": "89.00",
+        "net_amount": "89.00",
+        "tax_rate": "19",
+        "account_skr03": "4610"
+      }
+    ]
+  },
+  "sensible_werte": [
+    "Pixelwerk Design GmbH",
+    "Lea Brandt",
+    "Kreativhof 3",
+    "DE999100004",
+    "DE59 9999 9999 0007 0259 07",
+    "buchhaltung@druckerei-beispiel.de",
+    "+49 911 4119 107",
+    "241/107/50091",
+    "Timo Reuter",
+    "Anja Pohl"
+  ]
+}

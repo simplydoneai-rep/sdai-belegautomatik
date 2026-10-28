@@ -1,0 +1,66 @@
+{
+  "id": "K01.01",
+  "quelle": "kosit",
+  "client_id": "M6",
+  "merkmale": [
+    "Zwei Positionen, 7 %"
+  ],
+  "dokumente": [
+    {
+      "pfad": "kosit/01.01a-INVOICE_ubl.xml",
+      "art": "xml",
+      "abweichend": {
+        "supplier_name": "[Seller name]"
+      }
+    },
+    {
+      "pfad": "kosit/01.01a-INVOICE_uncefact.xml",
+      "art": "xml",
+      "abweichend": {
+        "supplier_name": "[Seller name]"
+      }
+    },
+    {
+      "pfad": "kosit_sicht/01.01a-sicht.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Lesezirkel Bergland GmbH",
+    "invoice_number": "123456XX",
+    "invoice_date": "2016-04-04",
+    "currency": "EUR",
+    "net_total": "314.86",
+    "tax_total": "22.04",
+    "gross_total": "336.9",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Zeitschrift [...]",
+        "quantity": "1",
+        "unit": "Stück",
+        "unit_price": "288.79",
+        "net_amount": "288.79",
+        "tax_rate": "7",
+        "account_skr03": null
+      },
+      {
+        "description": "Porto + Versandkosten",
+        "quantity": "1",
+        "unit": "Stück",
+        "unit_price": "26.07",
+        "net_amount": "26.07",
+        "tax_rate": "7",
+        "account_skr03": null
+      }
+    ]
+  },
+  "sensible_werte": [
+    "Musterverwaltung Lohberg GmbH",
+    "Felix Raabe",
+    "Am Rathausplatz 1",
+    "DE80 9999 9999 0100 3700 00",
+    "+49 951 7000 55"
+  ]
+}

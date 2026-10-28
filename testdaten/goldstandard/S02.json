@@ -1,0 +1,66 @@
+{
+  "id": "S02",
+  "quelle": "synthetisch",
+  "client_id": "M1",
+  "merkmale": [
+    "7 % und 19 %"
+  ],
+  "dokumente": [
+    {
+      "pfad": "synthetisch/S02_getraenke.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Getränke Hanse Vertrieb GmbH",
+    "invoice_number": "GH-88213",
+    "invoice_date": "2026-10-07",
+    "currency": "EUR",
+    "net_total": "243.12",
+    "tax_total": "39.34",
+    "gross_total": "282.46",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Mineralwasser medium 12 x 0,75 l",
+        "quantity": "12",
+        "unit": "Kiste",
+        "unit_price": "8.40",
+        "net_amount": "100.80",
+        "tax_rate": "19",
+        "account_skr03": "3400"
+      },
+      {
+        "description": "Apfelsaft naturtrüb 6 x 1,0 l",
+        "quantity": "6",
+        "unit": "Kiste",
+        "unit_price": "14.20",
+        "net_amount": "85.20",
+        "tax_rate": "19",
+        "account_skr03": "3400"
+      },
+      {
+        "description": "Vollmilch 3,8 % Barista",
+        "quantity": "48",
+        "unit": "l",
+        "unit_price": "1.19",
+        "net_amount": "57.12",
+        "tax_rate": "7",
+        "account_skr03": "3300"
+      }
+    ]
+  },
+  "sensible_werte": [
+    "Café Sonnenblick GmbH",
+    "Sabine Kowalczyk",
+    "Lindenallee 12",
+    "DE999100001",
+    "DE24 9999 9999 0002 0074 02",
+    "buchhaltung@getraenke-beispiel.de",
+    "+49 911 4034 102",
+    "241/102/50026",
+    "Mehmet Arslan",
+    "Klaus Wendel"
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "id": "S19",
+  "quelle": "synthetisch",
+  "client_id": "M2",
+  "merkmale": [
+    "Scan: schief",
+    "19 %"
+  ],
+  "dokumente": [
+    {
+      "pfad": "synthetisch/S19_teilezentrum.pdf",
+      "art": "scan"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Teilezentrum Nordring GmbH",
+    "invoice_number": "TZN-261021-02",
+    "invoice_date": "2026-10-21",
+    "currency": "EUR",
+    "net_total": "164.60",
+    "tax_total": "31.27",
+    "gross_total": "195.87",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Zündkerzen Iridium",
+        "quantity": "8",
+        "unit": "Stück",
+        "unit_price": "9.40",
+        "net_amount": "75.20",
+        "tax_rate": "19",
+        "account_skr03": "3400"
+      },
+      {
+        "description": "Luftfilter",
+        "quantity": "3",
+        "unit": "Stück",
+        "unit_price": "14.80",
+        "net_amount": "44.40",
+        "tax_rate": "19",
+        "account_skr03": "3400"
+      },
+      {
+        "description": "Scheibenwischer Satz",
+        "quantity": "2",
+        "unit": "Paar",
+        "unit_price": "22.50",
+        "net_amount": "45.00",
+        "tax_rate": "19",
+        "account_skr03": "3400"
+      }
+    ]
+  },
+  "sensible_werte": [
+    "Kfz-Technik Albrecht GmbH",
+    "Tobias Albrecht",
+    "Gewerbering 4",
+    "DE999100002",
+    "DE31 9999 9999 0003 0111 03",
+    "buchhaltung@teilezentrum-beispiel.de",
+    "+49 911 4051 103",
+    "241/103/50039",
+    "Svenja Haase",
+    "Dirk Bremer"
+  ]
+}

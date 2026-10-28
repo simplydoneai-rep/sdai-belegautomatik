@@ -1,0 +1,49 @@
+{
+  "id": "S10",
+  "quelle": "synthetisch",
+  "client_id": "M5",
+  "merkmale": [
+    "Gutschrift",
+    "7 %"
+  ],
+  "dokumente": [
+    {
+      "pfad": "synthetisch/S10_muehle.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "credit_note",
+    "supplier_name": "Mühle Hollerbach GmbH & Co. KG",
+    "invoice_number": "GS-26-0042",
+    "invoice_date": "2026-10-16",
+    "currency": "EUR",
+    "net_total": "-46.50",
+    "tax_total": "-3.26",
+    "gross_total": "-49.76",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Rücknahme Weizenmehl Type 550, beschädigte Säcke",
+        "quantity": "75",
+        "unit": "kg",
+        "unit_price": "0.62",
+        "net_amount": "-46.50",
+        "tax_rate": "7",
+        "account_skr03": "3300"
+      }
+    ]
+  },
+  "sensible_werte": [
+    "Bäckerei Kornfeld KG",
+    "Jonas Kornfeld",
+    "Marktplatz 7",
+    "DE999100005",
+    "DE73 9999 9999 0009 0333 09",
+    "buchhaltung@muehle-beispiel.de",
+    "+49 911 4153 109",
+    "241/109/50117",
+    "Georg Hollerbach",
+    "Georg Hollerbach"
+  ]
+}

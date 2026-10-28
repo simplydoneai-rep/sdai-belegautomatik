@@ -1,0 +1,15 @@
+[project]
+name = "sdai-belegautomatik"
+version = "0.1.0"
+description = "Simply Done AI: Belegautomatik – Machbarkeitstest"
+requires-python = ">=3.12"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+filterwarnings = ["ignore::DeprecationWarning", "ignore::FutureWarning"]
+
+[tool.mypy]
+strict = true
+python_version = "3.12"
+ignore_missing_imports = true

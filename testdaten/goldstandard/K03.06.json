@@ -1,0 +1,84 @@
+{
+  "id": "K03.06",
+  "quelle": "kosit",
+  "client_id": "M6",
+  "merkmale": [
+    "Austauschteile, negative Menge"
+  ],
+  "dokumente": [
+    {
+      "pfad": "kosit/03.06a-INVOICE_ubl.xml",
+      "art": "xml",
+      "abweichend": {
+        "supplier_name": "Testverkäufer"
+      }
+    },
+    {
+      "pfad": "kosit/03.06a-INVOICE_uncefact.xml",
+      "art": "xml",
+      "abweichend": {
+        "supplier_name": "Testverkäufer"
+      }
+    },
+    {
+      "pfad": "kosit_sicht/03.06a-sicht.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Autoteile Kreuzberg GmbH",
+    "invoice_number": "112233",
+    "invoice_date": "2021-04-23",
+    "currency": "EUR",
+    "net_total": "1500.00",
+    "tax_total": "304.00",
+    "gross_total": "1804.00",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Neumotor",
+        "quantity": "1.00",
+        "unit": "Stück",
+        "unit_price": "1000.00",
+        "net_amount": "1000.00",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Bemessungsgrundlage und Umsatzsteuer auf Altteil",
+        "quantity": "1.00",
+        "unit": "Stück",
+        "unit_price": "100.00",
+        "net_amount": "100.00",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Korrektur/Stornierung Bemessungsgrundlage der Umsatzsteuer auf Altteil",
+        "quantity": "-1.00",
+        "unit": "Stück",
+        "unit_price": "100.00",
+        "net_amount": "-100.00",
+        "tax_rate": "0",
+        "account_skr03": null
+      },
+      {
+        "description": "Montage",
+        "quantity": "1.00",
+        "unit": "Std",
+        "unit_price": "500.00",
+        "net_amount": "500.00",
+        "tax_rate": "19",
+        "account_skr03": null
+      }
+    ]
+  },
+  "sensible_werte": [
+    "Musterverwaltung Lohberg GmbH",
+    "Felix Raabe",
+    "Am Rathausplatz 1",
+    "DE53 9999 9999 0109 4033 09",
+    "+49 951 7009 55"
+  ]
+}

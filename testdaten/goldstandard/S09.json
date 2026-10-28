@@ -1,0 +1,66 @@
+{
+  "id": "S09",
+  "quelle": "synthetisch",
+  "client_id": "M5",
+  "merkmale": [
+    "7 %"
+  ],
+  "dokumente": [
+    {
+      "pfad": "synthetisch/S09_muehle.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Mühle Hollerbach GmbH & Co. KG",
+    "invoice_number": "MH-26-1187",
+    "invoice_date": "2026-10-02",
+    "currency": "EUR",
+    "net_total": "1114.00",
+    "tax_total": "77.98",
+    "gross_total": "1191.98",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Weizenmehl Type 550, 25-kg-Sack",
+        "quantity": "1000",
+        "unit": "kg",
+        "unit_price": "0.62",
+        "net_amount": "620.00",
+        "tax_rate": "7",
+        "account_skr03": "3300"
+      },
+      {
+        "description": "Roggenmehl Type 1150",
+        "quantity": "400",
+        "unit": "kg",
+        "unit_price": "0.71",
+        "net_amount": "284.00",
+        "tax_rate": "7",
+        "account_skr03": "3300"
+      },
+      {
+        "description": "Dinkelmehl Type 630",
+        "quantity": "200",
+        "unit": "kg",
+        "unit_price": "1.05",
+        "net_amount": "210.00",
+        "tax_rate": "7",
+        "account_skr03": "3300"
+      }
+    ]
+  },
+  "sensible_werte": [
+    "Bäckerei Kornfeld KG",
+    "Jonas Kornfeld",
+    "Marktplatz 7",
+    "DE999100005",
+    "DE73 9999 9999 0009 0333 09",
+    "buchhaltung@muehle-beispiel.de",
+    "+49 911 4153 109",
+    "241/109/50117",
+    "Georg Hollerbach",
+    "Georg Hollerbach"
+  ]
+}

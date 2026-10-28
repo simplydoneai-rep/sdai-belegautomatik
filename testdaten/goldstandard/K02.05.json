@@ -1,0 +1,255 @@
+{
+  "id": "K02.05",
+  "quelle": "kosit",
+  "client_id": "M6",
+  "merkmale": [
+    "Über 20 Positionen, 0 % und 19 %, Zu- und Abschläge"
+  ],
+  "dokumente": [
+    {
+      "pfad": "kosit/02.05a-INVOICE_ubl.xml",
+      "art": "xml",
+      "abweichend": {
+        "supplier_name": "[Seller name]"
+      }
+    },
+    {
+      "pfad": "kosit/02.05a-INVOICE_uncefact.xml",
+      "art": "xml",
+      "abweichend": {
+        "supplier_name": "[Seller name]"
+      }
+    },
+    {
+      "pfad": "kosit_sicht/02.05a-sicht.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Laborbedarf Quellental GmbH",
+    "invoice_number": "1234567",
+    "invoice_date": "2019-08-20",
+    "currency": "EUR",
+    "net_total": "2311.94",
+    "tax_total": "264.47",
+    "gross_total": "2576.41",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Produkt 1",
+        "quantity": "1",
+        "unit": "Stück",
+        "unit_price": "29.95",
+        "net_amount": "29.95",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Produkt 2",
+        "quantity": "7",
+        "unit": "Stück",
+        "unit_price": "19.95",
+        "net_amount": "139.65",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Produkt 3",
+        "quantity": "1",
+        "unit": "Stück",
+        "unit_price": "16",
+        "net_amount": "16",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Produkt 4",
+        "quantity": "10",
+        "unit": "Stück",
+        "unit_price": "32.95",
+        "net_amount": "329.5",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Produkt 5",
+        "quantity": "1",
+        "unit": "Stück",
+        "unit_price": "22.95",
+        "net_amount": "22.95",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Produkt 6",
+        "quantity": "1",
+        "unit": "Stück",
+        "unit_price": "12.95",
+        "net_amount": "12.95",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Produkt 7",
+        "quantity": "1",
+        "unit": "Stück",
+        "unit_price": "69.95",
+        "net_amount": "69.95",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Produkt 8",
+        "quantity": "3",
+        "unit": "Stück",
+        "unit_price": "42.95",
+        "net_amount": "128.85",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Produkt 9",
+        "quantity": "6",
+        "unit": "Stück",
+        "unit_price": "41.5645",
+        "net_amount": "249.39",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Produkt 10",
+        "quantity": "1",
+        "unit": "Stück",
+        "unit_price": "15",
+        "net_amount": "15",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Produkt 11",
+        "quantity": "1",
+        "unit": "Stück",
+        "unit_price": "10",
+        "net_amount": "10",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Produkt 12",
+        "quantity": "1",
+        "unit": "Stück",
+        "unit_price": "9.6774",
+        "net_amount": "9.68",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Produkt 13",
+        "quantity": "1",
+        "unit": "Stück",
+        "unit_price": "3.75",
+        "net_amount": "3.75",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Produkt 14",
+        "quantity": "1",
+        "unit": "Stück",
+        "unit_price": "7",
+        "net_amount": "7",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Produkt 15",
+        "quantity": "24",
+        "unit": "Stück",
+        "unit_price": "0",
+        "net_amount": "0",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Produkt 16",
+        "quantity": "6",
+        "unit": "Stück",
+        "unit_price": "0",
+        "net_amount": "0",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Produkt 17",
+        "quantity": "1",
+        "unit": "Stück",
+        "unit_price": "4.564",
+        "net_amount": "4.56",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Produkt 18",
+        "quantity": "1",
+        "unit": "Stück",
+        "unit_price": "20.0542",
+        "net_amount": "20.05",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Produkt 19",
+        "quantity": "1",
+        "unit": "Stück",
+        "unit_price": "3.45",
+        "net_amount": "3.45",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Produkt 20",
+        "quantity": "1",
+        "unit": "Stück",
+        "unit_price": "417.6011",
+        "net_amount": "417.6",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Produkt 21",
+        "quantity": "1",
+        "unit": "Stück",
+        "unit_price": "1.9496",
+        "net_amount": "1.95",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Fremdleistung Anbieter A",
+        "quantity": "1",
+        "unit": "Stück",
+        "unit_price": "0",
+        "net_amount": "0",
+        "tax_rate": "0",
+        "account_skr03": null
+      },
+      {
+        "description": "Fremdleistung Anbieter B",
+        "quantity": "1",
+        "unit": "Stück",
+        "unit_price": "0",
+        "net_amount": "0",
+        "tax_rate": "0",
+        "account_skr03": null
+      }
+    ]
+  },
+  "sensible_werte": [
+    "Musterverwaltung Lohberg GmbH",
+    "Felix Raabe",
+    "Am Rathausplatz 1",
+    "DE39 9999 9999 0107 3959 07",
+    "+49 951 7007 55"
+  ]
+}

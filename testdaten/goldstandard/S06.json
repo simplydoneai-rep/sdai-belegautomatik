@@ -1,0 +1,66 @@
+{
+  "id": "S06",
+  "quelle": "synthetisch",
+  "client_id": "M3",
+  "merkmale": [
+    "19 %"
+  ],
+  "dokumente": [
+    {
+      "pfad": "synthetisch/S06_holzhandel.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Holzhandel Waldmark GmbH",
+    "invoice_number": "WM-55120",
+    "invoice_date": "2026-10-13",
+    "currency": "EUR",
+    "net_total": "3956.40",
+    "tax_total": "751.72",
+    "gross_total": "4708.12",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Konstruktionsvollholz Fichte 80 x 160 mm",
+        "quantity": "8",
+        "unit": "m³",
+        "unit_price": "465.00",
+        "net_amount": "3720.00",
+        "tax_rate": "19",
+        "account_skr03": "3400"
+      },
+      {
+        "description": "Dachlatten 30 x 50 mm imprägniert",
+        "quantity": "120",
+        "unit": "m",
+        "unit_price": "1.35",
+        "net_amount": "162.00",
+        "tax_rate": "19",
+        "account_skr03": "3400"
+      },
+      {
+        "description": "Holzbauschrauben 8 x 240, Karton",
+        "quantity": "6",
+        "unit": "Karton",
+        "unit_price": "12.40",
+        "net_amount": "74.40",
+        "tax_rate": "19",
+        "account_skr03": "3400"
+      }
+    ]
+  },
+  "sensible_werte": [
+    "Holzbau Brenner GmbH",
+    "Martina Brenner",
+    "Sägewerkstraße 9",
+    "DE999100003",
+    "DE52 9999 9999 0006 0222 06",
+    "buchhaltung@holzhandel-beispiel.de",
+    "+49 911 4102 106",
+    "241/106/50078",
+    "Heike Sommer",
+    "Uwe Tanner"
+  ]
+}

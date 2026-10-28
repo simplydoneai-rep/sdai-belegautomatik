@@ -1,0 +1,111 @@
+{
+  "id": "K01.06",
+  "quelle": "kosit",
+  "client_id": "M6",
+  "merkmale": [
+    "Sieben Positionen, 19 %"
+  ],
+  "dokumente": [
+    {
+      "pfad": "kosit/01.06a-INVOICE_ubl.xml",
+      "art": "xml",
+      "abweichend": {
+        "supplier_name": "[Seller name]"
+      }
+    },
+    {
+      "pfad": "kosit/01.06a-INVOICE_uncefact.xml",
+      "art": "xml",
+      "abweichend": {
+        "supplier_name": "[Seller name]"
+      }
+    },
+    {
+      "pfad": "kosit_sicht/01.06a-sicht.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Bürotechnik Ostwind GmbH",
+    "invoice_number": "R123456789",
+    "invoice_date": "2016-07-06",
+    "currency": "EUR",
+    "net_total": "18236.72",
+    "tax_total": "3464.98",
+    "gross_total": "21701.7",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Servicegebühren A",
+        "quantity": "1",
+        "unit": "Monat",
+        "unit_price": "17.24",
+        "net_amount": "17.24",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Servicegebühren B",
+        "quantity": "1",
+        "unit": "Monat",
+        "unit_price": "16704.07",
+        "net_amount": "16704.07",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Servicegebühren C",
+        "quantity": "1",
+        "unit": "Monat",
+        "unit_price": "5.21",
+        "net_amount": "5.21",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Servicegebühren D",
+        "quantity": "1",
+        "unit": "Monat",
+        "unit_price": "282.36",
+        "net_amount": "282.36",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Servicegebühren E",
+        "quantity": "1",
+        "unit": "Monat",
+        "unit_price": "386.68",
+        "net_amount": "386.68",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Servicegebühren F",
+        "quantity": "1",
+        "unit": "Monat",
+        "unit_price": "535.11",
+        "net_amount": "535.11",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Servicegebühren G",
+        "quantity": "1",
+        "unit": "Monat",
+        "unit_price": "306.05",
+        "net_amount": "306.05",
+        "tax_rate": "19",
+        "account_skr03": null
+      }
+    ]
+  },
+  "sensible_werte": [
+    "Musterverwaltung Lohberg GmbH",
+    "Felix Raabe",
+    "Am Rathausplatz 1",
+    "DE11 9999 9999 0103 3811 03",
+    "+49 951 7003 55"
+  ]
+}

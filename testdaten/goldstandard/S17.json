@@ -1,0 +1,48 @@
+{
+  "id": "S17",
+  "quelle": "synthetisch",
+  "client_id": "M3",
+  "merkmale": [
+    "innergemeinschaftlicher Erwerb"
+  ],
+  "dokumente": [
+    {
+      "pfad": "synthetisch/S17_alpenholz.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Alpenholz Handels GmbH",
+    "invoice_number": "AH-2026-0815",
+    "invoice_date": "2026-10-15",
+    "currency": "EUR",
+    "net_total": "2352.00",
+    "tax_total": "0.00",
+    "gross_total": "2352.00",
+    "reverse_charge": true,
+    "lines": [
+      {
+        "description": "Lärchenholz Fassadenprofil 21 x 121 mm",
+        "quantity": "240",
+        "unit": "m",
+        "unit_price": "9.80",
+        "net_amount": "2352.00",
+        "tax_rate": "0",
+        "account_skr03": "3425"
+      }
+    ]
+  },
+  "sensible_werte": [
+    "Holzbau Brenner GmbH",
+    "Martina Brenner",
+    "Sägewerkstraße 9",
+    "DE999100003",
+    "DE32 9999 9999 0016 0592 16",
+    "buchhaltung@alpenholz-beispiel.de",
+    "+49 911 4272 116",
+    "241/116/50208",
+    "Florian Hofer",
+    "Florian Hofer"
+  ]
+}

@@ -1,0 +1,147 @@
+{
+  "id": "K01.13",
+  "quelle": "kosit",
+  "client_id": "M6",
+  "merkmale": [
+    "Elf Positionen, 19 %"
+  ],
+  "dokumente": [
+    {
+      "pfad": "kosit/01.13a-INVOICE_ubl.xml",
+      "art": "xml",
+      "abweichend": {
+        "supplier_name": "[Seller name]"
+      }
+    },
+    {
+      "pfad": "kosit/01.13a-INVOICE_uncefact.xml",
+      "art": "xml",
+      "abweichend": {
+        "supplier_name": "[Seller name]"
+      }
+    },
+    {
+      "pfad": "kosit_sicht/01.13a-sicht.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "IT-Service Lichtblick GmbH",
+    "invoice_number": "Rechnungsnummer",
+    "invoice_date": "2015-01-09",
+    "currency": "EUR",
+    "net_total": "5330",
+    "tax_total": "1012.7",
+    "gross_total": "6342.7",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Aussetzen der Kanten Neorokokosofa laut N2",
+        "quantity": "1",
+        "unit": "Stück",
+        "unit_price": "400",
+        "net_amount": "400",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Aussetzen der Kanten am Sofa um 1780 laut N2",
+        "quantity": "1",
+        "unit": "Stück",
+        "unit_price": "240",
+        "net_amount": "240",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Analyse Pigment",
+        "quantity": "1",
+        "unit": "Stück",
+        "unit_price": "120",
+        "net_amount": "120",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Querschliff",
+        "quantity": "1",
+        "unit": "Stück",
+        "unit_price": "70",
+        "net_amount": "70",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Furnierniederlegung 50 %",
+        "quantity": "1",
+        "unit": "Stück",
+        "unit_price": "140",
+        "net_amount": "140",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Transport 25 %",
+        "quantity": "1",
+        "unit": "Stück",
+        "unit_price": "400",
+        "net_amount": "400",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Sofa um 1780 Reinigung der Oberfläche",
+        "quantity": "1",
+        "unit": "Stück",
+        "unit_price": "280",
+        "net_amount": "280",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Konstruktive Ertüchtigung, Ergänzung eines Beines",
+        "quantity": "1",
+        "unit": "Stück",
+        "unit_price": "480",
+        "net_amount": "480",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Abnahme der rotbraunen Fassung 50 %",
+        "quantity": "1",
+        "unit": "Stück",
+        "unit_price": "1600",
+        "net_amount": "1600",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Neorokokosofo konstruktive Ertüchtigung",
+        "quantity": "1",
+        "unit": "Stück",
+        "unit_price": "400",
+        "net_amount": "400",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Reinigung, Fassungssicherung 50 %",
+        "quantity": "1",
+        "unit": "Stück",
+        "unit_price": "1200",
+        "net_amount": "1200",
+        "tax_rate": "19",
+        "account_skr03": null
+      }
+    ]
+  },
+  "sensible_werte": [
+    "Musterverwaltung Lohberg GmbH",
+    "Felix Raabe",
+    "Am Rathausplatz 1",
+    "DE25 9999 9999 0105 3885 05",
+    "+49 951 7005 55"
+  ]
+}

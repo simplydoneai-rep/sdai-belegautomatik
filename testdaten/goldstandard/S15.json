@@ -1,0 +1,56 @@
+{
+  "id": "S15",
+  "quelle": "synthetisch",
+  "client_id": "M2",
+  "merkmale": [
+    "19 %"
+  ],
+  "dokumente": [
+    {
+      "pfad": "synthetisch/S15_funknetz.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Funknetz Mitte GmbH",
+    "invoice_number": "FM-9930-1026",
+    "invoice_date": "2026-10-06",
+    "currency": "EUR",
+    "net_total": "99.96",
+    "tax_total": "18.99",
+    "gross_total": "118.95",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Mobilfunk Business Tarif, Grundgebühr Oktober",
+        "quantity": "3",
+        "unit": "Vertrag",
+        "unit_price": "29.99",
+        "net_amount": "89.97",
+        "tax_rate": "19",
+        "account_skr03": "4920"
+      },
+      {
+        "description": "Zusatz-Datenvolumen 10 GB",
+        "quantity": "1",
+        "unit": "Stück",
+        "unit_price": "9.99",
+        "net_amount": "9.99",
+        "tax_rate": "19",
+        "account_skr03": "4920"
+      }
+    ]
+  },
+  "sensible_werte": [
+    "Kfz-Technik Albrecht GmbH",
+    "Tobias Albrecht",
+    "Gewerbering 4",
+    "DE999100002",
+    "DE18 9999 9999 0014 0518 14",
+    "buchhaltung@funknetz-beispiel.de",
+    "+49 911 4238 114",
+    "241/114/50182",
+    "Patrick Aumann"
+  ]
+}

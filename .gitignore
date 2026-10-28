@@ -1,0 +1,23 @@
+# Zugangsdaten (CLAUDE.md: nie ins Repository)
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+
+# Ausgaben der Testläufe
+testdaten/ausgaben/
+
+# Editor / System
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store

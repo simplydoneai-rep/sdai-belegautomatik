@@ -1,0 +1,75 @@
+{
+  "id": "S01",
+  "quelle": "synthetisch",
+  "client_id": "M1",
+  "merkmale": [
+    "7 %"
+  ],
+  "dokumente": [
+    {
+      "pfad": "synthetisch/S01_frischgut.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Frischgut Großhandel GmbH",
+    "invoice_number": "FG-2026-10412",
+    "invoice_date": "2026-10-05",
+    "currency": "EUR",
+    "net_total": "349.65",
+    "tax_total": "24.48",
+    "gross_total": "374.13",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Kaffeebohnen Espresso Röstung",
+        "quantity": "10",
+        "unit": "kg",
+        "unit_price": "18.90",
+        "net_amount": "189.00",
+        "tax_rate": "7",
+        "account_skr03": "3300"
+      },
+      {
+        "description": "Vollmilch 3,5 %",
+        "quantity": "60",
+        "unit": "l",
+        "unit_price": "1.09",
+        "net_amount": "65.40",
+        "tax_rate": "7",
+        "account_skr03": "3300"
+      },
+      {
+        "description": "Weizenmehl Type 405",
+        "quantity": "25",
+        "unit": "kg",
+        "unit_price": "0.85",
+        "net_amount": "21.25",
+        "tax_rate": "7",
+        "account_skr03": "3300"
+      },
+      {
+        "description": "Süßrahmbutter",
+        "quantity": "10",
+        "unit": "kg",
+        "unit_price": "7.40",
+        "net_amount": "74.00",
+        "tax_rate": "7",
+        "account_skr03": "3300"
+      }
+    ]
+  },
+  "sensible_werte": [
+    "Café Sonnenblick GmbH",
+    "Sabine Kowalczyk",
+    "Lindenallee 12",
+    "DE999100001",
+    "DE17 9999 9999 0001 0037 01",
+    "buchhaltung@frischgut-beispiel.de",
+    "+49 911 4017 101",
+    "241/101/50013",
+    "Jonas Feldmann",
+    "Petra Lindqvist"
+  ]
+}

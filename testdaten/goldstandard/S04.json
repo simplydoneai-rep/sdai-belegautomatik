@@ -1,0 +1,66 @@
+{
+  "id": "S04",
+  "quelle": "synthetisch",
+  "client_id": "M2",
+  "merkmale": [
+    "19 %"
+  ],
+  "dokumente": [
+    {
+      "pfad": "synthetisch/S04_lackwerk.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Lackwerk Südpark GmbH",
+    "invoice_number": "LS/2026/3381",
+    "invoice_date": "2026-10-09",
+    "currency": "EUR",
+    "net_total": "467.30",
+    "tax_total": "88.79",
+    "gross_total": "556.09",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Basislack Farbton nach Muster",
+        "quantity": "4",
+        "unit": "l",
+        "unit_price": "58.00",
+        "net_amount": "232.00",
+        "tax_rate": "19",
+        "account_skr03": "3400"
+      },
+      {
+        "description": "Klarlack 2K HS",
+        "quantity": "5",
+        "unit": "l",
+        "unit_price": "39.50",
+        "net_amount": "197.50",
+        "tax_rate": "19",
+        "account_skr03": "3400"
+      },
+      {
+        "description": "Schleifpapier P800, Packung 50 Blatt",
+        "quantity": "2",
+        "unit": "Pck",
+        "unit_price": "18.90",
+        "net_amount": "37.80",
+        "tax_rate": "19",
+        "account_skr03": "3400"
+      }
+    ]
+  },
+  "sensible_werte": [
+    "Kfz-Technik Albrecht GmbH",
+    "Tobias Albrecht",
+    "Gewerbering 4",
+    "DE999100002",
+    "DE38 9999 9999 0004 0148 04",
+    "buchhaltung@lackwerk-beispiel.de",
+    "+49 911 4068 104",
+    "241/104/50052",
+    "Olga Petrenko",
+    "Rainer Voss"
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "id": "S13",
+  "quelle": "synthetisch",
+  "client_id": "M1",
+  "merkmale": [
+    "19 %"
+  ],
+  "dokumente": [
+    {
+      "pfad": "synthetisch/S13_reinigungsservice.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Reinigungsservice Glanzpunkt GmbH",
+    "invoice_number": "RG-10-2026-14",
+    "invoice_date": "2026-10-31",
+    "currency": "EUR",
+    "net_total": "908.00",
+    "tax_total": "172.52",
+    "gross_total": "1080.52",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Unterhaltsreinigung Gastraum Oktober 2026",
+        "quantity": "1",
+        "unit": "Monat",
+        "unit_price": "680.00",
+        "net_amount": "680.00",
+        "tax_rate": "19",
+        "account_skr03": "4250"
+      },
+      {
+        "description": "Grundreinigung Küche",
+        "quantity": "6",
+        "unit": "Std",
+        "unit_price": "38.00",
+        "net_amount": "228.00",
+        "tax_rate": "19",
+        "account_skr03": "4250"
+      }
+    ]
+  },
+  "sensible_werte": [
+    "Café Sonnenblick GmbH",
+    "Sabine Kowalczyk",
+    "Lindenallee 12",
+    "DE999100001",
+    "DE94 9999 9999 0012 0444 12",
+    "buchhaltung@reinigungsservice-beispiel.de",
+    "+49 911 4204 112",
+    "241/112/50156",
+    "Aylin Demir",
+    "Frank Becker"
+  ]
+}

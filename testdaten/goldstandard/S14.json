@@ -1,0 +1,57 @@
+{
+  "id": "S14",
+  "quelle": "synthetisch",
+  "client_id": "M4",
+  "merkmale": [
+    "7 % und 19 %"
+  ],
+  "dokumente": [
+    {
+      "pfad": "synthetisch/S14_fachverlag.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Fachverlag Paragraphenreiter GmbH",
+    "invoice_number": "FP-104455",
+    "invoice_date": "2026-10-08",
+    "currency": "EUR",
+    "net_total": "278.00",
+    "tax_total": "41.06",
+    "gross_total": "319.06",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Fachbuch Gestaltungs- und Urheberrecht, 4. Auflage",
+        "quantity": "2",
+        "unit": "Stück",
+        "unit_price": "49.00",
+        "net_amount": "98.00",
+        "tax_rate": "7",
+        "account_skr03": "4940"
+      },
+      {
+        "description": "Online-Datenbank Medienrecht, Jahresabo",
+        "quantity": "1",
+        "unit": "Jahr",
+        "unit_price": "180.00",
+        "net_amount": "180.00",
+        "tax_rate": "19",
+        "account_skr03": "4940"
+      }
+    ]
+  },
+  "sensible_werte": [
+    "Pixelwerk Design GmbH",
+    "Lea Brandt",
+    "Kreativhof 3",
+    "DE999100004",
+    "DE11 9999 9999 0013 0481 13",
+    "buchhaltung@fachverlag-beispiel.de",
+    "+49 911 4221 113",
+    "241/113/50169",
+    "Lukas Brenneis",
+    "Carola Stein"
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "id": "S12",
+  "quelle": "synthetisch",
+  "client_id": "M1",
+  "merkmale": [
+    "19 %",
+    "Energie"
+  ],
+  "dokumente": [
+    {
+      "pfad": "synthetisch/S12_energieversorgung.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Energieversorgung Talgrund GmbH",
+    "invoice_number": "ET-2026-500731",
+    "invoice_date": "2026-10-03",
+    "currency": "EUR",
+    "net_total": "1436.48",
+    "tax_total": "272.93",
+    "gross_total": "1709.41",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Strom Arbeitspreis 01.07.–30.09.2026",
+        "quantity": "4820",
+        "unit": "kWh",
+        "unit_price": "0.289",
+        "net_amount": "1392.98",
+        "tax_rate": "19",
+        "account_skr03": "4240"
+      },
+      {
+        "description": "Grundpreis",
+        "quantity": "3",
+        "unit": "Monat",
+        "unit_price": "14.50",
+        "net_amount": "43.50",
+        "tax_rate": "19",
+        "account_skr03": "4240"
+      }
+    ]
+  },
+  "sensible_werte": [
+    "Café Sonnenblick GmbH",
+    "Sabine Kowalczyk",
+    "Lindenallee 12",
+    "DE999100001",
+    "DE87 9999 9999 0011 0407 11",
+    "buchhaltung@energieversorgung-beispiel.de",
+    "+49 911 4187 111",
+    "241/111/50143",
+    "Dr. Helmut Grau"
+  ]
+}

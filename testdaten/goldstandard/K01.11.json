@@ -1,0 +1,75 @@
+{
+  "id": "K01.11",
+  "quelle": "kosit",
+  "client_id": "M6",
+  "merkmale": [
+    "Drei Positionen, 19 %"
+  ],
+  "dokumente": [
+    {
+      "pfad": "kosit/01.11a-INVOICE_ubl.xml",
+      "art": "xml",
+      "abweichend": {
+        "supplier_name": "[Seller name]"
+      }
+    },
+    {
+      "pfad": "kosit/01.11a-INVOICE_uncefact.xml",
+      "art": "xml",
+      "abweichend": {
+        "supplier_name": "[Seller name]"
+      }
+    },
+    {
+      "pfad": "kosit_sicht/01.11a-sicht.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Möbelwerk Ahornstein GmbH",
+    "invoice_number": "Rechnungsnummer",
+    "invoice_date": "2016-02-23",
+    "currency": "EUR",
+    "net_total": "234.77",
+    "tax_total": "44.61",
+    "gross_total": "279.38",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Huawei E5573 Mobiler 4G Hotspot sw",
+        "quantity": "3",
+        "unit": "Stück",
+        "unit_price": "71.42",
+        "net_amount": "214.26",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Beschaffungspauschale",
+        "quantity": "1",
+        "unit": "Stück",
+        "unit_price": "10.71",
+        "net_amount": "10.71",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Lieferkosten",
+        "quantity": "1",
+        "unit": "Stück",
+        "unit_price": "9.8",
+        "net_amount": "9.8",
+        "tax_rate": "19",
+        "account_skr03": null
+      }
+    ]
+  },
+  "sensible_werte": [
+    "Musterverwaltung Lohberg GmbH",
+    "Felix Raabe",
+    "Am Rathausplatz 1",
+    "DE18 9999 9999 0104 3848 04",
+    "+49 951 7004 55"
+  ]
+}

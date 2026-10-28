@@ -1,0 +1,57 @@
+{
+  "id": "K01.04",
+  "quelle": "kosit",
+  "client_id": "M6",
+  "merkmale": [
+    "Steuerbefreit, 0 %"
+  ],
+  "dokumente": [
+    {
+      "pfad": "kosit/01.04a-INVOICE_ubl.xml",
+      "art": "xml",
+      "abweichend": {
+        "supplier_name": "[Seller name]"
+      }
+    },
+    {
+      "pfad": "kosit/01.04a-INVOICE_uncefact.xml",
+      "art": "xml",
+      "abweichend": {
+        "supplier_name": "[Seller name]"
+      }
+    },
+    {
+      "pfad": "kosit_sicht/01.04a-sicht.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Dolmetschbüro Weitblick GmbH",
+    "invoice_number": "1234/78/901",
+    "invoice_date": "2016-06-16",
+    "currency": "EUR",
+    "net_total": "120",
+    "tax_total": "0",
+    "gross_total": "120",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Teilnahmegebühr",
+        "quantity": "1",
+        "unit": "Stück",
+        "unit_price": "120",
+        "net_amount": "120",
+        "tax_rate": "0",
+        "account_skr03": null
+      }
+    ]
+  },
+  "sensible_werte": [
+    "Musterverwaltung Lohberg GmbH",
+    "Felix Raabe",
+    "Am Rathausplatz 1",
+    "DE94 9999 9999 0102 3774 02",
+    "+49 951 7002 55"
+  ]
+}

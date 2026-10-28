@@ -1,0 +1,73 @@
+{
+  "_meta": {
+    "hinweis": "Erfundene Mandanten für Testbelege. Keine echten Daten."
+  },
+  "mandanten": {
+    "M1": {
+      "name": "Café Sonnenblick GmbH",
+      "attn": "Frau Sabine Kowalczyk",
+      "person": "Sabine Kowalczyk",
+      "street": "Lindenallee 12",
+      "postcode": "90402",
+      "city": "Nürnberg",
+      "vat_id": "DE999100001",
+      "industry_code": "56.10",
+      "branche": "Gastronomie (Café)"
+    },
+    "M2": {
+      "name": "Kfz-Technik Albrecht GmbH",
+      "attn": "Herrn Tobias Albrecht",
+      "person": "Tobias Albrecht",
+      "street": "Gewerbering 4",
+      "postcode": "91052",
+      "city": "Erlangen",
+      "vat_id": "DE999100002",
+      "industry_code": "45.20",
+      "branche": "Kfz-Werkstatt"
+    },
+    "M3": {
+      "name": "Holzbau Brenner GmbH",
+      "attn": "Frau Martina Brenner",
+      "person": "Martina Brenner",
+      "street": "Sägewerkstraße 9",
+      "postcode": "95444",
+      "city": "Bayreuth",
+      "vat_id": "DE999100003",
+      "industry_code": "43.91",
+      "branche": "Zimmerei, Dachdeckerei"
+    },
+    "M4": {
+      "name": "Pixelwerk Design GmbH",
+      "attn": "Frau Lea Brandt",
+      "person": "Lea Brandt",
+      "street": "Kreativhof 3",
+      "postcode": "90763",
+      "city": "Fürth",
+      "vat_id": "DE999100004",
+      "industry_code": "73.11",
+      "branche": "Werbeagentur"
+    },
+    "M5": {
+      "name": "Bäckerei Kornfeld KG",
+      "attn": "Herrn Jonas Kornfeld",
+      "person": "Jonas Kornfeld",
+      "street": "Marktplatz 7",
+      "postcode": "91126",
+      "city": "Schwabach",
+      "vat_id": "DE999100005",
+      "industry_code": "10.71",
+      "branche": "Bäckerei"
+    },
+    "M6": {
+      "name": "Musterverwaltung Lohberg GmbH",
+      "attn": "Herrn Felix Raabe",
+      "person": "Felix Raabe",
+      "street": "Am Rathausplatz 1",
+      "postcode": "96047",
+      "city": "Bamberg",
+      "vat_id": "DE999100006",
+      "industry_code": "70.10",
+      "branche": "Verwaltung (Käufer der KoSIT-Belege)"
+    }
+  }
+}

@@ -1,0 +1,174 @@
+{
+  "id": "K03.01",
+  "quelle": "kosit",
+  "client_id": "M6",
+  "merkmale": [
+    "14 Positionen, 7 % und 19 %"
+  ],
+  "dokumente": [
+    {
+      "pfad": "kosit/03.01a-INVOICE_ubl.xml",
+      "art": "xml",
+      "abweichend": {
+        "supplier_name": "[Seller name]"
+      }
+    },
+    {
+      "pfad": "kosit/03.01a-INVOICE_uncefact.xml",
+      "art": "xml",
+      "abweichend": {
+        "supplier_name": "[Seller name]"
+      }
+    },
+    {
+      "pfad": "kosit_sicht/03.01a-sicht.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Hausmeisterservice Eckstein GmbH",
+    "invoice_number": "123456789",
+    "invoice_date": "2019-02-28",
+    "currency": "EUR",
+    "net_total": "687.28",
+    "tax_total": "117.58",
+    "gross_total": "804.86",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Arbeitspreis Strom",
+        "quantity": "935",
+        "unit": "KWH",
+        "unit_price": "0.2185",
+        "net_amount": "204.3",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Arbeitspreis Strom",
+        "quantity": "119",
+        "unit": "KWH",
+        "unit_price": "0.2185",
+        "net_amount": "26",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Grundpreis Strom",
+        "quantity": "245.11",
+        "unit": "Tag",
+        "unit_price": "0.1022",
+        "net_amount": "25.05",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Grundpreis Strom",
+        "quantity": "24.40",
+        "unit": "Tag",
+        "unit_price": "0.1299",
+        "net_amount": "3.17",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Arbeitspreis Gas",
+        "quantity": "328",
+        "unit": "KWH",
+        "unit_price": "0.0405",
+        "net_amount": "13.28",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Arbeitspreis Gas",
+        "quantity": "3875",
+        "unit": "KWH",
+        "unit_price": "0.0405",
+        "net_amount": "156.94",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Arbeitspreis Gas",
+        "quantity": "1746",
+        "unit": "KWH",
+        "unit_price": "0.0405",
+        "net_amount": "70.71",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Grundpreis Gas",
+        "quantity": "141.80",
+        "unit": "Tag",
+        "unit_price": "0.1299",
+        "net_amount": "18.42",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Grundpreis Gas",
+        "quantity": "401",
+        "unit": "Tag",
+        "unit_price": "0.1299",
+        "net_amount": "52.09",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Grundpreis Gas",
+        "quantity": "68.73",
+        "unit": "Tag",
+        "unit_price": "0.1299",
+        "net_amount": "8.93",
+        "tax_rate": "19",
+        "account_skr03": null
+      },
+      {
+        "description": "Arbeitspreis Wasser",
+        "quantity": "25",
+        "unit": "m³",
+        "unit_price": "1.86",
+        "net_amount": "46.5",
+        "tax_rate": "7",
+        "account_skr03": null
+      },
+      {
+        "description": "Arbeitspreis Wasser",
+        "quantity": "4",
+        "unit": "m³",
+        "unit_price": "1.86",
+        "net_amount": "7.44",
+        "tax_rate": "7",
+        "account_skr03": null
+      },
+      {
+        "description": "Grundpreis Wasser",
+        "quantity": "245",
+        "unit": "Tag",
+        "unit_price": "0.1973",
+        "net_amount": "48.33",
+        "tax_rate": "7",
+        "account_skr03": null
+      },
+      {
+        "description": "Grundpreis Wasser",
+        "quantity": "31",
+        "unit": "Tag",
+        "unit_price": "0.1973",
+        "net_amount": "6.12",
+        "tax_rate": "7",
+        "account_skr03": null
+      }
+    ]
+  },
+  "sensible_werte": [
+    "Musterverwaltung Lohberg GmbH",
+    "Felix Raabe",
+    "Am Rathausplatz 1",
+    "DE46 9999 9999 0108 3996 08",
+    "+49 951 7008 55"
+  ]
+}

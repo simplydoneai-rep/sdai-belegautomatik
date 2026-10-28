@@ -1,0 +1,66 @@
+{
+  "id": "K01.03",
+  "quelle": "kosit",
+  "client_id": "M6",
+  "merkmale": [
+    "Zwei Positionen, 7 %"
+  ],
+  "dokumente": [
+    {
+      "pfad": "kosit/01.03a-INVOICE_ubl.xml",
+      "art": "xml",
+      "abweichend": {
+        "supplier_name": "[Seller name]"
+      }
+    },
+    {
+      "pfad": "kosit/01.03a-INVOICE_uncefact.xml",
+      "art": "xml",
+      "abweichend": {
+        "supplier_name": "[Seller name]"
+      }
+    },
+    {
+      "pfad": "kosit_sicht/01.03a-sicht.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Fachbuchversand Kellerhof GmbH",
+    "invoice_number": "RR123456",
+    "invoice_date": "2016-06-24",
+    "currency": "EUR",
+    "net_total": "170.28",
+    "tax_total": "11.92",
+    "gross_total": "182.2",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Deutsches Verwaltungsblatt",
+        "quantity": "1",
+        "unit": "Stück",
+        "unit_price": "152.34",
+        "net_amount": "152.34",
+        "tax_rate": "7",
+        "account_skr03": null
+      },
+      {
+        "description": "Versandkosten",
+        "quantity": "1",
+        "unit": "Stück",
+        "unit_price": "17.94",
+        "net_amount": "17.94",
+        "tax_rate": "7",
+        "account_skr03": null
+      }
+    ]
+  },
+  "sensible_werte": [
+    "Musterverwaltung Lohberg GmbH",
+    "Felix Raabe",
+    "Am Rathausplatz 1",
+    "DE87 9999 9999 0101 3737 01",
+    "+49 951 7001 55"
+  ]
+}

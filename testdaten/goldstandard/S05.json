@@ -1,0 +1,57 @@
+{
+  "id": "S05",
+  "quelle": "synthetisch",
+  "client_id": "M3",
+  "merkmale": [
+    "Reverse Charge § 13b"
+  ],
+  "dokumente": [
+    {
+      "pfad": "synthetisch/S05_geruest.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Gerüst & Ausbau Kessler GmbH",
+    "invoice_number": "K-2026-118",
+    "invoice_date": "2026-10-12",
+    "currency": "EUR",
+    "net_total": "2837.00",
+    "tax_total": "0.00",
+    "gross_total": "2837.00",
+    "reverse_charge": true,
+    "lines": [
+      {
+        "description": "Gerüststellung Bauvorhaben Ahornweg, Standzeit 4 Wochen",
+        "quantity": "1",
+        "unit": "pauschal",
+        "unit_price": "2450.00",
+        "net_amount": "2450.00",
+        "tax_rate": "0",
+        "account_skr03": "3120"
+      },
+      {
+        "description": "Montage Dachrinne inkl. Fallrohr",
+        "quantity": "18",
+        "unit": "m",
+        "unit_price": "21.50",
+        "net_amount": "387.00",
+        "tax_rate": "0",
+        "account_skr03": "3120"
+      }
+    ]
+  },
+  "sensible_werte": [
+    "Holzbau Brenner GmbH",
+    "Martina Brenner",
+    "Sägewerkstraße 9",
+    "DE999100003",
+    "DE45 9999 9999 0005 0185 05",
+    "buchhaltung@geruest-beispiel.de",
+    "+49 911 4085 105",
+    "241/105/50065",
+    "Marco Kessler",
+    "Marco Kessler"
+  ]
+}

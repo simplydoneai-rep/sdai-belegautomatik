@@ -1,0 +1,17 @@
+{
+  "_meta": {
+    "einheit": "EUR je Million Token (Eingabe, Ausgabe)",
+    "stand": "2026-10-28",
+    "quellen": {
+      "bedrock": "Claude Sonnet 5.5: 2 $ / 10 $ je Million Token laut docs/projektplan.md, 1:1 in EUR gerechnet; vor dem Pilot im AWS-Preisrechner fuer eu-central-1 pruefen",
+      "stackit_gptoss": "STACKIT Preisliste, Stufe Plus (GPT-OSS 120B): 0,45 EUR Eingabe / 0,65 EUR Ausgabe, https://stackit.com/en/asset/download/37788/file/STACKIT_price_list.pdf?version=18",
+      "stackit_qwen": "STACKIT Stufe Premium (Qwen3-VL 235B): 1,75 EUR Ausgabe laut Preisliste, 1,50 EUR Eingabe laut Drittquellen (european.cloud, wz-it.com); verbindlich bei STACKIT erfragen"
+    },
+    "hinweis": "Ueberschreibbar per PRICE_*-Variablen in .env."
+  },
+  "bedrock": [2.0, 10.0],
+  "stackit_qwen": [1.5, 1.75],
+  "stackit_gptoss": [0.45, 0.65],
+  "ionos": [0.0, 0.0],
+  "placeholder": [0.0, 0.0]
+}

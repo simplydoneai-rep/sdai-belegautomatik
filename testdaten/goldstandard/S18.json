@@ -1,0 +1,67 @@
+{
+  "id": "S18",
+  "quelle": "synthetisch",
+  "client_id": "M1",
+  "merkmale": [
+    "Scan: Bild",
+    "7 % und 19 %"
+  ],
+  "dokumente": [
+    {
+      "pfad": "synthetisch/S18_frischgut.pdf",
+      "art": "scan"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Frischgut Großhandel GmbH",
+    "invoice_number": "FG-2026-10688",
+    "invoice_date": "2026-10-19",
+    "currency": "EUR",
+    "net_total": "216.00",
+    "tax_total": "23.23",
+    "gross_total": "239.23",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Schlagsahne 30 %",
+        "quantity": "20",
+        "unit": "l",
+        "unit_price": "3.10",
+        "net_amount": "62.00",
+        "tax_rate": "7",
+        "account_skr03": "3300"
+      },
+      {
+        "description": "Eier Bodenhaltung Gr. M",
+        "quantity": "360",
+        "unit": "Stück",
+        "unit_price": "0.24",
+        "net_amount": "86.40",
+        "tax_rate": "7",
+        "account_skr03": "3300"
+      },
+      {
+        "description": "Spülmittel Profi, 10-l-Kanister",
+        "quantity": "4",
+        "unit": "Kanister",
+        "unit_price": "16.90",
+        "net_amount": "67.60",
+        "tax_rate": "19",
+        "account_skr03": "4980"
+      }
+    ]
+  },
+  "sensible_werte": [
+    "Café Sonnenblick GmbH",
+    "Sabine Kowalczyk",
+    "Lindenallee 12",
+    "DE999100001",
+    "DE17 9999 9999 0001 0037 01",
+    "buchhaltung@frischgut-beispiel.de",
+    "+49 911 4017 101",
+    "241/101/50013",
+    "Jonas Feldmann",
+    "Petra Lindqvist"
+  ]
+}
