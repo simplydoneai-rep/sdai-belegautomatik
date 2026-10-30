@@ -86,3 +86,22 @@ def test_kontenliste() -> None:
     konten = dict(load_accounts("SKR03"))
     for nr in ("3120", "3300", "3400", "3425", "4240", "4930"):
         assert nr in konten
+
+
+@pytest.mark.parametrize(
+    ("raw", "expected"),
+    [("4910", "4910"), ("4910 Porto", "4910"), (" 3400 - Wareneingang", "3400"), (4910, "4910"),
+     ("9999", None), ("Porto", None), (None, None), ("", None)],
+)
+def test_kontonummer_bereinigen(raw: object, expected: str | None) -> None:
+    from app.kontierung.konten import normalize_account
+
+    assert normalize_account(raw, {"3400", "4910"}) == expected
+
+
+def test_positionen_bereinigen_zaehlt_verworfene() -> None:
+    from app.kontierung.konten import normalize_lines
+
+    data: dict[str, object] = {"lines": [{"account_skr03": "4910 Porto"}, {"account_skr03": "1234"}, {"account_skr03": None}]}
+    assert normalize_lines(data, {"4910"}) == 1
+    assert [ln["account_skr03"] for ln in data["lines"]] == ["4910", None, None]  # type: ignore[union-attr]

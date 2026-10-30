@@ -29,7 +29,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from dotenv import load_dotenv  # noqa: E402
 
 from app.erechnung.parser import parse_file, without_parties  # noqa: E402
-from app.kontierung.konten import load_accounts  # noqa: E402
+from app.kontierung.konten import load_accounts, normalize_lines  # noqa: E402
 from app.kontierung.steuerlogik import pruefe_summen  # noqa: E402
 from app.llm.base import SYSTEM_PROMPT, LLMProvider, build_user_prompt  # noqa: E402
 from app.llm.factory import build_providers, price_per_million  # noqa: E402
@@ -86,6 +86,7 @@ def main() -> None:
 
     mandanten = json.loads((TESTDATEN / "mandanten.json").read_text(encoding="utf-8"))["mandanten"]
     accounts = load_accounts("SKR03")
+    allowed = {nr for nr, _ in accounts}
     golds = sorted((TESTDATEN / "goldstandard").glob("*.json"))
     if args.nur:
         ids = set(args.nur.split(","))
@@ -138,6 +139,7 @@ def main() -> None:
                 for pname, provider in providers.items():
                     res = provider.extract(payload)
                     data = restore(res.data, pseudo.mapping) if res.data is not None else None
+                    dropped = normalize_lines(data, allowed) if data else 0
                     pin, pout = price_per_million(pname)
                     cost = (res.input_tokens * pin + res.output_tokens * pout) / 1_000_000
                     check = pruefe_summen(data) if data else None
@@ -147,6 +149,7 @@ def main() -> None:
                         "token_ein": res.input_tokens, "token_aus": res.output_tokens, "kosten_eur": round(cost, 6),
                         "token_ein_geschaetzt": estimate_tokens(prompt_chars),
                         "token_aus_geschaetzt": estimate_tokens(len(json.dumps(gold["erwartet"], ensure_ascii=False))),
+                        "konten_verworfen": dropped,
                         "plausibel": check.ok if check else False,
                         "plausi_hinweise": check.hinweise if check else ["keine_antwort"],
                         "pseudo_platzhalter": len(pseudo.mapping),

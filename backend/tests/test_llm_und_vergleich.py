@@ -22,6 +22,21 @@ def test_bedrock_nur_eu_ohne_fable() -> None:
         validate_bedrock_config("eu.anthropic.claude-sonnet-5-5", "us-east-1")
 
 
+@pytest.mark.parametrize("model_id", ["openai.gpt-oss-120b-1:0", "qwen.qwen3-235b-a22b-2507-v1:0", "eu.anthropic.claude-sonnet-4-6"])
+def test_bedrock_regionale_modelle_in_frankfurt_erlaubt(model_id: str) -> None:
+    validate_bedrock_config(model_id, "eu-central-1")
+
+
+@pytest.mark.parametrize(
+    "model_id",
+    ["us.anthropic.claude-sonnet-5-5", "global.anthropic.claude-sonnet-5-5", "apac.qwen.qwen3-32b-v1:0",
+     "us.openai.gpt-oss-120b-1:0", "", "gpt-oss-120b"],
+)
+def test_bedrock_profile_ausserhalb_eu_abgelehnt(model_id: str) -> None:
+    with pytest.raises(ValueError):
+        validate_bedrock_config(model_id, "eu-central-1")
+
+
 def test_openai_compat_lehnt_us_endpunkte_ab() -> None:
     for url in ("https://api.anthropic.com/v1", "https://api.openai.com/v1", "http://unsicher.example/v1"):
         with pytest.raises(ValueError):

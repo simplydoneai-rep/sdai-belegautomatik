@@ -29,7 +29,7 @@ OUTPUT_SCHEMA: dict[str, Any] = {
             "unit_price": "Dezimalzahl als String",
             "net_amount": "Dezimalzahl als String",
             "tax_rate": "Steuersatz in Prozent als String, z. B. 19, 7, 0",
-            "account_skr03": "Sachkonto aus der erlaubten Kontenliste",
+            "account_skr03": "nur die Kontonummer (z. B. \"3400\") aus der erlaubten Kontenliste",
         }
     ],
 }
@@ -40,8 +40,12 @@ SYSTEM_PROMPT = (
     "Antworte ausschließlich mit einem JSON-Objekt nach dem vorgegebenen Schema, ohne Erklärung, ohne Markdown. "
     "Beträge als Dezimalzahl mit Punkt (z. B. \"1234.56\"). Nichts erfinden: Fehlt eine Angabe, setze null. "
     "Bei einer Gutschrift bleiben die Beträge so, wie sie auf dem Beleg stehen (negativ, falls negativ gedruckt). "
-    "net_amount und unit_price sind immer Nettowerte; stehen auf dem Beleg nur Bruttopreise "
-    "(z. B. Kleinbetragsrechnung), rechne sie mit dem Steuersatz auf netto um. "
+    "net_amount und unit_price sind Nettowerte. Weist die Rechnung Nettopreise aus (Normalfall: "
+    "Positionen netto, Umsatzsteuer erst in der Summe), übernimm die Positionsbeträge unverändert. "
+    "Nur wenn der Beleg ausdrücklich Bruttopreise zeigt (z. B. Kassenbon, Kleinbetragsrechnung, "
+    "\"inkl. MwSt.\"), rechne die Positionen mit ihrem Steuersatz auf netto um. "
+    "tax_rate ist der auf dem Beleg für die Position ausgewiesene Satz (bei Reverse Charge oder "
+    "steuerfreier Lieferung 0). account_skr03 enthält nur die vierstellige Kontonummer, z. B. \"3400\". "
     "Fehlt eine Rechnungsnummer, setze invoice_number auf null. "
     "Für jede Position schlägst du genau ein Sachkonto aus der erlaubten Liste vor; "
     "Konten außerhalb der Liste sind unzulässig."

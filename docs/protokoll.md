@@ -161,6 +161,30 @@ Umgesetzt mit Claude Code. Plan: `docs/plan-machbarkeitstest.md`, Bericht: `docs
 
 **Offen:** STACKIT-Messung nach Freischaltung, dann Anbieterwahl nach der Regel im Bericht (Abschnitt 5). Freischaltung Claude Sonnet 5.5 bei AWS anfragen.
 
+## 30.10.2026 – STACKIT-Absage, Vergleich von drei Modellen über Bedrock
+
+**STACKIT** hat das Kundenkonto von Simply Done AI ohne Angabe von Gründen abgelehnt. Nachfrage über den STACKIT-Support möglich.
+
+**Claude Sonnet 5.5** ist für das AWS-Konto weiterhin gesperrt („not available for this account“); Freischaltung nur über eine Support-Anfrage bei AWS.
+
+**Entscheidung (Paul Graß: „Wir machen weiter mit AWS“):** Die offenen Modelle GPT-OSS 120B und Qwen3 235B werden über Bedrock gemessen; sie laufen dort direkt in Frankfurt. `CLAUDE.md` Regel 5 entsprechend erweitert. Details: `docs/entscheidungen/2026-10-30_bedrock-regionale-modelle.md`.
+
+**Ergebnis** (42 Belege, gleicher Prompt, Bericht `docs/machbarkeitstest-bericht.md`):
+
+| | Claude Sonnet 4.6 | GPT-OSS 120B | Qwen3 235B |
+|---|---|---|---|
+| Pflichtfelder | 99,2 % | 99,2 % | 99,5 % |
+| Positionen | 99,4 % | 100 % | 93,6 % |
+| Sachkonto | 88,5 % | 62,5 % | 68,3 % |
+| Kosten je Beleg | 1,27 Cent | 0,08 Cent | 0,07 Cent |
+
+**Erkenntnisse:**
+- Beim Auslesen sind die offenen Modelle so gut wie Claude, bei einem Sechzehntel der Kosten. Bei der Kontierung ist Claude deutlich besser.
+- Eine missverständliche Prompt-Anweisung hatte GPT-OSS anfangs auf 58 % bei den Positionen gedrückt (Nettobeträge fälschlich durch 1,19 geteilt). Nach Präzisierung 100 %. Kontonummern werden jetzt aus der KI-Antwort herausgelöst und gegen die erlaubte Liste geprüft.
+- Kosten aller Messläufe bisher zusammen ca. 1,20 $ aus dem AWS-Guthaben.
+
+**Empfehlung:** Auslesen mit offenem Modell, Kontierung über Lernregeln und Branchen-Regelwerk, Claude nur für Positionen ohne Regel. Endgültige Wahl nach Messung von Sonnet 5.5 und Prüfung eines deutschen Anbieters (IONOS).
+
 ## Nächste Schritte
 
 Die aktuelle Aufgabenliste steht in `docs/projektplan.md`, Abschnitt 10. Die Liste unten ist der Stand vom 28.10.2026 vor dem Projektplan.

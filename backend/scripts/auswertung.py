@@ -24,7 +24,7 @@ from app.qualitaet.vergleich import PFLICHTFELDER  # noqa: E402
 PROJECT = Path(__file__).resolve().parents[2]
 REPORT = PROJECT / "docs" / "machbarkeitstest-bericht.md"
 START, ENDE = "<!-- MESSWERTE:START -->", "<!-- MESSWERTE:ENDE -->"
-KI_ANBIETER = ("bedrock", "stackit_qwen", "stackit_gptoss")
+KI_ANBIETER = ("bedrock", "bedrock_gptoss", "bedrock_qwen", "stackit_qwen", "stackit_gptoss")
 
 FELDNAMEN = {
     "supplier_name": "Lieferant", "invoice_number": "Rechnungsnummer", "invoice_date": "Rechnungsdatum",
@@ -51,14 +51,44 @@ def pct(ok: float, total: float) -> str:
     return "–" if not total else f"{100 * ok / total:.1f} %"
 
 
-def build(run_dir: Path) -> str:
+def load_run(run_dir: Path) -> tuple[dict[str, Any], list[dict[str, Any]]]:
     lauf = json.loads((run_dir / "lauf.json").read_text(encoding="utf-8"))
     rows = [json.loads(line) for line in (run_dir / "ergebnisse.jsonl").read_text(encoding="utf-8").splitlines()]
+    return lauf, rows
+
+
+def merge_runs(run_dirs: list[Path]) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+    """Je Anbieter der jüngste vollständige Lauf (meiste Ergebnisse), damit bezahlte Messungen
+    nicht wiederholt werden müssen, wenn ein neuer Anbieter dazukommt."""
+    runs = [(d, *load_run(d)) for d in sorted(run_dirs)]
+    best: dict[str, tuple[Path, dict[str, Any], list[dict[str, Any]]]] = {}
+    for d, lauf, rows in runs:
+        for a in {r["anbieter"] for r in rows}:
+            sel = [r for r in rows if r["anbieter"] == a]
+            if a not in best or len(sel) >= len(best[a][2]):
+                best[a] = (d, lauf, sel)
+    merged_rows = [r for _, _, sel in best.values() for r in sel]
+    latest = runs[-1][1]
+    lauf = {
+        "belege": max(lauf.get("belege", 0) for _, lauf, _ in runs),
+        "herkunft": {a: d.name for a, (d, _, _) in best.items()},
+        "modelle": {a: (lf.get("modelle") or {}).get(a) for a, (_, lf, _) in best.items()},
+        "preise_eur_je_mio": {a: (lf.get("preise_eur_je_mio") or {}).get(a) for a, (_, lf, _) in best.items()
+                              if (lf.get("preise_eur_je_mio") or {}).get(a)},
+        "uebersprungen": {k: v for k, v in (latest.get("uebersprungen") or {}).items() if k not in best},
+    }
+    return lauf, merged_rows
+
+
+def build(lauf: dict[str, Any], rows: list[dict[str, Any]]) -> str:
     anbieter = sorted({r["anbieter"] for r in rows}, key=lambda a: (a != "erechnung", a))
     out: list[str] = []
 
-    out.append(f"**Lauf:** `{run_dir.name}` · Belege: {lauf['belege']} · gemessene Anbieter: "
-               f"{', '.join(anbieter)}")
+    herkunft = lauf.get("herkunft") or {}
+    out.append(f"**Belege:** {lauf['belege']} · **gemessene Anbieter:** {', '.join(anbieter)}")
+    if herkunft:
+        out.append("")
+        out.append("**Läufe:** " + "; ".join(f"`{a}` aus `{d}`" for a, d in sorted(herkunft.items())))
     modelle = {k: v for k, v in (lauf.get("modelle") or {}).items() if v}
     if modelle:
         out.append("")
@@ -195,9 +225,11 @@ def build(run_dir: Path) -> str:
 
 
 def main() -> None:
+    """Ohne Argument: alle Läufe in testdaten/ausgaben zusammenführen. Mit Argumenten: nur diese Läufe."""
     base = PROJECT / "testdaten" / "ausgaben"
-    run_dir = Path(sys.argv[1]) if len(sys.argv) > 1 else sorted(p for p in base.iterdir() if p.is_dir())[-1]
-    block = f"{START}\n{build(run_dir)}\n{ENDE}"
+    run_dirs = [Path(a) for a in sys.argv[1:]] or [p for p in base.iterdir() if (p / "ergebnisse.jsonl").exists()]
+    lauf, rows = merge_runs(run_dirs)
+    block = f"{START}\n{build(lauf, rows)}\n{ENDE}"
     if REPORT.exists():
         text = REPORT.read_text(encoding="utf-8")
         if START in text and ENDE in text:
@@ -207,7 +239,7 @@ def main() -> None:
     else:
         text = f"# Machbarkeitstest – Bericht\n\n## Messwerte\n\n{block}\n"
     REPORT.write_text(text, encoding="utf-8")
-    print(f"Bericht aktualisiert: {REPORT} (Lauf {run_dir.name})")
+    print(f"Bericht aktualisiert: {REPORT} ({len(lauf['herkunft'])} Anbieter aus {len(set(lauf['herkunft'].values()))} Läufen)")
 
 
 if __name__ == "__main__":

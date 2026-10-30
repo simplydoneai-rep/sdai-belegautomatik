@@ -1,15 +1,19 @@
 {
   "_meta": {
-    "einheit": "EUR je Million Token (Eingabe, Ausgabe)",
-    "stand": "2026-10-28",
+    "einheit": "EUR je Million Token (Eingabe, Ausgabe); Dollarpreise 1:1 in EUR gerechnet",
+    "stand": "2026-10-30",
     "quellen": {
-      "bedrock": "Claude Sonnet 5.5: 2 $ / 10 $ je Million Token laut docs/projektplan.md, 1:1 in EUR gerechnet; vor dem Pilot im AWS-Preisrechner fuer eu-central-1 pruefen",
-      "stackit_gptoss": "STACKIT Preisliste, Stufe Plus (GPT-OSS 120B): 0,45 EUR Eingabe / 0,65 EUR Ausgabe, https://stackit.com/en/asset/download/37788/file/STACKIT_price_list.pdf?version=18",
-      "stackit_qwen": "STACKIT Stufe Premium (Qwen3-VL 235B): 1,75 EUR Ausgabe laut Preisliste, 1,50 EUR Eingabe laut Drittquellen (european.cloud, wz-it.com); verbindlich bei STACKIT erfragen"
+      "bedrock": "Claude Sonnet 5.5: 2 $ / 10 $ laut docs/projektplan.md; Sonnet 4.6: 3 $ / 15 $ (per PRICE_BEDROCK_* im Lauf gesetzt); vor dem Pilot im AWS-Preisrechner fuer eu-central-1 pruefen",
+      "bedrock_gptoss": "GPT-OSS 120B auf Bedrock: 0,15 $ / 0,60 $ laut Preisvergleichsseiten (futureagi.com, pricepertoken.com, Stand 07/2026); offizielle Preisseite fuer eu-central-1 pruefen",
+      "bedrock_qwen": "Qwen3 235B A22B 2507 auf Bedrock: 0,22 $ / 0,88 $ laut typingmind.com; offizielle Preisseite fuer eu-central-1 pruefen",
+      "stackit_gptoss": "STACKIT Preisliste, Stufe Plus (GPT-OSS 120B): 0,45 EUR / 0,65 EUR, https://stackit.com/en/asset/download/37788/file/STACKIT_price_list.pdf?version=18",
+      "stackit_qwen": "STACKIT Stufe Premium (Qwen3-VL 235B): 1,75 EUR Ausgabe laut Preisliste, 1,50 EUR Eingabe laut Drittquellen"
     },
-    "hinweis": "Ueberschreibbar per PRICE_*-Variablen in .env."
+    "hinweis": "Ueberschreibbar per PRICE_*-Variablen in .env. STACKIT hat das Kundenkonto am 30.10.2026 abgelehnt."
   },
   "bedrock": [2.0, 10.0],
+  "bedrock_gptoss": [0.15, 0.6],
+  "bedrock_qwen": [0.22, 0.88],
   "stackit_qwen": [1.5, 1.75],
   "stackit_gptoss": [0.45, 0.65],
   "ionos": [0.0, 0.0],

@@ -28,9 +28,14 @@ def build_providers() -> tuple[dict[str, LLMProvider], dict[str, str]]:
     if (e.get("AWS_ACCESS_KEY_ID") and e.get("AWS_SECRET_ACCESS_KEY")) or e.get("AWS_BEARER_TOKEN_BEDROCK"):
         from app.llm.bedrock import BedrockProvider
 
-        ok["bedrock"] = BedrockProvider()
+        for key, var in (("bedrock", "BEDROCK_MODEL_ID"), ("bedrock_gptoss", "BEDROCK_MODEL_GPTOSS"),
+                         ("bedrock_qwen", "BEDROCK_MODEL_QWEN")):
+            if e.get(var):
+                ok[key] = BedrockProvider(model_id=e[var], name=key)
+            else:
+                skipped[key] = f"{var} fehlt"
     else:
-        skipped["bedrock"] = "keine AWS-Zugangsdaten in .env"
+        skipped["bedrock"] = skipped["bedrock_gptoss"] = skipped["bedrock_qwen"] = "keine AWS-Zugangsdaten in .env"
 
     from app.llm.openai_compat import OpenAICompatProvider
 
