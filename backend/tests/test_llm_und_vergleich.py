@@ -103,3 +103,17 @@ def test_platzhalter_kleinbetrag_brutto() -> None:
             "1   Toner   1   47,60 €   19 %   47,60 €\nSumme   47,60 €\ndarin enthalten 19 % MwSt. 7,60 €")
     d = extract_rule_based(text)
     assert d["lines"][0]["net_amount"] == "40.00" and d["net_total"] == "40.00" and d["invoice_number"] is None
+
+
+def test_factory_ionos_anbieter(monkeypatch: pytest.MonkeyPatch) -> None:
+    from app.llm.factory import build_providers
+
+    for var in ("AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY", "AWS_BEARER_TOKEN_BEDROCK", "STACKIT_API_KEY"):
+        monkeypatch.delenv(var, raising=False)
+    monkeypatch.setenv("IONOS_API_KEY", "test-token")
+    monkeypatch.setenv("IONOS_BASE_URL", "https://openai.inference.de-txl.ionos.com/v1")
+    monkeypatch.setenv("IONOS_MODEL_GPTOSS", "openai/gpt-oss-120b")
+    monkeypatch.delenv("IONOS_MODEL_QWEN", raising=False)
+    ok, skipped = build_providers()
+    assert "ionos_gptoss" in ok and ok["ionos_gptoss"].name == "ionos_gptoss"
+    assert skipped["ionos_qwen"] == "IONOS_MODEL_QWEN fehlt"

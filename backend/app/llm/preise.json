@@ -7,15 +7,42 @@
       "bedrock_gptoss": "GPT-OSS 120B auf Bedrock: 0,15 $ / 0,60 $ laut Preisvergleichsseiten (futureagi.com, pricepertoken.com, Stand 07/2026); offizielle Preisseite fuer eu-central-1 pruefen",
       "bedrock_qwen": "Qwen3 235B A22B 2507 auf Bedrock: 0,22 $ / 0,88 $ laut typingmind.com; offizielle Preisseite fuer eu-central-1 pruefen",
       "stackit_gptoss": "STACKIT Preisliste, Stufe Plus (GPT-OSS 120B): 0,45 EUR / 0,65 EUR, https://stackit.com/en/asset/download/37788/file/STACKIT_price_list.pdf?version=18",
-      "stackit_qwen": "STACKIT Stufe Premium (Qwen3-VL 235B): 1,75 EUR Ausgabe laut Preisliste, 1,50 EUR Eingabe laut Drittquellen"
+      "stackit_qwen": "STACKIT Stufe Premium (Qwen3-VL 235B): 1,75 EUR Ausgabe laut Preisliste, 1,50 EUR Eingabe laut Drittquellen",
+      "ionos_gptoss": "IONOS Cloud GmbH Preisliste v2026-10-29, gpt-oss-120b: 0,15 EUR / 0,65 EUR netto, https://docs.ionos.com/cloud/support/general-information/price-list/ionos-cloud-gmbh-de",
+      "ionos_qwen": "IONOS Cloud GmbH Preisliste v2026-10-29, Qwen3.5-397B-A17B: 0,60 EUR / 3,60 EUR netto"
     },
     "hinweis": "Ueberschreibbar per PRICE_*-Variablen in .env. STACKIT hat das Kundenkonto am 30.10.2026 abgelehnt."
   },
-  "bedrock": [2.0, 10.0],
-  "bedrock_gptoss": [0.15, 0.6],
-  "bedrock_qwen": [0.22, 0.88],
-  "stackit_qwen": [1.5, 1.75],
-  "stackit_gptoss": [0.45, 0.65],
-  "ionos": [0.0, 0.0],
-  "placeholder": [0.0, 0.0]
+  "bedrock": [
+    2.0,
+    10.0
+  ],
+  "bedrock_gptoss": [
+    0.15,
+    0.6
+  ],
+  "bedrock_qwen": [
+    0.22,
+    0.88
+  ],
+  "stackit_qwen": [
+    1.5,
+    1.75
+  ],
+  "stackit_gptoss": [
+    0.45,
+    0.65
+  ],
+  "placeholder": [
+    0.0,
+    0.0
+  ],
+  "ionos_gptoss": [
+    0.15,
+    0.65
+  ],
+  "ionos_qwen": [
+    0.6,
+    3.6
+  ]
 }

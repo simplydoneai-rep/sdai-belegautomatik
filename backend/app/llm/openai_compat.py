@@ -37,7 +37,7 @@ class OpenAICompatProvider(LLMProvider):
                 "model": self.model,
                 "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
                 "temperature": 0.0,
-                "max_tokens": 4096,
+                "max_tokens": 8192,  # Platz für Denk-Token (GPT-OSS)
             },
         )
         resp.raise_for_status()

@@ -185,6 +185,16 @@ Umgesetzt mit Claude Code. Plan: `docs/plan-machbarkeitstest.md`, Bericht: `docs
 
 **Empfehlung:** Auslesen mit offenem Modell, Kontierung über Lernregeln und Branchen-Regelwerk, Claude nur für Positionen ohne Regel. Endgültige Wahl nach Messung von Sonnet 5.5 und Prüfung eines deutschen Anbieters (IONOS).
 
+## 30.10.2026 – IONOS AI Model Hub als deutsche Alternative
+
+Recherche: `docs/recherche/2026-10-30_ionos-ai-model-hub.md`.
+
+**Ergebnis:** IONOS (IONOS Cloud GmbH, Rechenzentren in Deutschland) bietet GPT-OSS 120B zu 0,15 € / 0,65 € je Million Token an, also dasselbe Modell, das über Bedrock 99,2 % der Pflichtfelder und 100 % der Positionen erreichte. Prompts und Antworten werden laut IONOS nicht gespeichert und nicht zum Training genutzt. Die Standard-AVV enthält eine Verpflichtung nach § 203 StGB. Kein Claude im Angebot.
+
+**Vorbereitet:** Anbieter `ionos_gptoss` und `ionos_qwen` (Qwen3.5-397B), Skript `backend/scripts/ionos_modelle.py` zum Abfragen der Modellnamen, Preise in `preise.json`.
+
+**Nächster Schritt (Paul Graß):** IONOS-Cloud-Konto für Simply Done AI anlegen, Token erzeugen und in `.env` eintragen.
+
 ## Nächste Schritte
 
 Die aktuelle Aufgabenliste steht in `docs/projektplan.md`, Abschnitt 10. Die Liste unten ist der Stand vom 28.10.2026 vor dem Projektplan.

@@ -24,7 +24,7 @@ from app.qualitaet.vergleich import PFLICHTFELDER  # noqa: E402
 PROJECT = Path(__file__).resolve().parents[2]
 REPORT = PROJECT / "docs" / "machbarkeitstest-bericht.md"
 START, ENDE = "<!-- MESSWERTE:START -->", "<!-- MESSWERTE:ENDE -->"
-KI_ANBIETER = ("bedrock", "bedrock_gptoss", "bedrock_qwen", "stackit_qwen", "stackit_gptoss")
+KI_ANBIETER = ("bedrock", "bedrock_gptoss", "bedrock_qwen", "ionos_gptoss", "ionos_qwen")
 
 FELDNAMEN = {
     "supplier_name": "Lieferant", "invoice_number": "Rechnungsnummer", "invoice_date": "Rechnungsdatum",

@@ -49,6 +49,13 @@ def build_providers() -> tuple[dict[str, LLMProvider], dict[str, str]]:
     else:
         skipped["stackit_qwen"] = skipped["stackit_gptoss"] = "kein STACKIT_API_KEY in .env"
 
-    if e.get("IONOS_API_KEY") and e.get("IONOS_MODEL"):
-        ok["ionos"] = OpenAICompatProvider("ionos", e["IONOS_BASE_URL"], e["IONOS_API_KEY"], e["IONOS_MODEL"])
+    if e.get("IONOS_API_KEY"):
+        base = e.get("IONOS_BASE_URL", "")
+        for key, var in (("ionos_gptoss", "IONOS_MODEL_GPTOSS"), ("ionos_qwen", "IONOS_MODEL_QWEN")):
+            if e.get(var):
+                ok[key] = OpenAICompatProvider(key, base, e["IONOS_API_KEY"], e[var])
+            else:
+                skipped[key] = f"{var} fehlt"
+    else:
+        skipped["ionos_gptoss"] = skipped["ionos_qwen"] = "kein IONOS_API_KEY in .env"
     return ok, skipped
