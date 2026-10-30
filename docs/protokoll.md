@@ -195,6 +195,29 @@ Recherche: `docs/recherche/2026-10-30_ionos-ai-model-hub.md`.
 
 **Nächster Schritt (Paul Graß):** IONOS-Cloud-Konto für Simply Done AI anlegen, Token erzeugen und in `.env` eintragen.
 
+## 31.10.2026 – Messung bei IONOS: deutsche Lösung ohne AWS möglich
+
+**Konto:** IONOS-Cloud-Konto lief zunächst als „Testdrive“; Zugangstoken erst nach Freischaltung der Vollversion (200 € Startguthaben). Token (30 Tage) in `.env`.
+
+**Ergebnis** (42 Belege, gleicher Prompt wie bei AWS):
+
+| | Claude Sonnet 4.6 (AWS) | GPT-OSS 120B (IONOS) | Qwen3.5 397B (IONOS) |
+|---|---|---|---|
+| Pflichtfelder | 99,2 % | 98,9 % | 98,7 % |
+| Positionen | 99,4 % | 100 % | 100 % |
+| Sachkonto | 88,5 % | 61,5 % | **87,5 %** |
+| Kosten je Beleg | 1,27 Cent | 0,09 Cent | 1,90 Cent |
+| Antwortzeit | 3 s | 6 s | 61 s |
+
+**Erkenntnisse:**
+- Qwen3.5 397B bei IONOS kontiert fast so gut wie Claude. Damit ist eine komplett deutsche Lösung möglich, mit § 203-Klausel in der Standard-AVV.
+- Qwen3.5 denkt lange; bei IONOS nicht abschaltbar. Zwei lange Rechnungen brachen beim Limit von 8.192 Token ab; mit 24.000 Token vollständig richtig.
+- GPT-OSS liefert bei IONOS und AWS dieselbe Qualität.
+
+**Empfehlung (Bericht, Abschnitt 5):** Auslesen mit GPT-OSS bei IONOS, Kontierung über Regeln, Qwen3.5 bei IONOS nur für Positionen ohne Regel, Claude über AWS als Rückfallebene. Vorher anwaltlich prüfen lassen, ob die IONOS-AVV reicht.
+
+**Kosten der Messungen:** IONOS ca. 0,90 € aus dem Startguthaben; AWS bisher ca. 1,20 $ aus dem Guthaben.
+
 ## Nächste Schritte
 
 Die aktuelle Aufgabenliste steht in `docs/projektplan.md`, Abschnitt 10. Die Liste unten ist der Stand vom 28.10.2026 vor dem Projektplan.

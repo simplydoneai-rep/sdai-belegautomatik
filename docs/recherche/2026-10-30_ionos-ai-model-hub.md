@@ -49,6 +49,20 @@ Hochrechnung mit den gemessenen Tokenzahlen von GPT-OSS (ca. 1.330 ein, 1.010 au
 | GPT-OSS 120B | ja, 0,15 $ / 0,60 $ | ja, 0,15 € / 0,65 € |
 | Konto vorhanden | ja | nein |
 
+## Messergebnis (31.10.2026)
+
+Gemessen mit 42 Testbelegen, Details in `docs/machbarkeitstest-bericht.md`:
+
+| | GPT-OSS 120B | Qwen3.5-397B-A17B |
+|---|---|---|
+| Pflichtfelder | 98,9 % | 98,7 % |
+| Positionen | 100 % | 100 % |
+| Sachkonto | 61,5 % | **87,5 %** (Claude: 88,5 %) |
+| Kosten je Beleg | 0,09 Cent | 1,90 Cent |
+| Antwortzeit | 6 s | 61 s, Denkmodus nicht abschaltbar, Token-Limit 24.000 nötig |
+
+Modellnamen bei IONOS: `openai/gpt-oss-120b`, `Qwen/Qwen3.5-397B-A17B`. Neue Konten laufen als „Testdrive“; Zugangstoken erst nach Freischaltung der Vollversion.
+
 ## Empfehlung
 
 1. **IONOS-Konto für Simply Done AI beantragen** (Public-Cloud-Vertrag). Falls IONOS wie STACKIT ablehnt, beim Support nach den Kriterien fragen.

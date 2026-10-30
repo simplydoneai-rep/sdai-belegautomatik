@@ -53,7 +53,8 @@ def build_providers() -> tuple[dict[str, LLMProvider], dict[str, str]]:
         base = e.get("IONOS_BASE_URL", "")
         for key, var in (("ionos_gptoss", "IONOS_MODEL_GPTOSS"), ("ionos_qwen", "IONOS_MODEL_QWEN")):
             if e.get(var):
-                ok[key] = OpenAICompatProvider(key, base, e["IONOS_API_KEY"], e[var])
+                limit = int(e.get(f"{var}_MAX_TOKENS") or (24000 if key == "ionos_qwen" else 8192))
+                ok[key] = OpenAICompatProvider(key, base, e["IONOS_API_KEY"], e[var], max_tokens=limit)
             else:
                 skipped[key] = f"{var} fehlt"
     else:

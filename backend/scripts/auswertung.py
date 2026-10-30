@@ -58,24 +58,29 @@ def load_run(run_dir: Path) -> tuple[dict[str, Any], list[dict[str, Any]]]:
 
 
 def merge_runs(run_dirs: list[Path]) -> tuple[dict[str, Any], list[dict[str, Any]]]:
-    """Je Anbieter der jüngste vollständige Lauf (meiste Ergebnisse), damit bezahlte Messungen
-    nicht wiederholt werden müssen, wenn ein neuer Anbieter dazukommt."""
+    """Je Anbieter und Belegdatei das jüngste Ergebnis. So zählen Nachmessungen einzelner Belege,
+    und bezahlte Messungen müssen nicht wiederholt werden, wenn ein neuer Anbieter dazukommt."""
     runs = [(d, *load_run(d)) for d in sorted(run_dirs)]
-    best: dict[str, tuple[Path, dict[str, Any], list[dict[str, Any]]]] = {}
+    latest_row: dict[tuple[str, str], tuple[Path, dict[str, Any]]] = {}
+    lauf_of: dict[Path, dict[str, Any]] = {}
     for d, lauf, rows in runs:
-        for a in {r["anbieter"] for r in rows}:
-            sel = [r for r in rows if r["anbieter"] == a]
-            if a not in best or len(sel) >= len(best[a][2]):
-                best[a] = (d, lauf, sel)
-    merged_rows = [r for _, _, sel in best.values() for r in sel]
+        lauf_of[d] = lauf
+        for r in rows:
+            latest_row[(r["anbieter"], r["datei"])] = (d, r)
+    merged_rows = [r for _, r in latest_row.values()]
+    herkunft: dict[str, set[str]] = {}
+    for (a, _), (d, _) in latest_row.items():
+        herkunft.setdefault(a, set()).add(d.name)
+    newest_for = {a: max(ds) for a, ds in herkunft.items()}
     latest = runs[-1][1]
     lauf = {
-        "belege": max(lauf.get("belege", 0) for _, lauf, _ in runs),
-        "herkunft": {a: d.name for a, (d, _, _) in best.items()},
-        "modelle": {a: (lf.get("modelle") or {}).get(a) for a, (_, lf, _) in best.items()},
-        "preise_eur_je_mio": {a: (lf.get("preise_eur_je_mio") or {}).get(a) for a, (_, lf, _) in best.items()
-                              if (lf.get("preise_eur_je_mio") or {}).get(a)},
-        "uebersprungen": {k: v for k, v in (latest.get("uebersprungen") or {}).items() if k not in best},
+        "belege": max(lf.get("belege", 0) for _, lf, _ in runs),
+        "herkunft": {a: ", ".join(sorted(ds)) for a, ds in herkunft.items()},
+        "modelle": {a: (lauf_of[next(d for d in lauf_of if d.name == n)].get("modelle") or {}).get(a)
+                    for a, n in newest_for.items()},
+        "preise_eur_je_mio": {a: p for a, n in newest_for.items()
+                              if (p := (lauf_of[next(d for d in lauf_of if d.name == n)].get("preise_eur_je_mio") or {}).get(a))},
+        "uebersprungen": {k: v for k, v in (latest.get("uebersprungen") or {}).items() if k not in herkunft},
     }
     return lauf, merged_rows
 
