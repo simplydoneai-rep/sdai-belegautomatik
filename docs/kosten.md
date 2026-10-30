@@ -13,7 +13,7 @@ Vorher: Stand 28.10.2026 mit geschätzten KI-Kosten; jetzt mit **gemessenen** KI
 | Pilot (10 Mandanten, ab Mär 2027) | ca. 500 | ca. 530 € (Server 98 €, KI ca. 10 €, Werkzeuge, Versicherung, Steuerberatung) | ca. 1 € (Fixkosten auf wenige Belege verteilt) |
 | Ganze Kanzlei | ca. 50.000 | ca. **3.550 €** inkl. Verwaltung, Rücklagen und Arbeitszeit | ca. **7 Cent** |
 
-**Einmalig vor dem Pilot:** ca. 5.500–17.800 € (Anwalt, Datenschutz, Sicherheitstest, Versicherung), ohne GmbH-Gründung. Details in Abschnitt 5 und `docs/rechtsberatung.md`.
+**Einmalig vor dem Pilot:** ca. 4.500–14.800 € (Anwalt, Datenschutz, Sicherheitstest), ohne GmbH-Gründung. Die Versicherungen bestehen seit 01.08.2026. Details in Abschnitt 5 und `docs/rechtsberatung.md`.
 
 **Break-even** (laufende Kosten gedeckt): bei 0,35 € pro Beleg ab ca. **8.900 Belegen pro Monat**, das sind rund 180 Mandanten mit je 50 Belegen.
 
@@ -106,9 +106,9 @@ Die Rechnung ist vorsichtig: E-Rechnungen brauchen gar keine KI, und wenn Qwen3.
 | Anwalt IT- und Berufsrecht: Vertrag, AVV + § 62a StBerG, Prüfung Pseudonymisierung, Einwilligungsvorlage | 1.500–4.000 € | `docs/rechtsberatung.md` |
 | Datenschutz-Folgenabschätzung (falls extern) | 0–3.000 € | `docs/rechtsberatung.md` |
 | Externer Sicherheitstest | 3.000–7.000 € | `docs/projektplan.md` |
-| Versicherung IT-/Cyber- und Vermögensschadenhaftpflicht, 1. Jahr | 1.000–3.000 € | Schätzung, Angebote einholen |
+| Versicherung IT-Haftpflicht und Cyber | 0 € | bereits abgeschlossen (ca. 596 € im Jahr, laufend in Abschnitt 6) |
 | Prüfung Nebentätigkeit (optional) | 0–800 € | `docs/rechtsberatung.md` |
-| **Summe** | **ca. 5.500–17.800 €** | |
+| **Summe** | **ca. 4.500–14.800 €** | |
 | Optional: Gründung GmbH statt GbR | ca. 800–1.500 € + 25.000 € Stammkapital (12.500 € sofort) | begrenzt die Haftung |
 
 ---
@@ -118,7 +118,7 @@ Die Rechnung ist vorsichtig: E-Rechnungen brauchen gar keine KI, und wenn Qwen3.
 | Posten | pro Monat | Annahme |
 |---|---|---|
 | Steuerberatung und Buchhaltung für Simply Done AI | ca. 150 € | extern, nicht über die Kanzlei (Interessenkonflikt) |
-| Versicherung | ca. 170 € | 2.000 € im Jahr |
+| Versicherung | ca. 170 € | heute ca. 50 € im Monat (596 € im Jahr, Summen 125.000 € bzw. 100.000 €); für den Betrieb mit 1.000 Mandanten höhere Summen und Umsatz, geschätzt 2.000 € im Jahr |
 | Entwicklungswerkzeuge (Claude Max, GitHub, Kleinkram) | ca. 120 € | |
 | Laufende Rechtsberatung | ca. 100 € | Rücklage |
 | Rücklage Sicherheitstest (jährlich) | ca. 400 € | 5.000 € im Jahr |

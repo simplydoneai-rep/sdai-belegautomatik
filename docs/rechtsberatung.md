@@ -31,10 +31,35 @@ Zwischen Mandant und Kanzlei braucht es **nichts Neues**: Steuerberater sind sei
 | 7 | **Einordnung nach AI Act** | Buchungsvorschläge gehören nach unserer Einschätzung **nicht** zu den Hochrisiko-Anwendungen. Pflicht bleibt die KI-Kompetenz der Nutzer (Art. 4): kurze, dokumentierte Schulung | Simply Done AI, kurze Bestätigung durch Anwalt | gering, in Nr. 2 | vor dem Pilot |
 | 8 | **Nebentätigkeit und Interessenkonflikt** (Paul Graß ist Angestellter der Kanzlei und Geschäftsführer des Anbieters) | Ohne schriftliche Genehmigung ist der Pilot angreifbar (Arbeitsrecht, Neutralität bei der Anbieterauswahl, faire Preise) | Paul Graß mit Markus Pfaar; bei Bedarf kurze Prüfung durch Arbeitsrechtler | **0–800 €** | vor dem Gespräch am 27.11.2026 vorbereiten |
 | 9 | **Rechtsform von Simply Done AI** | Eine **GbR haftet unbeschränkt mit dem Privatvermögen** der Gesellschafter. Eine falsche Buchung oder ein Datenleck könnte bei einer Kanzlei mit über 1.000 Mandanten teuer werden. Eine GmbH oder UG begrenzt die Haftung. Möglicherweise hat auch STACKIT wegen der Rechtsform abgelehnt (unbestätigt) | Steuerberater/Anwalt, Notar | GmbH: Notar und Handelsregister ca. **800–1.500 €** plus Stammkapital 25.000 € (12.500 € sofort einzuzahlen); UG ab 1 € Stammkapital | spätestens vor dem Pilot |
-| 10 | **Versicherung**: IT-/Cyber-Haftpflicht und Vermögensschadenhaftpflicht | Deckt Schäden durch Softwarefehler oder Datenpannen; Kanzleien fragen danach | Versicherungsmakler | **1.000–3.000 € pro Jahr** | vor dem Pilot |
+| 10 | **Versicherung**: IT-/Cyber-Haftpflicht und Vermögensschadenhaftpflicht | Deckt Schäden durch Softwarefehler oder Datenpannen; Kanzleien fragen danach | Versicherungsmakler | **abgeschlossen** seit 01.08.2026: IT-Haftpflicht 125.000 €, Cyber 100.000 € je Baustein, zusammen ca. 596 € pro Jahr. Vor dem Pilot Deckung für unsere Tätigkeit und Höhe der Summen klären (Abschnitt „Versicherungen“) | vor dem Pilot klären |
 | 11 | **AGB und Standardverträge für weitere Kanzleien** | Erst nötig, wenn an andere Kanzleien verkauft wird | Anwalt | **2.000–5.000 €** | nach Gate 2 (Sep 2027) |
 
-**Summe vor dem Pilot (einmalig):** ca. **3.500–10.000 €** für Anwalt, Datenschutz und erste Versicherungsprämie, **ohne** Kosten einer GmbH-Gründung.
+**Summe vor dem Pilot (einmalig):** ca. **2.500–7.800 €** für Anwalt und Datenschutz, **ohne** Kosten einer GmbH-Gründung. Die Versicherungen bestehen bereits.
+
+---
+
+## Versicherungen (Stand 31.10.2026)
+
+Beide bei Markel Insurance SE, betreut über den Makler SDV (Augsburg), Versicherungsnehmer SimplyDoneAI GbR, Laufzeit 01.08.2026–01.08.2027.
+
+| | IT-Haftpflicht (Vermögensschaden) | Cyber-Versicherung |
+|---|---|---|
+| Deckt | Schäden bei Kunden durch Fehler in unserer Leistung (z. B. falscher Buchungsvorschlag führt zu Steuernachzahlung, Zinsen, Beraterkosten) | Hackerangriff, Datenleck, Erpressung, Ausfall; Ansprüche Dritter nach einem Datenvorfall |
+| Summe | 125.000 € je Schaden, höchstens 375.000 € im Jahr | 100.000 € je Baustein, höchstens 200.000 € im Jahr |
+| Selbstbehalt | 250 € | 1.000 € |
+| Einstufung | Umsatz bis 50.000 €, „Tätigkeiten der IT- und Telekommunikationsbranche gemäß Ihren Angaben“ | Umsatz bis 100.000 € |
+| Beitrag | 182,07 € im Jahr (15 % Startup-Nachlass für 2 Jahre) | 413,49 € im Jahr |
+
+**Einschätzung (keine Versicherungsberatung):** Für die Entwicklung und einen Pilot mit 10 Mandanten ist das eine gute Grundlage. Vor dem Pilot mit dem Makler klären:
+
+1. **Ist unsere Tätigkeit gedeckt?** Die IT-Haftpflicht deckt Tätigkeiten „gemäß Ihren Angaben“. Zu prüfen ist, ob dort Betrieb einer Software (SaaS) mit KI für Steuerkanzleien, Verarbeitung von Daten von Berufsgeheimnisträgern und **Buchungsvorschläge** angegeben sind. Manche IT-Policen schließen Tätigkeiten aus, die der Steuerberatung oder Buchhaltung nahekommen.
+2. **Serienschaden:** Ein Fehler in der Kontierungslogik trifft viele Mandanten gleichzeitig. Häufig gilt das als **ein** Schaden, dann stehen insgesamt nur 125.000 € zur Verfügung. Für den Betrieb mit über 1.000 Mandanten ist eine höhere Summe zu prüfen (z. B. 500.000–1.000.000 €).
+3. **Umsatzgrenzen:** Bei 0,35 € je Beleg und 50.000 Belegen läge der Umsatz bei ca. 210.000 € im Jahr, also über beiden Einstufungen. Steigenden Umsatz rechtzeitig melden.
+4. **Versicherte Personen:** In der Cyber-Police ist Tim Ludwig als Mitversicherter genannt, in der IT-Haftpflicht nicht. Klären, ob alle Gesellschafter der GbR in beiden Policen geschützt sind.
+5. **Rechtsformwechsel:** Wird aus der GbR eine GmbH oder UG, müssen beide Policen umgeschrieben werden.
+6. **Haftungsgrenze im Vertrag mit der Kanzlei** (Nr. 1) an die Versicherungssumme anpassen, damit keine Lücke zwischen vertraglicher Haftung und Versicherungsschutz entsteht.
+
+Hinweis zur GbR (Nr. 9): Die Versicherungen mindern das Risiko der persönlichen Haftung deutlich, beseitigen es aber nicht: über der Deckungssumme, bei Ausschlüssen oder bei Vorsatz haften die Gesellschafter weiterhin privat.
 
 ---
 

@@ -232,6 +232,14 @@ Vollständig: `docs/kosten.md` (neu gefasst), `docs/rechtsberatung.md` (neu).
 
 **Rechtsberatung, wichtigste Punkte:** Vertrag mit AVV und § 62a StBerG zwischen Kanzlei und Simply Done AI; § 203-Vereinbarungen mit Hetzner und IONOS (beide kostenlos); Prüfung der Pseudonymisierung; Einwilligung der Pilot-Mandanten; Datenschutz-Folgenabschätzung. **Neu:** Hinweis, dass eine GbR unbeschränkt mit dem Privatvermögen haftet; eine GmbH oder UG vor dem Pilot prüfen.
 
+## 31.10.2026 – Versicherungen erfasst
+
+Die SimplyDoneAI GbR ist seit 01.08.2026 bei Markel Insurance SE versichert (Makler SDV): **IT-Haftpflicht** 125.000 € je Vermögensschaden und **Cyber-Versicherung** 100.000 € je Baustein, zusammen ca. 596 € im Jahr. Details und Einschätzung: `docs/rechtsberatung.md`, Abschnitt „Versicherungen“.
+
+**Vor dem Pilot mit dem Makler klären** (Entwurf: `docs/entwurf-mail-makler.md`): Deckung für Buchungsvorschläge und Software für Steuerkanzleien, Serienschaden, höhere Summen für den Betrieb mit über 1.000 Mandanten, Umsatzgrenzen, Versicherung aller Gesellschafter, Folgen eines Rechtsformwechsels.
+
+`docs/kosten.md` angepasst: einmalige Kosten vor dem Pilot jetzt ca. 4.500–14.800 €.
+
 ## Nächste Schritte
 
 Die aktuelle Aufgabenliste steht in `docs/projektplan.md`, Abschnitt 10. Die Liste unten ist der Stand vom 28.10.2026 vor dem Projektplan.
