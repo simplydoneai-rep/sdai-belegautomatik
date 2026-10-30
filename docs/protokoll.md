@@ -218,6 +218,20 @@ Recherche: `docs/recherche/2026-10-30_ionos-ai-model-hub.md`.
 
 **Kosten der Messungen:** IONOS ca. 0,90 € aus dem Startguthaben; AWS bisher ca. 1,20 $ aus dem Guthaben.
 
+## 31.10.2026 – Kalkulation: Server, Speicher, Verwaltung, Rechtsberatung, Preis
+
+Vollständig: `docs/kosten.md` (neu gefasst), `docs/rechtsberatung.md` (neu).
+
+**Ergebnisse bei 50.000 Belegen im Monat:**
+- **Speicher:** ca. 30 GB im Monat, 3,2 TB je Kopie nach voller Aufbewahrung; Hetzner Object Storage an zwei Standorten 13 € (Jahr 1) bis 42 € im Monat. Kein Kostenfaktor.
+- **Server:** CCX33 (Anwendung, Texterkennung) + CCX23 (Datenbank) + Sicherung ca. 300 € im Monat. Keine Grafikkarte nötig. Pilot: ein CPX42, ca. 98 € im Monat.
+- **KI (gemessen):** ca. 520 € im 1. Jahr, danach ca. 235 € (GPT-OSS und Qwen3.5 bei IONOS).
+- **Verwaltung, Rücklagen, Arbeitszeit:** ca. 2.740 € im Monat.
+- **Gesamt:** ca. 3.560 € im Monat, ca. 7 Cent je Beleg. Break-even bei 0,35 € je Beleg ab ca. 8.900 Belegen im Monat.
+- **Einmalig vor dem Pilot:** ca. 5.500–17.800 € (Anwalt, Datenschutz, Sicherheitstest, Versicherung).
+
+**Rechtsberatung, wichtigste Punkte:** Vertrag mit AVV und § 62a StBerG zwischen Kanzlei und Simply Done AI; § 203-Vereinbarungen mit Hetzner und IONOS (beide kostenlos); Prüfung der Pseudonymisierung; Einwilligung der Pilot-Mandanten; Datenschutz-Folgenabschätzung. **Neu:** Hinweis, dass eine GbR unbeschränkt mit dem Privatvermögen haftet; eine GmbH oder UG vor dem Pilot prüfen.
+
 ## Nächste Schritte
 
 Die aktuelle Aufgabenliste steht in `docs/projektplan.md`, Abschnitt 10. Die Liste unten ist der Stand vom 28.10.2026 vor dem Projektplan.
