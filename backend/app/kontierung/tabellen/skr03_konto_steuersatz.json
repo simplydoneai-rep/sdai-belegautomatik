@@ -1,0 +1,14 @@
+{
+  "_meta": {
+    "kontenrahmen": "SKR03",
+    "zweck": "Konten mit fest zugeordnetem Steuersatz (Automatikkonten). Ein abweichender Steuersatz in einer Position ist ein Widerspruch und senkt die Sicherheit (CLAUDE.md Abschnitt 5).",
+    "quelle": "DATEV SKR03, Kontenbezeichnungen der Automatikkonten; Abgleich mit der offiziellen DATEV-Kontenrahmenliste steht aus",
+    "stand": "2026-10-31"
+  },
+  "konten": {
+    "3300": [7],
+    "3400": [19],
+    "3120": [0],
+    "3425": [0]
+  }
+}

@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Belegautomatik – Demo</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="brand"><strong>Simply Done AI</strong> · Belegautomatik</div>
+    <div class="badge" title="Die KI-Antworten stammen aus den Messläufen vom 30./31.10.2026. Auslesen, Texterkennung, Pseudonymisierung und Steuerlogik laufen live.">
+      Demo · nur Testbelege · KI-Antworten aus dem Messlauf
+    </div>
+  </header>
+
+  <section class="toolbar">
+    <label>Testbeleg
+      <select id="beleg"></select>
+    </label>
+    <label>KI-Modell
+      <select id="modell"></select>
+    </label>
+    <button id="los" class="primary">Verarbeiten</button>
+    <div id="drop" class="drop" tabindex="0">
+      oder eigene Datei hierher ziehen
+      <input id="datei" type="file" accept=".pdf,.xml,.jpg,.jpeg,.png,.tif,.tiff">
+      <label class="inline">für Mandant <select id="mandant"></select></label>
+    </div>
+  </section>
+
+  <main>
+    <section class="links">
+      <div id="vorschau" class="vorschau leer">Beleg auswählen und „Verarbeiten“ klicken</div>
+    </section>
+
+    <section class="rechts">
+      <div id="leer" class="hinweis">Noch kein Beleg verarbeitet.</div>
+      <div id="ergebnis" hidden>
+        <div id="status" class="status"></div>
+        <ol id="schritte" class="schritte"></ol>
+
+        <h2>Kopfdaten</h2>
+        <table id="kopf" class="kv"></table>
+
+        <h2>Buchungsvorschlag je Position</h2>
+        <table id="positionen" class="pos">
+          <thead><tr><th></th><th>Bezeichnung</th><th class="r">Netto</th><th class="r">USt</th><th>Sachkonto SKR03</th></tr></thead>
+          <tbody></tbody>
+        </table>
+
+        <div class="zwei">
+          <div>
+            <h2>Steuerlogik</h2>
+            <div id="steuerlogik"></div>
+          </div>
+          <div>
+            <h2>KI</h2>
+            <div id="ki"></div>
+          </div>
+        </div>
+
+        <div id="soll" class="soll" hidden></div>
+
+        <details id="pseudo">
+          <summary>Was ging an die KI? <span id="pseudo-zahl"></span></summary>
+          <p class="klein">Name, Anschrift und Ansprechpartner des Mandanten, IBAN, Telefon, E-Mail, Steuernummer und Namen
+            von Personen werden vor dem KI-Aufruf durch Platzhalter ersetzt. Die Zuordnung bleibt bei uns.</p>
+          <div id="pseudo-typen" class="chips"></div>
+          <pre id="pseudo-text"></pre>
+        </details>
+      </div>
+    </section>
+  </main>
+
+  <footer>Nur synthetische Testbelege. Kein automatisches Buchen: Jeder Vorschlag wird von einem Sachbearbeiter geprüft und freigegeben.</footer>
+  <script src="app.js"></script>
+</body>
+</html>

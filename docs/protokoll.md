@@ -240,6 +240,19 @@ Die SimplyDoneAI GbR ist seit 01.08.2026 bei Markel Insurance SE versichert (Mak
 
 `docs/kosten.md` angepasst: einmalige Kosten vor dem Pilot jetzt ca. 4.500–14.800 €.
 
+## 31.10.2026 – Demo „Beleg rein → Buchungsvorschlag raus“
+
+**Entscheidung (Wunsch Paul Graß):** Die Demo nutzt weder IONOS noch AWS. Sie spielt die KI-Antworten aus den Messläufen ab (210 Antworten: 42 Belege × 5 Modelle); alle übrigen Schritte laufen live. Details: `docs/entscheidungen/2026-10-31_demo-ohne-ki-kosten.md`.
+
+**Stand:**
+- Start per Doppelklick auf `demo_starten.bat`, dann im Browser `http://127.0.0.1:8077`.
+- Links der Beleg als Bild (auch Scans, Fotos, mehrseitig), rechts Kopfdaten, Positionen mit Sachkonto und Ampel, Verarbeitungsschritte mit Zeiten, Steuerlogik, Herkunft des KI-Vorschlags (Modell, damalige Zeit und Kosten), Soll-Ist-Abgleich und „Was ging an die KI?“ mit hervorgehobenen Platzhaltern.
+- Eigene Dateien per Drag & Drop; unbekannte Belege laufen regelbasiert ohne KI, Ampel dann höchstens Gelb.
+- Geprüft: alle 52 Testdateien mit 3 Modellen ohne Fehler; Upload bekannt/unbekannt/unzulässig; 113 Tests grün.
+- Beim Test gefunden und behoben: Ampel zeigte Grün bei einem Beleg ohne erkannte Positionen; eingebauter PDF-Betrachter zeigte leere Seiten (jetzt serverseitig gerenderte Seitenbilder).
+
+**Für die Vorführung empfohlen:** S25 (28 Positionen, alle Konten richtig), S02 (gemischte Steuersätze), S05 (Reverse Charge), eine KoSIT-E-Rechnung (ohne KI), S30 (Handyfoto).
+
 ## Nächste Schritte
 
 Die aktuelle Aufgabenliste steht in `docs/projektplan.md`, Abschnitt 10. Die Liste unten ist der Stand vom 28.10.2026 vor dem Projektplan.

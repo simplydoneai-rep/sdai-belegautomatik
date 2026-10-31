@@ -1,14 +1,14 @@
 {
   "_meta": {
     "kontenrahmen": "SKR03",
-    "zweck": "Erlaubte Kontenliste fuer den Machbarkeitstest (Auswahl typischer Aufwandskonten)",
-    "quelle": "DATEV SKR03, Kontenbezeichnungen sinngemaess; Abgleich mit der offiziellen DATEV-Kontenrahmenliste steht aus",
+    "zweck": "Erlaubte Kontenliste für den Machbarkeitstest (Auswahl typischer Aufwandskonten)",
+    "quelle": "DATEV SKR03, Kontenbezeichnungen sinngemäß; Abgleich mit der offiziellen DATEV-Kontenrahmenliste steht aus",
     "stand": "2026-10-28"
   },
   "konten": [
     [
       "0480",
-      "Geringwertige Wirtschaftsgueter"
+      "Geringwertige Wirtschaftsgüter"
     ],
     [
       "3100",
@@ -16,7 +16,7 @@
     ],
     [
       "3120",
-      "Bauleistungen eines im Inland ansaessigen Unternehmers 19 % VSt und 19 % USt (13b)"
+      "Bauleistungen eines im Inland ansässigen Unternehmers 19 % VSt und 19 % USt (13b)"
     ],
     [
       "3300",
@@ -44,7 +44,7 @@
     ],
     [
       "4260",
-      "Instandhaltung betrieblicher Raeume"
+      "Instandhaltung betrieblicher Räume"
     ],
     [
       "4360",
@@ -68,11 +68,11 @@
     ],
     [
       "4805",
-      "Reparaturen und Instandhaltung von anderen Anlagen und Betriebs- und Geschaeftsausstattung"
+      "Reparaturen und Instandhaltung von anderen Anlagen und Betriebs- und Geschäftsausstattung"
     ],
     [
       "4806",
-      "Wartungskosten fuer Hard- und Software"
+      "Wartungskosten für Hard- und Software"
     ],
     [
       "4910",
@@ -84,11 +84,11 @@
     ],
     [
       "4930",
-      "Buerobedarf"
+      "Bürobedarf"
     ],
     [
       "4940",
-      "Zeitschriften, Buecher (Fachliteratur)"
+      "Zeitschriften, Bücher (Fachliteratur)"
     ],
     [
       "4950",
@@ -96,7 +96,7 @@
     ],
     [
       "4964",
-      "Aufwendungen fuer die zeitlich befristete Ueberlassung von Rechten (Lizenzen, Konzessionen)"
+      "Aufwendungen für die zeitlich befristete Überlassung von Rechten (Lizenzen, Konzessionen)"
     ],
     [
       "4980",
@@ -104,7 +104,7 @@
     ],
     [
       "4985",
-      "Werkzeuge und Kleingeraete"
+      "Werkzeuge und Kleingeräte"
     ]
   ]
 }
