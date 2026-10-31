@@ -31,7 +31,7 @@
         "unit_price": "950.00",
         "net_amount": "950.00",
         "tax_rate": "19",
-        "account_skr03": "4610"
+        "account_skr03": "4600"
       },
       {
         "description": "Bildbearbeitung und Retusche",
@@ -40,7 +40,7 @@
         "unit_price": "65.00",
         "net_amount": "390.00",
         "tax_rate": "19",
-        "account_skr03": "4610"
+        "account_skr03": "4600"
       }
     ]
   },

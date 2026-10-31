@@ -1,0 +1,7700 @@
+{
+ "_meta": {
+  "kontenrahmen": "SKR03",
+  "quelle": "DATEV-Kontenrahmen nach BilRUG, Standardkontenrahmen SKR 03, Art.-Nr. 11174, gültig für 2026",
+  "erzeugt_mit": "backend/scripts/skr03_einlesen.py",
+  "kennzeichen": {
+   "AV": "Automatikkonto Vorsteuer",
+   "AM": "Automatikkonto Umsatzsteuer",
+   "S": "Sammelkonto",
+   "F": "Konto mit allgemeiner Funktion"
+  }
+ },
+ "konten": [
+  {
+   "nr": "0005",
+   "name": "Rückständige fällige Einzahlungen auf Geschäftsanteile",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0010",
+   "name": "Entgeltlich erworbene Konzessionen, gewerbliche Schutzrechte und ähnliche Rechte und Werte sowie Lizenzen an solchen Rechten und Werten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0015",
+   "name": "Konzessionen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0020",
+   "name": "Gewerbliche Schutzrechte",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0025",
+   "name": "Ähnliche Rechte und Werte",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0027",
+   "name": "EDV-Software",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0030",
+   "name": "Lizenzen an gewerblichen Schutzrechten und ähnlichen Rechten und Werten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0035",
+   "name": "Geschäfts- oder Firmenwert",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0038",
+   "name": "Anzahlungen auf Geschäfts- oder Firmenwert",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0039",
+   "name": "Geleistete Anzahlungen auf immaterielle Vermögensgegenstände",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0043",
+   "name": "Selbst geschaffene immaterielle Vermögensgegenstände",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0044",
+   "name": "EDV-Software",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0045",
+   "name": "Lizenzen und Franchiseverträge",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0046",
+   "name": "Konzessionen und gewerbliche Schutzrechte",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0047",
+   "name": "Rezepte, Verfahren, Prototypen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0048",
+   "name": "Immaterielle Vermögensgegenstände in Entwicklung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0050",
+   "name": "Grundstücke, grundstücksgleiche Rechte und Bauten einschließlich der Bauten auf fremden Grundstücken",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0059",
+   "name": "Grundstücksanteil des häuslichen Arbeitszimmers",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0060",
+   "name": "Grundstücksgleiche Rechte ohne Bauten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0065",
+   "name": "Unbebaute Grundstücke",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0070",
+   "name": "Grundstücksgleiche Rechte (Erbbaurecht, Dauerwohnrecht, unbebaute Grundstücke)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0075",
+   "name": "Grundstücke mit Substanzverzehr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0079",
+   "name": "Anzahlungen auf Grund und Boden",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0080",
+   "name": "Bauten auf eigenen Grundstücken und grundstücksgleichen Rechten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0085",
+   "name": "Grundstückswerte eigener bebauter Grundstücke",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0090",
+   "name": "Geschäftsbauten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0100",
+   "name": "Fabrikbauten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0110",
+   "name": "Garagen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0111",
+   "name": "Außenanlagen für Geschäfts-, Fabrik- und andere Bauten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0112",
+   "name": "Hof- und Wegebefestigungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0113",
+   "name": "Einrichtungen für Geschäfts-, Fabrik- und andere Bauten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0115",
+   "name": "Andere Bauten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0120",
+   "name": "Geschäfts-, Fabrik- und andere Bauten im Bau auf eigenen Grundstücken",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0129",
+   "name": "Anzahlungen auf Geschäfts-, Fabrik- und andere Bauten auf eigenen Grundstücken",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0140",
+   "name": "Wohnbauten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0145",
+   "name": "Garagen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0146",
+   "name": "Außenanlagen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0147",
+   "name": "Hof- und Wegebefestigungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0148",
+   "name": "Einrichtungen für Wohnbauten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0149",
+   "name": "Gebäudeteil des häuslichen Arbeitszimmers",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0150",
+   "name": "Wohnbauten im Bau auf eigenen Grundstücken",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0159",
+   "name": "Anzahlungen auf Wohnbauten auf eigenen Grundstücken",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0160",
+   "name": "Bauten auf fremden Grundstücken",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0165",
+   "name": "Geschäftsbauten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0170",
+   "name": "Fabrikbauten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0175",
+   "name": "Garagen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0176",
+   "name": "Außenanlagen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0177",
+   "name": "Hof- und Wegebefestigungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0178",
+   "name": "Einrichtungen für Geschäfts-, Fabrik-, Wohn- und andere Bauten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0179",
+   "name": "Andere Bauten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0180",
+   "name": "Geschäfts-, Fabrik- und andere Bauten im Bau auf fremden Grundstücken",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0189",
+   "name": "Anzahlungen auf Geschäfts-, Fabrik- und andere Bauten auf fremden Grundstücken",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0190",
+   "name": "Wohnbauten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0191",
+   "name": "Garagen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0192",
+   "name": "Außenanlagen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0193",
+   "name": "Hof- und Wegebefestigungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0194",
+   "name": "Einrichtungen für Wohnbauten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0195",
+   "name": "Wohnbauten im Bau auf fremden Grundstücken",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0199",
+   "name": "Anzahlungen auf Wohnbauten auf fremden Grundstücken",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0200",
+   "name": "Technische Anlagen und Maschinen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0210",
+   "name": "Maschinen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0220",
+   "name": "Maschinengebundene Werkzeuge",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0240",
+   "name": "Technische Anlagen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0260",
+   "name": "Transportanlagen und Ähnliches",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0280",
+   "name": "Betriebsvorrichtungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0290",
+   "name": "Technische Anlagen und Maschinen im Bau",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0299",
+   "name": "Anzahlungen auf technische Anlagen und Maschinen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0300",
+   "name": "Andere Anlagen, Betriebs- und Geschäftsausstattung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0310",
+   "name": "Andere Anlagen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0320",
+   "name": "Pkw",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0350",
+   "name": "Lkw",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0380",
+   "name": "Sonstige Transportmittel",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0400",
+   "name": "Betriebsausstattung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0410",
+   "name": "Geschäftsausstattung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0420",
+   "name": "Büroeinrichtung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0430",
+   "name": "Ladeneinrichtung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0440",
+   "name": "Werkzeuge",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0450",
+   "name": "Einbauten in fremde Grundstücke",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0460",
+   "name": "Gerüst- und Schalungsmaterial",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0480",
+   "name": "Geringwertige Wirtschaftsgüter",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0485",
+   "name": "Wirtschaftsgüter (Sammelposten)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0490",
+   "name": "Sonstige Betriebs- und Geschäftsausstattung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0498",
+   "name": "Andere Anlagen, Betriebs- und Geschäftsausstattung im Bau",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0499",
+   "name": "Anzahlungen auf andere Anlagen, Betriebs- und Geschäftsausstattung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0500",
+   "name": "Anteile an verbundenen Unternehmen (Anlagevermögen)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0501",
+   "name": "Anteile an verbundenen Unternehmen, Personengesellschaften",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0502",
+   "name": "Anteile an verbundenen Unternehmen, Kapitalgesellschaften",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0503",
+   "name": "Anteile an herrschender oder mehrheitlich beteiligter Gesellschaft, Kapitalgesellschaften",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0504",
+   "name": "Anteile an herrschender oder mehrheitlich beteiligter Gesellschaft",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0505",
+   "name": "Ausleihungen an verbundene Unternehmen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0506",
+   "name": "Ausleihungen an verbundene Unternehmen, Personengesellschaften",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0507",
+   "name": "Ausleihungen an verbundene Unternehmen, Kapitalgesellschaften",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0508",
+   "name": "Ausleihungen an verbundene Unternehmen, Einzelunternehmen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0509",
+   "name": "Anteile an herrschender oder mehrheitlich beteiligter Gesellschaft, Personengesellschaften",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0510",
+   "name": "Beteiligungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0513",
+   "name": "Typisch stille Beteiligungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0516",
+   "name": "Atypisch stille Beteiligungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0517",
+   "name": "Beteiligungen an Kapitalgesellschaften",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0518",
+   "name": "Beteiligungen an Personengesellschaften",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0519",
+   "name": "Beteiligung einer GmbH & Co. KG an einer Komplementär GmbH",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0520",
+   "name": "Ausleihungen an Unternehmen, mit denen ein Beteiligungsverhältnis besteht",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0523",
+   "name": "Ausleihungen an Unternehmen, mit denen ein Beteiligungsverhältnis besteht, Personengesellschaften",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0524",
+   "name": "Ausleihungen an Unternehmen, mit denen ein Beteiligungsverhältnis besteht, Kapitalgesellschaften",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0525",
+   "name": "Wertpapiere des Anlagevermögens",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0530",
+   "name": "Wertpapiere mit Gewinnbeteiligungsansprüchen, die dem Teileinkünfteverfahren unterliegen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0535",
+   "name": "Festverzinsliche Wertpapiere",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0538",
+   "name": "Anteile einer GmbH & Co. KG an einer Komplementär-GmbH",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0540",
+   "name": "Übrige sonstige Ausleihungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0550",
+   "name": "Darlehen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0570",
+   "name": "Genossenschaftsanteile zum langfristigen Verbleib",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0580",
+   "name": "Ausleihungen an Gesellschafter",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0582",
+   "name": "Ausleihungen an GmbH-Gesellschafter",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0584",
+   "name": "Ausleihungen an persönlich haftende Gesellschafter",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0586",
+   "name": "Ausleihungen an Kommanditisten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0590",
+   "name": "Ausleihungen an nahe stehende Personen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0595",
+   "name": "Rückdeckungsansprüche aus Lebensversicherungen zum langfristigen Verbleib Verbindlichkeiten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0600",
+   "name": "Anleihen, nicht konvertibel",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0601",
+   "name": "- Restlaufzeit bis 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0605",
+   "name": "- Restlaufzeit 1 bis 5 Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0610",
+   "name": "- Restlaufzeit größer 5 Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0615",
+   "name": "Anleihen konvertibel",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0616",
+   "name": "- Restlaufzeit bis 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0620",
+   "name": "- Restlaufzeit 1 bis 5 Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0625",
+   "name": "- Restlaufzeit größer 5 Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0630",
+   "name": "Verbindlichkeiten gegenüber Kreditinstituten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0631",
+   "name": "- Restlaufzeit bis 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0640",
+   "name": "- Restlaufzeit 1 bis 5 Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0650",
+   "name": "- Restlaufzeit größer 5 Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0660",
+   "name": "Verbindlichkeiten gegenüber Kreditinstituten aus Teilzahlungsverträgen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0661",
+   "name": "- Restlaufzeit bis 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0670",
+   "name": "- Restlaufzeit 1 bis 5 Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0680",
+   "name": "- Restlaufzeit größer 5 Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0690",
+   "name": "Verbindlichkeiten gegenüber Kreditinstituten, vor Restlaufzeitdifferenzierung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0699",
+   "name": "Gegenkonto 0630-0689 bei Aufteilung der Konten 0690-0698",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0700",
+   "name": "Verbindlichkeiten gegenüber verbundenen Unternehmen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0701",
+   "name": "- Restlaufzeit bis 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0705",
+   "name": "- Restlaufzeit 1 bis 5 Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0710",
+   "name": "- Restlaufzeit größer 5 Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0715",
+   "name": "Verbindlichkeiten gegenüber Unternehmen, mit denen ein Beteiligungsverhältnis besteht",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0716",
+   "name": "- Restlaufzeit bis 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0720",
+   "name": "- Restlaufzeit 1 bis 5 Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0725",
+   "name": "- Restlaufzeit größer 5 Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0730",
+   "name": "Verbindlichkeiten gegenüber Gesellschaftern",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0731",
+   "name": "- Restlaufzeit bis 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0740",
+   "name": "- Restlaufzeit 1 bis 5 Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0750",
+   "name": "- Restlaufzeit größer 5 Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0755",
+   "name": "Verbindlichkeiten gegenüber Gesellschaftern für offene Ausschüttungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0760",
+   "name": "Verbindlichkeiten gegenüber typisch stillen Gesellschaftern",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0761",
+   "name": "- Restlaufzeit bis 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0764",
+   "name": "- Restlaufzeit 1 bis 5 Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0767",
+   "name": "- Restlaufzeit größer 5 Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0770",
+   "name": "Verbindlichkeiten gegenüber atypisch stillen Gesellschaftern",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0771",
+   "name": "- Restlaufzeit bis 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0774",
+   "name": "- Restlaufzeit 1 bis 5 Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0777",
+   "name": "- Restlaufzeit größer 5 Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0780",
+   "name": "Partiarische Darlehen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0781",
+   "name": "- Restlaufzeit bis 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0784",
+   "name": "- Restlaufzeit 1 bis 5 Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0787",
+   "name": "- Restlaufzeit größer 5 Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0790",
+   "name": "Sonstige Verbindlichkeiten, vor Restlaufzeitdifferenzierung (nur Bilanzierer)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0799",
+   "name": "Gegenkonto 0730-0789 und 1665-",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0800",
+   "name": "Gezeichnetes Kapital",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0809",
+   "name": "0819-0963 0968-0969 0987-0989 0996-0999",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0810",
+   "name": "Geschäftsguthaben der verbleibenden Mitglieder",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0811",
+   "name": "Geschäftsguthaben der ausscheidenden Mitglieder",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0812",
+   "name": "Geschäftsguthaben aus gekündigten Geschäftsanteilen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0813",
+   "name": "Rückständige fällige Einzahlungen auf Geschäftsanteile, vermerkt",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0815",
+   "name": "Gegenkonto Rückständige fällige Einzahlungen auf Geschäftsanteile, vermerkt",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0819",
+   "name": "Erworbene eigene Anteile",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0820",
+   "name": "Ausstehende Einlagen auf das gezeichnete Kapital, nicht eingefordert (Passivausweis, vom gezeichneten Kapital offen abgesetzt; eingeforderte ausstehende Einlagen s. Konten 0830-08",
+   "kennzeichen": "",
+   "bis": "29"
+  },
+  {
+   "nr": "0830",
+   "name": "Ausstehende Einlagen auf das gezeichnete Kapital, eingefordert (Forderungen, nicht eingeforderte ausstehende Einlagen s. Konten 0820-08",
+   "kennzeichen": "",
+   "bis": "38"
+  },
+  {
+   "nr": "0839",
+   "name": "Nachschüsse (Forderungen, Gegenkonto 08",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0840",
+   "name": "Kapitalrücklage",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0841",
+   "name": "Kapitalrücklage durch Ausgabe von Anteilen über Nennbetrag",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0842",
+   "name": "Kapitalrücklage durch Ausgabe von Schuldverschreibungen für Wandlungsrechte und Optionsrechte zum Erwerb von Anteilen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0843",
+   "name": "Kapitalrücklage durch Zuzahlungen gegen Gewährung eines Vorzugs für Anteile",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0844",
+   "name": "Kapitalrücklage durch andere Zuzahlungen in das Eigenkapital",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0845",
+   "name": "Nachschusskapital (Gegenkonto 081",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0846",
+   "name": "Gesetzliche Rücklage",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0848",
+   "name": "Andere Gewinnrücklagen aus dem Erwerb eigener Anteile",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0849",
+   "name": "Rücklage für Anteile an einem herrschenden oder mehrheitlich beteiligten Unternehmen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0851",
+   "name": "Satzungsmäßige Rücklagen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0852",
+   "name": "Andere Ergebnisrücklagen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0853",
+   "name": "Gewinnrücklagen aus den Übergangsvorschriften BilMoG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0854",
+   "name": "Gewinnrücklagen aus den Übergangsvorschriften BilMoG (Zuschreibung Sachanlagevermögen)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0855",
+   "name": "Andere Gewinnrücklagen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0856",
+   "name": "Eigenkapitalanteil von Wertaufholungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0857",
+   "name": "Gewinnrücklagen aus den Übergangsvorschriften BilMoG (Zuschreibung Finanzanlagevermögen)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0858",
+   "name": "Gewinnrücklagen aus den Übergangsvorschriften BilMoG (Auflösung der Sonderposten mit Rücklageanteil)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0859",
+   "name": "Latente Steuern (Gewinnrücklage Haben) aus erfolgsneutralen Verrechnungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0860",
+   "name": "Gewinnvortrag vor Verwendung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0865",
+   "name": "Gewinnvortrag vor Verwendung (mit Aufteilung für Kapitalkontenentwicklung)",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "0867",
+   "name": "Verlustvortrag vor Verwendung (mit Aufteilung für Kapitalkontenentwicklung)",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "0868",
+   "name": "Verlustvortrag vor Verwen-",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0870",
+   "name": "Festkapital",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "0871",
+   "name": "Kapital (fester Anteil, nur Einzelunternehmen)",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "0880",
+   "name": "Variables Kapital",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "0881",
+   "name": "Kapital (variabler Anteil, nur Einzelunternehmen)",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "0890",
+   "name": "Gesellschafter-Darlehen",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "0900",
+   "name": "Kommandit-Kapital",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "0910",
+   "name": "Verlustausgleichskonto",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "0920",
+   "name": "Gesellschafter-Darlehen",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "0930",
+   "name": "Übrige andere Sonderposten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0931",
+   "name": "Steuerfreie Rücklagen nach § 6b EStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0932",
+   "name": "Rücklage für Ersatzbeschaffung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0940",
+   "name": "Sonderposten mit Rücklageanteil, Sonderabschreibungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0945",
+   "name": "Ausgleichsposten bei Entnahmen § 4g EStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0946",
+   "name": "Rücklage für Zuschüsse",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0947",
+   "name": "Sonderposten mit Rücklageanteil nach § 7g Abs. 5 EStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0948",
+   "name": "Sonderposten für Zuschüsse Dritter",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0949",
+   "name": "Sonderposten für Investitionszulagen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0950",
+   "name": "Rückstellungen für Pensionen und ähnliche Verpflichtungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0951",
+   "name": "Rückstellungen für Pensionen und ähnliche Verpflichtungen zur Saldierung mit Vermögensgegenständen zum langfristigen Verbleib nach § 246 Abs. 2 HGB",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0952",
+   "name": "Rückstellungen für Pensionen und ähnliche Verpflichtungen gegenüber Gesellschaftern oder nahe stehenden Personen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0953",
+   "name": "Rückstellungen für Direktzusagen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0954",
+   "name": "Rückstellungen für Zuschussverpflichtungen für Pensionskassen und Lebensversicherungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0955",
+   "name": "Steuerrückstellungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0956",
+   "name": "Gewerbesteuerrückstellung nach § 4 Abs. 5b EStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0961",
+   "name": "Urlaubsrückstellungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0962",
+   "name": "Steuerrückstellung aus Steuerstundung (BStBK)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0963",
+   "name": "Körperschaftsteuerrückstellung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0964",
+   "name": "Rückstellungen für mit der Altersversorgung vergleichbare langfristige Verpflichtungen zum langfristigen Verbleib",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0965",
+   "name": "Rückstellungen für Personalkosten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0966",
+   "name": "Rückstellungen zur Erfüllung der Aufbewahrungspflichten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0967",
+   "name": "Rückstellungen für mit der Altersversorgung vergleichbare langfristige Verpflichtungen zur Saldierung mit Vermögensgegenständen zum langfristigen Verbleib nach § 246 Abs. 2 HGB",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0968",
+   "name": "Passive latente Steuern",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0969",
+   "name": "Rückstellung für latente Steuern",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0970",
+   "name": "Sonstige Rückstellungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0971",
+   "name": "Rückstellungen für unterlassene Aufwendungen für Instandhaltung, Nachholung in den ersten drei Monaten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0973",
+   "name": "Rückstellungen für Abraum- und Abfallbeseitigung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0974",
+   "name": "Rückstellungen für Gewährleistungen (Gegenkonto 47",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0976",
+   "name": "Rückstellungen für drohende Verluste aus schwebenden Geschäften",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0977",
+   "name": "Rückstellungen für Abschluss- und Prüfungskosten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0979",
+   "name": "Rückstellungen für Umweltschutz",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0980",
+   "name": "Aktive Rechnungsabgrenzung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0983",
+   "name": "Aktive latente Steuern",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0984",
+   "name": "Als Aufwand berücksichtigte Zölle SB und Verbrauchsteuern auf Vorräte",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0985",
+   "name": "Als Aufwand berücksichtigte SB Umsatzsteuer auf Anzahlungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0986",
+   "name": "Damnum/Disagio",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0987",
+   "name": "Rechnungsabgrenzungsposten (Gewinnrücklage Soll) aus erfolgsneutralen Verrechnungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0988",
+   "name": "Latente Steuern (Gewinnrücklage Soll) aus erfolgsneutralen Verrechnungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0989",
+   "name": "Gesamthänderisch gebundene Rücklagen (mit Aufteilung für Kapitalkontenentwicklung)",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "0990",
+   "name": "Passive Rechnungsabgrenzung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0992",
+   "name": "Abgrenzungen unterjährig pauschal gebuchter Abschreibungen für BWA",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0996",
+   "name": "Pauschalwertberichtigung auf Forderungen - Restlaufzeit bis zu 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0997",
+   "name": "- Restlaufzeit größer 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0998",
+   "name": "Einzelwertberichtigungen auf Forderungen - Restlaufzeit bis zu 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "0999",
+   "name": "- Restlaufzeit größer 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1000",
+   "name": "Kasse",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1010",
+   "name": "Nebenkasse 1",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1020",
+   "name": "Nebenkasse 2",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1100",
+   "name": "Bank (Postbank)",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1110",
+   "name": "Bank (Postbank 1)",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1120",
+   "name": "Bank (Postbank 2)",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1130",
+   "name": "Bank (Postbank 3)",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1190",
+   "name": "LZB-Guthaben",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1195",
+   "name": "Bundesbankguthaben",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1200",
+   "name": "Bank",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1210",
+   "name": "Bank 1",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1220",
+   "name": "Bank 2",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1230",
+   "name": "Bank 3",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1240",
+   "name": "Bank 4",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1250",
+   "name": "Bank 5",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1290",
+   "name": "Finanzmittelanlagen im Rahmen der kurzfristigen Finanzdisposition (nicht im Finanzmittelfonds enthalten)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1295",
+   "name": "Verbindlichkeiten gegenüber Kreditinstituten (nicht im Finanzmittelfonds enthalten)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1329",
+   "name": "Andere Wertpapiere mit unwesentlichen Wertschwankungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1340",
+   "name": "Anteile an verbundenen Unternehmen (Umlaufvermögen)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1344",
+   "name": "Anteile an herrschender oder mit Mehrheit beteiligter Gesellschaft",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1348",
+   "name": "Sonstige Wertpapiere",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1349",
+   "name": "Wertpapieranlagen im Rahmen der kurzfristigen Finanzdisposition",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1350",
+   "name": "GmbH-Anteile zum kurzfristigen Verbleib",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1352",
+   "name": "Genossenschaftsanteile zum kurzfristigen Verbleib",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1353",
+   "name": "Vermögensgegenstände zur Erfüllung von mit der Altersversorgung vergleichbaren langfristigen Verpflichtungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1354",
+   "name": "Vermögensgegenstände zur Saldierung mit der Altersversorgung vergleichbaren langfristigen Verpflichtungen nach § 246 Abs. 2 HGB",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1355",
+   "name": "Ansprüche aus Rückdeckungsversicherungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1356",
+   "name": "Vermögensgegenstände zur Erfüllung von Pensionsrückstellungen und ähnlichen Verpflichtungen zum langfristigen Verbleib",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1357",
+   "name": "Vermögensgegenstände zur Saldierung mit Pensionsrückstellungen und ähnlichen Verpflichtungen zum langfristigen Verbleib nach § 246 Abs. 2 HGB",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1360",
+   "name": "Geldtransit",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1371",
+   "name": "Verrechnungskonto Gewinnermittlung § 4 Abs. 3 EStG, nicht ergebniswirksam",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1372",
+   "name": "1373-1509 V 1510-1512 1513-1516 V 1517-1518 1519-1709 M 1710-1712 1713-1716 M 1717-1724 1725-1868 V 1869 1870-1878 M 1879 1880-1999",
+   "kennzeichen": "V"
+  },
+  {
+   "nr": "1376",
+   "name": "Forderungen gegen typisch stille Gesellschafter",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1377",
+   "name": "- Restlaufzeit bis 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1378",
+   "name": "- Restlaufzeit größer 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1380",
+   "name": "Überleitungskonto Kostenstelle",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1381",
+   "name": "Forderungen gegen GmbH-Gesellschafter",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1382",
+   "name": "- Restlaufzeit bis 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1383",
+   "name": "- Restlaufzeit größer 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1385",
+   "name": "Forderungen gegen persönlich haftende Gesellschafter",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1386",
+   "name": "- Restlaufzeit bis 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1387",
+   "name": "- Restlaufzeit größer 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1389",
+   "name": "Ansprüche aus betrieblicher Alters- SB versorgung und Pensionsansprüche (Mitunternehmer)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1390",
+   "name": "Verrechnungskonto Ist-Versteuerung",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1391",
+   "name": "Neutralisierung ertragswirksamer Sachverhalte für § 4 Abs. 3 EStG",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1394",
+   "name": "Forderungen gegen Gesellschaft/ SB Gesamthand",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1400",
+   "name": "Forderungen aus Lieferungen und Leistungen",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "1410",
+   "name": "Forderungen aus Lieferungen und Leistungen ohne Kontokorrent",
+   "kennzeichen": "F",
+   "bis": "44"
+  },
+  {
+   "nr": "1445",
+   "name": "Forderungen aus Lieferungen und Leistungen zum allgemeinen Umsatzsteuersatz oder eines Kleinunternehmers (EÜR)",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1446",
+   "name": "Forderungen aus Lieferungen und Leistungen zum ermäßigten Umsatzsteuersatz (EÜR)",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1447",
+   "name": "Forderungen aus steuerfreien oder nicht steuerbaren Lieferungen und Leistungen (EÜR)",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1448",
+   "name": "Forderungen aus Lieferungen und Leistungen nach Durchschnittssätzen nach § 24 UStG (EÜR)",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1449",
+   "name": "Gegenkonto 1445-1448 bei Aufteilung der Forderungen nach Steuersätzen (EÜR)",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1450",
+   "name": "Forderungen nach § 11 Abs. 1 Satz 2 EStG für § 4 Abs. 3 EStG",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1451",
+   "name": "Forderungen aus Lieferungen und Leistungen ohne Kontokorrent - Restlaufzeit bis 1 Jahr",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1455",
+   "name": "- Restlaufzeit größer 1 Jahr",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1460",
+   "name": "Zweifelhafte Forderungen",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1461",
+   "name": "- Restlaufzeit bis 1 Jahr",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1465",
+   "name": "- Restlaufzeit größer 1 Jahr",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1470",
+   "name": "Forderungen aus Lieferungen und Leistungen gegen verbundene Unternehmen",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1471",
+   "name": "- Restlaufzeit bis 1 Jahr",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1475",
+   "name": "- Restlaufzeit größer 1 Jahr",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1478",
+   "name": "Wertberichtigungen auf Forderungen gegen verbundene Unternehmen - Restlaufzeit bis 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1479",
+   "name": "- Restlaufzeit größer 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1480",
+   "name": "Forderungen aus Lieferungen und Leistungen gegen Unternehmen, mit denen ein Beteiligungsverhältnis besteht",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1481",
+   "name": "- Restlaufzeit bis 1 Jahr",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1485",
+   "name": "- Restlaufzeit größer 1 Jahr",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1488",
+   "name": "Wertberichtigungen auf Forderungen gegen Unternehmen, mit denen ein Beteiligungsverhältnis besteht - Restlaufzeit bis 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1489",
+   "name": "- Restlaufzeit größer 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1490",
+   "name": "Forderungen aus Lieferungen und Leistungen gegen Gesellschafter",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1491",
+   "name": "- Restlaufzeit bis 1 Jahr",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1495",
+   "name": "- Restlaufzeit größer 1 Jahr",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1498",
+   "name": "Gegenkonto zu sonstigen Vermögensgegenständen bei Buchungen über Debitorenkonto",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1499",
+   "name": "Gegenkonto 1451-1497 bei Aufteilung Debitorenkonto",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1500",
+   "name": "Sonstige Vermögensgegenstände",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1501",
+   "name": "- Restlaufzeit bis 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1502",
+   "name": "- Restlaufzeit größer 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1503",
+   "name": "Forderungen gegen Vorstandsmitglieder und Geschäftsführer - Restlaufzeit bis 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1504",
+   "name": "- Restlaufzeit größer 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1505",
+   "name": "Forderungen gegen Aufsichtsrats- und Beiratsmitglieder - Restlaufzeit bis 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1506",
+   "name": "- Restlaufzeit größer 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1507",
+   "name": "Forderungen gegen sonstige Gesellschafter - Restlaufzeit bis 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1508",
+   "name": "- Restlaufzeit größer 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1510",
+   "name": "Geleistete Anzahlungen auf Vorräte",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1511",
+   "name": "Geleistete Anzahlungen, 7 % Vorsteuer",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "1512",
+   "name": "Geleistete Anzahlungen, 5 % Vorsteuer",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "1517",
+   "name": "Geleistete Anzahlungen, 16 % Vorsteuer",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "1518",
+   "name": "Geleistete Anzahlungen, 19 % Vorsteuer",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "1519",
+   "name": "Forderungen gegen Arbeitsgemeinschaften",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1520",
+   "name": "Forderungen gegenüber Krankenkassen aus Aufwendungsausgleichsgesetz",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1521",
+   "name": "Agenturwarenabrechnung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1522",
+   "name": "Genussrechte",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1524",
+   "name": "Einzahlungsansprüche zu Nebenleistungen oder Zuzahlungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1525",
+   "name": "Kautionen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1526",
+   "name": "- Restlaufzeit bis 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1527",
+   "name": "- Restlaufzeit größer 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1528",
+   "name": "Nachträglich abziehbare Vorsteuer nach § 15a Abs. 2 UStG",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1529",
+   "name": "Zurückzuzahlende Vorsteuer nach § 15a Abs. 2 UStG",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1530",
+   "name": "Forderungen gegen Personal aus Lohn- und Gehaltsabrechnung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1531",
+   "name": "- Restlaufzeit bis 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1537",
+   "name": "- Restlaufzeit größer 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1539",
+   "name": "Umsatzsteuerforderungen frühere Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1540",
+   "name": "Forderungen aus Gewerbesteuerüberzahlungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1542",
+   "name": "Steuererstattungsansprüche gegenüber anderen Ländern",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1543",
+   "name": "Forderungen an das Finanzamt aus abgeführtem Bauabzugsbetrag",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1544",
+   "name": "Forderung gegenüber Bundesagentur für Arbeit",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1545",
+   "name": "Forderungen aus Umsatzsteuer- Vorauszahlungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1546",
+   "name": "Umsatzsteuerforderungen Vorjahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1547",
+   "name": "Forderungen aus entrichteten Verbrauchsteuern",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1548",
+   "name": "Vorsteuer in Folgeperiode/im Folgejahr abziehbar",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "1549",
+   "name": "Körperschaftsteuerrückforderung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1550",
+   "name": "Darlehen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1551",
+   "name": "- Restlaufzeit bis 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1555",
+   "name": "- Restlaufzeit größer 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1556",
+   "name": "Nachträglich abziehbare Vorsteuer nach § 15a Abs. 1 UStG, bewegliche Wirtschaftsgüter",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1557",
+   "name": "Zurückzuzahlende Vorsteuer nach § 15a Abs. 1 UStG, bewegliche Wirtschaftsgüter",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1558",
+   "name": "Nachträglich abziehbare Vorsteuer nach § 15a Abs. 1 UStG, unbewegliche Wirtschaftsgüter",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1559",
+   "name": "Zurückzuzahlende Vorsteuer nach § 15a Abs. 1 UStG, unbewegliche Wirtschaftsgüter",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1560",
+   "name": "Aufzuteilende Vorsteuer",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "1561",
+   "name": "Aufzuteilende Vorsteuer 7 %",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "1562",
+   "name": "Aufzuteilende Vorsteuer aus innergemeinschaftlichem Erwerb",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "1563",
+   "name": "Aufzuteilende Vorsteuer aus innergemeinschaftlichem Erwerb 19 %",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "1566",
+   "name": "Aufzuteilende Vorsteuer 19 %",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "1567",
+   "name": "Aufzuteilende Vorsteuer nach §§ 13a und 13b UStG",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "1569",
+   "name": "Aufzuteilende Vorsteuer nach §§ 13a und 13b UStG 19 %",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "1570",
+   "name": "Abziehbare Vorsteuer",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "1571",
+   "name": "Abziehbare Vorsteuer 7 %",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "1572",
+   "name": "Abziehbare Vorsteuer aus innergemeinschaftlichem Erwerb",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "1573",
+   "name": "Vorsteuer aus Erwerb als letzter Abnehmer innerhalb eines Dreiecksgeschäfts",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "1574",
+   "name": "Abziehbare Vorsteuer aus innergemeinschaftlichem Erwerb 19 %",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "1576",
+   "name": "Abziehbare Vorsteuer 19 %",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "1577",
+   "name": "Abziehbare Vorsteuer nach § 13b UStG 19 %",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "1578",
+   "name": "Abziehbare Vorsteuer nach § 13b UStG",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "1580",
+   "name": "Gegenkonto Vorsteuer § 4 Abs. 3 EStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1581",
+   "name": "Auflösung Vorsteuer aus Vorjahr § 4 Abs. 3 EStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1582",
+   "name": "Vorsteuer aus Investitionen § 4 Abs. 3 EStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1584",
+   "name": "Abziehbare Vorsteuer aus innergemeinschaftlichem Erwerb von Neufahrzeugen von Lieferanten ohne USt-Id-Nr.",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "1585",
+   "name": "Abziehbare Vorsteuer aus der Auslagerung von Gegenständen aus einem Umsatzsteuerlager",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "1588",
+   "name": "Entstandene Einfuhrumsatzsteuer",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1590",
+   "name": "Durchlaufende Posten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1592",
+   "name": "Fremdgeld",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1593",
+   "name": "Verrechnungskonto erhaltene Anzahlungen bei Buchung über Debitorenkonto",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1594",
+   "name": "Forderungen gegen verbundene Unternehmen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1595",
+   "name": "- Restlaufzeit bis 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1596",
+   "name": "- Restlaufzeit größer 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1597",
+   "name": "Forderungen gegen Unternehmen, mit denen ein Beteiligungsverhältnis besteht",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1598",
+   "name": "- Restlaufzeit bis 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1599",
+   "name": "- Restlaufzeit größer 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1600",
+   "name": "Verbindlichkeiten aus Lieferungen und Leistungen",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "1605",
+   "name": "Verbindlichkeiten aus Lieferungen und Leistungen zum allgemeinen Umsatzsteuersatz (EÜR)",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1606",
+   "name": "Verbindlichkeiten aus Lieferungen und Leistungen zum ermäßigten Umsatzsteuersatz (EÜR)",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1607",
+   "name": "Verbindlichkeiten aus Lieferungen und Leistungen ohne Vorsteuerabzug (EÜR)",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1609",
+   "name": "Gegenkonto 1605-1607 bei Aufteilung der Verbindlichkeiten nach Steuersätzen (EÜR)",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1610",
+   "name": "Verbindlichkeiten aus Lieferungen und Leistungen ohne Kontokorrent",
+   "kennzeichen": "F",
+   "bis": "23"
+  },
+  {
+   "nr": "1624",
+   "name": "Verbindlichkeiten aus Lieferungen und Leistungen für Investitionen für § 4 Abs. 3 EStG",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1625",
+   "name": "Verbindlichkeiten aus Lieferungen und Leistungen ohne Kontokorrent - Restlaufzeit bis 1 Jahr",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1626",
+   "name": "- Restlaufzeit 1 bis 5 Jahre",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1628",
+   "name": "- Restlaufzeit größer 5 Jahre",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1630",
+   "name": "Verbindlichkeiten aus Lieferungen und Leistungen gegenüber verbundenen Unternehmen",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1631",
+   "name": "- Restlaufzeit bis 1 Jahr",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1635",
+   "name": "- Restlaufzeit 1 bis 5 Jahre",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1638",
+   "name": "- Restlaufzeit größer 5 Jahre",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1640",
+   "name": "Verbindlichkeiten aus Lieferungen und Leistungen gegenüber Unternehmen, mit denen ein Beteiligungsverhältnis besteht",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1641",
+   "name": "- Restlaufzeit bis 1 Jahr",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1645",
+   "name": "- Restlaufzeit 1 bis 5 Jahre",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1648",
+   "name": "- Restlaufzeit größer 5 Jahre",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1650",
+   "name": "Verbindlichkeiten aus Lieferungen und Leistungen gegenüber Gesellschaftern",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1651",
+   "name": "- Restlaufzeit bis 1 Jahr",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1655",
+   "name": "- Restlaufzeit 1 bis 5 Jahre",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1658",
+   "name": "- Restlaufzeit größer 5 Jahre",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1659",
+   "name": "Gegenkonto 1625-1658 bei Aufteilung Kreditorenkonto",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1665",
+   "name": "Verbindlichkeiten gegenüber GmbH-Gesellschaftern",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1666",
+   "name": "- Restlaufzeit bis 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1667",
+   "name": "- Restlaufzeit 1 bis 5 Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1668",
+   "name": "- Restlaufzeit größer 5 Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1670",
+   "name": "Verbindlichkeiten gegenüber persönlich haftenden Gesellschaftern",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1671",
+   "name": "- Restlaufzeit bis 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1672",
+   "name": "- Restlaufzeit 1 bis 5 Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1673",
+   "name": "- Restlaufzeit größer 5 Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1675",
+   "name": "Verbindlichkeiten gegenüber Kommanditisten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1676",
+   "name": "- Restlaufzeit bis 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1677",
+   "name": "- Restlaufzeit 1 bis 5 Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1678",
+   "name": "und 1695-1698 bei Aufteilung der Konten 0790-0798",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1691",
+   "name": "Verbindlichkeiten gegenüber Arbeitsgemeinschaften",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1692",
+   "name": "Neutralisierung aufwandswirksamer Sachverhalte für § 4 Abs. 3 EStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1693",
+   "name": "Ergebnisneutrale Sachverhalte für § 4 Abs. 3 EStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1695",
+   "name": "Verbindlichkeiten gegenüber stillen Gesellschaftern",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1696",
+   "name": "- Restlaufzeit bis 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1697",
+   "name": "- Restlaufzeit 1 bis 5 Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1698",
+   "name": "- Restlaufzeit größer 5 Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1700",
+   "name": "Sonstige Verbindlichkeiten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1701",
+   "name": "- Restlaufzeit bis 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1702",
+   "name": "- Restlaufzeit 1 bis 5 Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1703",
+   "name": "- Restlaufzeit größer 5 Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1704",
+   "name": "Sonstige Verbindlichkeiten nach § 11 Abs. 2 Satz 2 EStG für § 4 Abs. 3 EStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1705",
+   "name": "Darlehen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1706",
+   "name": "- Restlaufzeit bis 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1707",
+   "name": "- Restlaufzeit 1 bis 5 Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1708",
+   "name": "- Restlaufzeit größer 5 Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1709",
+   "name": "Gewinnverfügungskonto stille Gesellschafter - sonstige Verbindlichkeiten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1710",
+   "name": "Erhaltene Anzahlungen auf Bestellungen (Verbindlichkeiten)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1711",
+   "name": "Erhaltene, versteuerte Anzahlungen 7 % USt (Verbindlichkeiten)",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "1712",
+   "name": "Erhaltene, versteuerte Anzahlungen 5 % USt (Verbindlichkeiten)",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "1714",
+   "name": "Erhaltene, versteuerte Anzahlungen 0 % USt (Verbindlichkeiten)",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "1715",
+   "name": "Erhaltene Anzahlungen - Nachsteuer",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1717",
+   "name": "Erhaltene, versteuerte Anzahlungen 16 % USt (Verbindlichkeiten)",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "1718",
+   "name": "Erhaltene, versteuerte Anzahlungen 19 % USt (Verbindlichkeiten)",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "1719",
+   "name": "Erhaltene Anzahlungen - Restlaufzeit bis 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1720",
+   "name": "- Restlaufzeit 1 bis 5 Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1721",
+   "name": "- Restlaufzeit größer 5 Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1722",
+   "name": "Erhaltene Anzahlungen auf Bestellungen (von Vorräten offen abgesetzt)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1725",
+   "name": "Umsatzsteuer in Folgeperiode fällig (§§ 13 Abs. 1 Nr. 6 und 13b Abs. 2 UStG)",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "1728",
+   "name": "Umsatzsteuer aus im anderen EU- Land steuerpflichtigen elektronischen Dienstleistungen",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "1729",
+   "name": "Steuerzahlungen aus im anderen EU-Land steuerpflichtigen Leistungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1730",
+   "name": "Kreditkartenabrechnung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1731",
+   "name": "Agenturwarenabrechnung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1732",
+   "name": "Erhaltene Kautionen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1733",
+   "name": "- Restlaufzeit bis 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1734",
+   "name": "- Restlaufzeit 1 bis 5 Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1735",
+   "name": "- Restlaufzeit größer 5 Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1736",
+   "name": "Verbindlichkeiten aus Steuern und Abgaben",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1737",
+   "name": "- Restlaufzeit bis 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1738",
+   "name": "- Restlaufzeit 1 bis 5 Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1739",
+   "name": "- Restlaufzeit größer 5 Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1740",
+   "name": "Verbindlichkeiten aus Lohn und Gehalt",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1741",
+   "name": "Verbindlichkeiten aus Lohn- und Kirchensteuer",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1742",
+   "name": "Verbindlichkeiten im Rahmen der sozialen Sicherheit",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1743",
+   "name": "- Restlaufzeit bis 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1744",
+   "name": "- Restlaufzeit 1 bis 5 Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1745",
+   "name": "- Restlaufzeit größer 5 Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1746",
+   "name": "Verbindlichkeiten aus Einbehaltungen (KapESt und SolZ, KiSt auf Kap- ESt) für offene Ausschüttungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1747",
+   "name": "Verbindlichkeiten für Verbrauchsteuern",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1748",
+   "name": "Verbindlichkeiten für Einbehaltungen von Arbeitnehmern",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1749",
+   "name": "Verbindlichkeiten an das Finanzamt aus abzuführendem Bauabzugsbetrag",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1750",
+   "name": "Verbindlichkeiten aus Vermögensbildung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1751",
+   "name": "- Restlaufzeit bis 1 Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1752",
+   "name": "- Restlaufzeit 1 bis 5 Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1753",
+   "name": "- Restlaufzeit größer 5 Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1754",
+   "name": "Steuerzahlungen an andere Länder",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1755",
+   "name": "Lohn- und Gehaltsverrechnungskonto",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1756",
+   "name": "Lohn- und Gehaltsverrechnung nach § 11 Abs. 2 Satz 2 EStG für § 4 Abs. 3 EStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1757",
+   "name": "Verbindlichkeiten gegenüber SB Gesellschaft/Gesamthand",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1758",
+   "name": "Sonstige Verbindlichkeiten aus genossenschaftlicher Rückvergütung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1759",
+   "name": "Voraussichtliche Beitragsschuld gegenüber den Sozialversicherungsträgern",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1760",
+   "name": "Umsatzsteuer nicht fällig",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "1761",
+   "name": "Umsatzsteuer nicht fällig 7 %",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "1762",
+   "name": "Umsatzsteuer nicht fällig aus im Inland steuerpflichtigen EU-Lieferungen",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "1764",
+   "name": "Umsatzsteuer nicht fällig aus im Inland steuerpflichtigen EU-Lieferungen 19 %",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "1766",
+   "name": "Umsatzsteuer nicht fällig 19 %",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "1767",
+   "name": "Umsatzsteuer aus im anderen EU- Land steuerpflichtigen Lieferungen",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "1768",
+   "name": "Umsatzsteuer aus im anderen EU- Land steuerpflichtigen sonstigen Leistungen/Werklieferungen",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "1769",
+   "name": "Umsatzsteuer aus der Auslagerung von Gegenständen aus einem Umsatzsteuerlager",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "1770",
+   "name": "Umsatzsteuer",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "1771",
+   "name": "Umsatzsteuer 7 %",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "1772",
+   "name": "Umsatzsteuer aus innergemeinschaftlichem Erwerb",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "1774",
+   "name": "Umsatzsteuer aus innergemeinschaftlichem Erwerb 19 %",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "1776",
+   "name": "Umsatzsteuer 19 %",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "1777",
+   "name": "Umsatzsteuer aus im Inland steuerpflichtigen EU-Lieferungen",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "1778",
+   "name": "Umsatzsteuer aus im Inland steuerpflichtigen EU-Lieferungen 19 %",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "1779",
+   "name": "Umsatzsteuer aus innergemeinschaftlichem Erwerb ohne Vorsteuerabzug",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "1780",
+   "name": "Umsatzsteuer-Vorauszahlungen",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1781",
+   "name": "Umsatzsteuer-Vorauszahlungen 1/11",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1782",
+   "name": "Nachsteuer, UStVA Kz. 65",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1783",
+   "name": "In Rechnung unrichtig oder unberechtigt ausgewiesene Steuerbeträge, UStVA Kz. 69",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1784",
+   "name": "Umsatzsteuer aus innergemeinschaftlichem Erwerb von Neufahrzeugen von Lieferanten ohne Umsatzsteuer-Identifikationsnummer",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "1785",
+   "name": "Umsatzsteuer nach § 13b UStG",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "1787",
+   "name": "Umsatzsteuer nach § 13b UStG 19 %",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "1789",
+   "name": "Umsatzsteuer laufendes Jahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1790",
+   "name": "Umsatzsteuerverbindlichkeiten Vorjahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1791",
+   "name": "Umsatzsteuerverbindlichkeiten frühere Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1792",
+   "name": "Sonstige Verrechnungskonten (Interimskonten)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1793",
+   "name": "Verrechnungskonto geleistete Anzahlungen bei Buchung über Kreditorenkonto",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1794",
+   "name": "Umsatzsteuer aus Erwerb als letzter Abnehmer innerhalb eines Dreiecksgeschäfts",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "1795",
+   "name": "Verbindlichkeiten im Rahmen der sozialen Sicherheit für § 4 Abs. 3 EStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1796",
+   "name": "Ausgegebene Geschenkgutscheine",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1797",
+   "name": "Verbindlichkeiten aus Umsatzsteuer-Vorauszahlungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1798",
+   "name": "Umsatzsteuer aus im Inland steuerpflichtigen EU-Lieferungen, nur OSS",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "1800",
+   "name": "Privatentnahmen allgemein",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1801",
+   "name": "Privatentnahmen allgemein (nur Einzelunternehmen)",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1810",
+   "name": "Privatsteuern",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1811",
+   "name": "Privatsteuern (nur Einzelunternehmen)",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1820",
+   "name": "Sonderausgaben beschränkt abzugsfähig",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1821",
+   "name": "Sonderausgaben beschränkt abzugsfähig (nur Einzelunternehmen)",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1830",
+   "name": "Sonderausgaben unbeschränkt abzugsfähig",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1831",
+   "name": "Sonderausgaben unbeschränkt abzugsfähig (nur Einzelunternehmen)",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1840",
+   "name": "Zuwendungen, Spenden",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1841",
+   "name": "Zuwendungen, Spenden (nur Einzelunternehmen)",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1850",
+   "name": "Außergewöhnliche Belastungen",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1851",
+   "name": "Außergewöhnliche Belastungen (nur Einzelunternehmen)",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1860",
+   "name": "Grundstücksaufwand",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1861",
+   "name": "Grundstücksaufwand (nur Einzelunternehmen)",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1869",
+   "name": "Grundstücksaufwand (Umsatzsteuerschlüssel möglich, nur Einzelunternehmen)2",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1870",
+   "name": "Grundstücksertrag",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1871",
+   "name": "Grundstücksertrag (nur Einzelunternehmen)",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1879",
+   "name": "Grundstücksertrag (Umsatzsteuerschlüssel möglich, nur Einzelunternehmen)2",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "1880",
+   "name": "Unentgeltliche Wertabgaben",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1881",
+   "name": "Unentgeltliche Wertabgaben (nur Einzelunternehmen)",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1890",
+   "name": "Privateinlagen",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1891",
+   "name": "Privateinlagen (nur Einzelunternehmen)",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1900",
+   "name": "Auszahlungen allgemein (Teilhafter), Fremdkapital",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1910",
+   "name": "Privatsteuern (Teilhafter), Fremdkapital",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1920",
+   "name": "Sonderausgaben beschränkt abzugsfähig (Teilhafter), Fremdkapital",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1930",
+   "name": "Sonderausgaben unbeschränkt abzugsfähig (Teilhafter), Fremdkapital",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1940",
+   "name": "Zuwendungen, Spenden (Teilhafter), Fremdkapital",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1950",
+   "name": "Außergewöhnliche Belastungen (Teilhafter), Fremdkapital",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1960",
+   "name": "Grundstücksaufwand (Teilhafter), Fremdkapital",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1970",
+   "name": "Grundstücksertrag (Teilhafter), Fremdkapital",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1980",
+   "name": "Unentgeltliche Wertabgaben (Teilhafter), Fremdkapital",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "1990",
+   "name": "Einzahlungen (Teilhafter), Fremdkapital",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "2004",
+   "name": "Verluste durch Verschmelzung und Umwandlung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2007",
+   "name": "Aufwendungen für Restrukturierungs- und Sanierungsmaßnahmen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2020",
+   "name": "Periodenfremde Aufwendungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2100",
+   "name": "Zinsen und ähnliche Aufwendun-",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2102",
+   "name": "Steuerlich nicht abzugsfähige andere Nebenleistungen zu Steuern § 4 Abs. 5b EStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2103",
+   "name": "Steuerlich abzugsfähige andere Nebenleistungen zu Steuern",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2104",
+   "name": "Steuerlich nicht abzugsfähige andere Nebenleistungen zu Steuern",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2105",
+   "name": "Zinsaufwendungen § 233a AO nicht abzugsfähig",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2107",
+   "name": "Zinsaufwendungen § 233a AO abzugsfähig",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2108",
+   "name": "Zinsaufwendungen §§ 234 bis 237 AO nicht abzugsfähig",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2109",
+   "name": "Zinsaufwendungen an verbundene Unternehmen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2110",
+   "name": "Zinsaufwendungen für kurzfristige Verbindlichkeiten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2111",
+   "name": "Zinsaufwendungen §§ 234 bis 237 AO abzugsfähig",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2113",
+   "name": "Nicht abzugsfähige Schuldzinsen nach § 4 Abs. 4a EStG (Hinzurechnungsbetrag)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2114",
+   "name": "Zinsen für Gesellschafterdarlehen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2115",
+   "name": "Zinsen und ähnliche Aufwendungen §§ 3 Nr. 40 und 3c EStG bzw. § 8b Abs. 1 und 4 KStG1",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2116",
+   "name": "Zinsen und ähnliche Aufwendungen an verbundene Unternehmen §§ 3 Nr. 40 und 3c EStG bzw. § 8b Abs. 1 KStG1",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2117",
+   "name": "Zinsen an Gesellschafter mit einer Beteiligung von mehr als 25 % bzw. diesen nahe stehende Personen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2118",
+   "name": "Zinsen auf Kontokorrentkonten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2119",
+   "name": "Zinsaufwendungen für kurzfristige Verbindlichkeiten an verbundene Unternehmen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2120",
+   "name": "Zinsaufwendungen für langfristige Verbindlichkeiten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2123",
+   "name": "Abschreibungen auf ein Agio oder Disagio/Damnum zur Finanzierung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2124",
+   "name": "Abschreibungen auf ein Agio oder Disagio/Damnum zur Finanzierung des Anlagevermögens",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2125",
+   "name": "Zinsaufwendungen für Gebäude, die zum Betriebsvermögen gehören",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2126",
+   "name": "Zinsen zur Finanzierung des Anlagevermögens",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2127",
+   "name": "Renten und dauernde Lasten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2128",
+   "name": "Zinsaufwendungen für Kapitalüberlassung durch Mitunternehmer § 15 EStG (mit Sonderbetriebseinnahme korrespondierend)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2129",
+   "name": "Zinsaufwendungen für langfristige Verbindlichkeiten an verbundene Unternehmen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2140",
+   "name": "Zinsähnliche Aufwendungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2141",
+   "name": "Kreditprovisionen und Verwaltungskostenbeiträge",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2142",
+   "name": "Zinsanteil der Zuführungen zu Pensionsrückstellungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2143",
+   "name": "Zinsaufwendungen aus der Abzinsung von auf Rentenverpflichtungen beruhenden Verbindlichkeiten, für die eine Gegenleistung nicht mehr zu erwarten ist",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2144",
+   "name": "Zinsaufwendungen aus der Abzinsung von Rückstellungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2145",
+   "name": "Zinsaufwendungen aus der Abzinsung von Pensionsrückstellungen und ähnlichen/vergleichbaren Verpflichtungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2146",
+   "name": "Zinsaufwendungen aus der Abzinsung von Pensionsrückstellungen und ähnlichen/vergleichbaren Verpflichtungen zur Verrechnung nach § 246 Abs. 2 HGB",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2147",
+   "name": "Aufwendungen aus Vermögensgegenständen zur Verrechnung nach § 246 Abs. 2 HGB",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2148",
+   "name": "Steuerlich nicht abzugsfähige Zinsaufwendungen aus der Abzinsung von Rückstellungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2149",
+   "name": "Zinsähnliche Aufwendungen an verbundene Unternehmen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2150",
+   "name": "Aufwendungen aus der Währungsumrechnung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2151",
+   "name": "Aufwendungen aus der Währungsumrechnung (nicht § 256a HGB)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2166",
+   "name": "Aufwendungen aus Bewertung Finanzmittelfonds",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2170",
+   "name": "Nicht abziehbare Vorsteuer",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2171",
+   "name": "Nicht abziehbare Vorsteuer 7 %",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2176",
+   "name": "Nicht abziehbare Vorsteuer 19 %",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2200",
+   "name": "Körperschaftsteuer",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2203",
+   "name": "Körperschaftsteuer für Vorjahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2204",
+   "name": "Körperschaftsteuererstattungen für Vorjahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2208",
+   "name": "Solidaritätszuschlag",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2209",
+   "name": "Solidaritätszuschlag für Vorjahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2210",
+   "name": "Solidaritätszuschlagerstattungen für Vorjahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2213",
+   "name": "Kapitalertragsteuer 25 %",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2216",
+   "name": "Anrechenbarer Solidaritätszuschlag auf Kapitalertragsteuer 25 %",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2218",
+   "name": "Ausländische Steuer auf im Inland steuerfreie DBA-Einkünfte",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2219",
+   "name": "Anrechnung/Abzug ausländische Quellensteuer",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2250",
+   "name": "Aufwendungen aus der Zuführung und Auflösung von latenten Steuern",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2255",
+   "name": "Erträge aus der Zuführung und Auflösung von latenten Steuern",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2260",
+   "name": "Aufwendungen aus der Zuführung zu Steuerrückstellungen für Steuerstundung (BStBK)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2265",
+   "name": "Erträge aus der Auflösung von Steuerrückstellungen für Steuerstundung (BStBK)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2281",
+   "name": "Gewerbesteuernachzahlungen und Gewerbesteuererstattungen für Vorjahre nach § 4 Abs. 5b EStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2283",
+   "name": "Erträge aus der Auflösung von Gewerbesteuerrückstellungen nach § 4 Abs. 5b EStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2285",
+   "name": "Steuernachzahlungen Vorjahre für sonstige Steuern",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2287",
+   "name": "Steuererstattungen Vorjahre für sonstige Steuern",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2289",
+   "name": "Erträge aus der Auflösung von Rückstellungen für sonstige Steuern",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2300",
+   "name": "Sonstige Aufwendungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2308",
+   "name": "Sonstige nicht abziehbare Aufwendungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2310",
+   "name": "Anlagenabgänge Sachanlagen (Restbuchwert bei Buchverlust)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2311",
+   "name": "Anlagenabgänge immaterielle Vermögensgegenstände (Restbuchwert bei Buchverlust)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2312",
+   "name": "Anlagenabgänge Finanzanlagen (Restbuchwert bei Buchverlust)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2313",
+   "name": "Anlagenabgänge Finanzanlagen § 3 Nr. 40 EStG bzw. § 8b Abs. 2 KStG i. V m. § 8b Abs. 3 S. 3 KStG (Restbuchwert bei Buchverlust)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2315",
+   "name": "Anlagenabgänge Sachanlagen (Restbuchwert bei Buchgewinn)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2316",
+   "name": "Anlagenabgänge immaterielle Vermögensgegenstände (Restbuchwert bei Buchgewinn)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2317",
+   "name": "Anlagenabgänge Finanzanlagen (Restbuchwert bei Buchgewinn)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2318",
+   "name": "Anlagenabgänge Finanzanlagen § 3 Nr. 40 EStG bzw. § 8b Abs. 2 KStG (Restbuchwert bei Buchgewinn)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2324",
+   "name": "Abgänge Wertpapiere des Umlaufvermögens § 8b Abs. 2 KStG i. V. m. § 8b Abs. 3 S. 3 KStG (Buchwert bei Buchverlust)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2325",
+   "name": "Verluste aus dem Abgang von Gegenständen des Umlaufvermögens (außer Vorräte)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2326",
+   "name": "Verluste aus dem Abgang von Gegenständen des Umlaufvermögens (außer Vorräte) § 3 Nr. 40 EStG bzw. § 8b Abs. 2 KStG i. V. m. § 8b Abs. 3 S. 3 KStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2327",
+   "name": "Abgang von Wirtschaftsgütern des Umlaufvermögens nach § 4 Abs. 3 Satz 4 EStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2328",
+   "name": "Abgang von Wirtschaftsgütern des Umlaufvermögens § 3 Nr. 40 EStG bzw. § 8b Abs. 2 KStG i. V. m. § 8b Abs. 3 S. 3 KStG nach § 4 Abs. 3 S. 4 EStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2339",
+   "name": "Einstellungen in die steuerliche SB Rücklage nach § 4g EStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2342",
+   "name": "Einstellungen in die steuerliche Rücklage nach § 6b Abs. 3 EStG",
+   "kennzeichen": "SB"
+  },
+  {
+   "nr": "2343",
+   "name": "Einstellungen in die steuerliche SB Rücklage nach § 6b Abs. 10 EStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2344",
+   "name": "Einstellungen in die Rücklage für Ersatzbeschaffung nach R 6.6 EStR",
+   "kennzeichen": "SB"
+  },
+  {
+   "nr": "2345",
+   "name": "Einstellungen in sonstige steuerli- SB che Rücklagen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2347",
+   "name": "Aufwendungen aus dem Erwerb eigener Anteile",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2350",
+   "name": "Sonstige Grundstücksaufwendungen (neutral)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2375",
+   "name": "Grundsteuer",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2380",
+   "name": "Zuwendungen, Spenden, steuerlich nicht abziehbar",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2381",
+   "name": "Zuwendungen, Spenden für wissenschaftliche und kulturelle Zwecke",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2382",
+   "name": "Zuwendungen, Spenden für mildtätige Zwecke",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2383",
+   "name": "Zuwendungen, Spenden für kirchliche, religiöse und gemeinnützige Zwecke",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2384",
+   "name": "Zuwendungen, Spenden an politische Parteien",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2385",
+   "name": "Nicht abziehbare Hälfte der Aufsichtsratsvergütungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2386",
+   "name": "Abziehbare Aufsichtsratsvergütungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2387",
+   "name": "Zuwendungen, Spenden in das zu erhaltende Vermögen (Vermögensstock) einer Stiftung für gemeinnützige Zwecke",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2389",
+   "name": "Zuwendungen, Spenden in das zu erhaltende Vermögen (Vermögensstock) einer Stiftung für kirchliche, religiöse und gemeinnützige Zwecke",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2390",
+   "name": "Zuwendungen, Spenden an Stiftungen in das zu erhaltende Vermögen (Vermögensstock) für wissenschaftliche, mildtätige, kulturelle Zwecke",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2400",
+   "name": "Forderungsverluste (übliche Höhe)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2401",
+   "name": "Forderungsverluste 7 % USt (übliche Höhe)",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "2402",
+   "name": "Forderungsverluste aus steuerfreien EU-Lieferungen (übliche Höhe)",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "2403",
+   "name": "Forderungsverluste aus im Inland steuerpflichtigen EU-Lieferungen 7 % USt (übliche Höhe)",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "2406",
+   "name": "Forderungsverluste 19 % USt (übliche Höhe)",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "2408",
+   "name": "Forderungsverluste aus im Inland steuerpflichtigen EU-Lieferungen 19 % USt (übliche Höhe)",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "2430",
+   "name": "Forderungsverluste (soweit unüblich hoch)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2431",
+   "name": "Forderungsverluste 7 % USt (soweit unüblich hoch)",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "2436",
+   "name": "Forderungsverluste 19 % USt (soweit unüblich hoch)",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "2440",
+   "name": "Abschreibungen auf Forderungen gegenüber Kapitalgesellschaften, an denen eine Beteiligung besteht (soweit unüblich hoch), § 3c EStG bzw. § 8b Abs. 3 KStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2441",
+   "name": "Abschreibungen auf Forderungen gegenüber Gesellschaftern und nahestehende Personen (soweit unüblich hoch), § 3 Nr. 40 EStG bzw. § 8b Abs. 3 KStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2450",
+   "name": "Einstellungen in die Pauschalwertberichtigung auf Forderungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2451",
+   "name": "Einstellungen in die Einzelwertberichtigung auf Forderungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2480",
+   "name": "Einstellungen in die Rücklage für Anteile an einem herrschenden oder mehrheitlich beteiligten Unternehmen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2481",
+   "name": "2660-2669 M 2707-2712",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2485",
+   "name": "Einstellungen in andere Ergebnisrücklagen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2488",
+   "name": "Änderung steuerlicher Ausgleichs- SB posten (Körperschaften)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2489",
+   "name": "Änderung steuerlicher Ausgleichs- SB posten (Personengesellschaften, Einzelunternehmen)",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "2490",
+   "name": "Aufwendungen aus Verlustübernahme",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2491",
+   "name": "Abgeführte Gewinnanteile (Soll) / ausgeglichene Verlustanteile (Haben) bei atypisch stiller Beteiligung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2492",
+   "name": "Abgeführte Gewinne auf Grund einer Gewinngemeinschaft",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2493",
+   "name": "Abgeführte Gewinnanteile (Soll) / ausgeglichene Verlustanteile (Haben) bei typisch stiller Beteiligung § 8 GewStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2494",
+   "name": "Abgeführte Gewinne auf Grund eines Gewinn- oder Teilgewinnabführungsvertrags",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2495",
+   "name": "Einstellungen in die Kapitalrücklage nach den Vorschriften über die vereinfachte Kapitalherabsetzung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2496",
+   "name": "Einstellungen in die gesetzliche Rücklage",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2497",
+   "name": "Einstellungen in satzungsmäßige Rücklagen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2498",
+   "name": "Einstellungen in den Ausgleichsposten für aktivierte eigene Anteile",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "2499",
+   "name": "Einstellungen in andere Gewinnrücklagen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2504",
+   "name": "Erträge durch Verschmelzung und Umwandlung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2510",
+   "name": "Sonstige betriebsfremde Erträge",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2520",
+   "name": "Periodenfremde Erträge",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2600",
+   "name": "Erträge aus Beteiligungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2603",
+   "name": "Erträge aus Beteiligungen an Personengesellschaften (verbundene Unternehmen), § 9 GewStG bzw. § 18 EStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2613",
+   "name": "Erträge aus typisch stillen Beteiligungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2614",
+   "name": "Erträge aus atypisch stillen Beteiligungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2615",
+   "name": "Erträge aus Anteilen an Kapitalgesellschaften (Beteiligung) § 3 Nr. 40 EStG bzw. § 8b Abs. 1 KStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2616",
+   "name": "Erträge aus Anteilen an Kapitalgesellschaften (verbundene Unternehmen) § 3 Nr. 40 EStG bzw. § 8b Abs. 1 KStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2618",
+   "name": "Gewinnanteile aus gewerblichen und selbständigen Mitunternehmerschaften, § 9 GewStG bzw. § 18 EStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2619",
+   "name": "Erträge aus Beteiligungen an verbundenen Unternehmen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2620",
+   "name": "Erträge aus anderen Wertpapieren und Ausleihungen des Finanzanlagevermögens",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2621",
+   "name": "Erträge aus Ausleihungen des Finanzanlagevermögens",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2622",
+   "name": "Erträge aus Ausleihungen des Finanzanlagevermögens an verbundenen Unternehmen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2623",
+   "name": "Erträge aus Anteilen an Personengesellschaften (Finanzanlagevermögen)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2625",
+   "name": "Erträge aus Anteilen an Kapitalgesellschaften (Finanzanlagevermögen) § 3 Nr. 40 EStG bzw. § 8b Abs. 1 und 4 KStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2626",
+   "name": "Erträge aus Anteilen an Kapitalgesellschaften (verbundene Unternehmen) § 3 Nr. 40 EStG bzw. § 8b Abs. 1 KStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2640",
+   "name": "Zins- und Dividendenerträge",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2641",
+   "name": "Erhaltene Ausgleichszahlungen (als außenstehender Aktionär)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2646",
+   "name": "Erträge aus Anteilen an Personengesellschaften (verbundene Unternehmen)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2647",
+   "name": "Erträge aus anderen Wertpapieren des Finanzanlagevermögens an Kapitalgesellschaften (verbundene Unternehmen)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2648",
+   "name": "Erträge aus anderen Wertpapieren des Finanzanlagevermögens an Personengesellschaften (verbundene Unternehmen)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2649",
+   "name": "Erträge aus anderen Wertpapieren und Ausleihungen des Finanzanlagevermögens aus verbundenen Unternehmen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2650",
+   "name": "Sonstige Zinsen und ähnliche Erträge",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2653",
+   "name": "Zinserträge § 233a AO und § 4 Abs. 5b EStG, steuerfrei",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2654",
+   "name": "Erträge aus anderen Wertpapieren und Ausleihungen des Umlaufvermögens",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2655",
+   "name": "Erträge aus Anteilen an Kapitalgesellschaften (Umlaufvermögen) § 3 Nr. 40 EStG bzw. § 8b Abs. 1 und 4 KStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2656",
+   "name": "Erträge aus Anteilen an Kapitalgesellschaften (verbundene Unternehmen) § 3 Nr. 40 EStG bzw. § 8b Abs. 1 KStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2657",
+   "name": "Zinserträge § 233a AO, steuerpflichtig",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2658",
+   "name": "Zinserträge § 233a AO, steuerfrei (Anlage GK KSt)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2659",
+   "name": "Sonstige Zinsen und ähnliche Erträge aus verbundenen Unternehmen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2660",
+   "name": "Erträge aus der Währungsumrechnung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2661",
+   "name": "Erträge aus der Währungsumrechnung (nicht § 256a HGB)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2666",
+   "name": "Erträge aus Bewertung Finanzmittelfonds",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2680",
+   "name": "Zinsähnliche Erträge",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2682",
+   "name": "Steuerfreie Zinserträge aus der Abzinsung von Rückstellungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2683",
+   "name": "Zinserträge aus der Abzinsung von auf Rentenverpflichtungen beruhenden Verbindlichkeiten, für die eine Gegenleistung nicht mehr zu erwarten ist",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2684",
+   "name": "Zinserträge aus der Abzinsung von Rückstellungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2685",
+   "name": "Zinserträge aus der Abzinsung von Pensionsrückstellungen und ähnlichen/vergleichbaren Verpflichtungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2686",
+   "name": "Zinserträge aus der Abzinsung von Pensionsrückstellungen und ähnlichen/vergleichbaren Verpflichtungen zur Verrechnung nach § 246 Abs. 2 HGB",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2687",
+   "name": "Erträge aus Vermögensgegenständen zur Verrechnung nach § 246 Abs. 2 HGB",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2689",
+   "name": "Zinsähnliche Erträge aus verbundenen Unternehmen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2700",
+   "name": "Andere betriebs- und/oder periodenfremde (neutrale) sonstige Erträge",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2709",
+   "name": "Sonstige Erträge unregelmäßig",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2710",
+   "name": "Erträge aus Zuschreibungen des Sachanlagevermögens",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2711",
+   "name": "Erträge aus Zuschreibungen des immateriellen Anlagevermögens",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2712",
+   "name": "Erträge aus Zuschreibungen des Finanzanlagevermögens",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2713",
+   "name": "Erträge aus Zuschreibungen des Finanzanlagevermögens § 3 Nr. 40 EStG bzw. § 8b Abs. 3 S. 9 KStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2714",
+   "name": "Erträge aus Zuschreibungen § 3 Nr. 40 EStG bzw. § 8b Abs. 2 KStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2715",
+   "name": "M 2720-2722",
+   "kennzeichen": "M"
+  },
+  {
+   "nr": "2716",
+   "name": "Erträge aus Zuschreibungen des Umlaufvermögens § 3 Nr. 40 EStG bzw. § 8b Abs. 3 S. 9 KStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2724",
+   "name": "Abgänge Wertpapiere des Umlaufvermögens § 8b Abs. 2 KStG (Buchwert bei Buchgewinn)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2725",
+   "name": "2727-2729 M 2732-2734",
+   "kennzeichen": "M"
+  },
+  {
+   "nr": "2726",
+   "name": "Erträge aus dem Abgang von Gegenständen des Umlaufvermögens (außer Vorräte) § 3 Nr. 40 EStG bzw. § 8b Abs. 2 KStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2727",
+   "name": "Erträge aus der Auflösung einer steuerlichen Rücklage nach § 6b Abs. 3 EStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2728",
+   "name": "Erträge aus der Auflösung einer steuerlichen Rücklage nach § 6b Abs. 10 EStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2729",
+   "name": "Erträge aus der Auflösung der SB Rücklage für Ersatzbeschaffung, R 6.6 EStR",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2730",
+   "name": "Erträge aus der Herabsetzung der Pauschalwertberichtigung auf Forderungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2731",
+   "name": "Erträge aus der Herabsetzung der Einzelwertberichtigung auf Forderungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2732",
+   "name": "Erträge aus abgeschriebenen Forderungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2735",
+   "name": "Erträge aus der Auflösung von Rückstellungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2736",
+   "name": "2737-2741 M 2750-2752",
+   "kennzeichen": "V"
+  },
+  {
+   "nr": "2737",
+   "name": "Erträge aus der Auflösung einer SB steuerlichen Rücklage nach § 4g EStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2740",
+   "name": "Erträge aus der Auflösung sonstiger steuerlicher Rücklagen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2741",
+   "name": "Erträge aus der Auflösung steuerrechtlicher Sonderabschreibungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2742",
+   "name": "Versicherungsentschädigungen und Schadenersatzleistungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2743",
+   "name": "Investitionszuschüsse (steuerpflichtig)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2744",
+   "name": "Investitionszulagen (steuerfrei)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2745",
+   "name": "Ertrag aus der Kapitalherabsetzung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2746",
+   "name": "Steuerfreie Erträge aus der Auflösung von steuerlichen Rücklagen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2747",
+   "name": "Sonstige steuerfreie Betriebseinnahmen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2749",
+   "name": "Erstattungen Aufwendungsausgleichsgesetz",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2750",
+   "name": "Grundstückserträge",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2751",
+   "name": "Erlöse aus Vermietung und Verpachtung, umsatzsteuerfrei § 4 Nr. 12 UStG",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "2752",
+   "name": "Erlöse aus Vermietung und Verpachtung 19 % USt",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "2760",
+   "name": "Erträge aus der Aktivierung unentgeltlich erworbener Vermögensgegenstände",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2762",
+   "name": "Kostenerstattungen, Rückvergütungen und Gutschriften für frühere Jahre",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2764",
+   "name": "Erträge aus Verwaltungskostenumlage",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2790",
+   "name": "Erträge aus Verlustübernahme",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2792",
+   "name": "Erhaltene Gewinne auf Grund einer Gewinngemeinschaft",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2794",
+   "name": "Erhaltene Gewinne auf Grund eines Gewinn- oder Teilgewinnabführungsvertrags",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2795",
+   "name": "Entnahmen aus der Kapitalrücklage",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2796",
+   "name": "Entnahmen aus der gesetzlichen Rücklage",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2797",
+   "name": "Entnahmen aus satzungsmäßigen Rücklagen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2798",
+   "name": "Entnahmen aus dem Ausgleichsposten für aktivierte eigene Anteile",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "2799",
+   "name": "Entnahmen aus anderen Gewinnrücklagen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2840",
+   "name": "Entnahmen aus der Rücklage für Anteile an einem herrschenden oder mehrheitlich beteiligten Unternehmen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2850",
+   "name": "Entnahmen aus anderen Ergebnisrücklagen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2860",
+   "name": "Gewinnvortrag nach Verwendung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2868",
+   "name": "Verlustvortrag nach Verwendung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2870",
+   "name": "Vorabausschüttung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2890",
+   "name": "Verrechneter kalkulatorischer Unternehmerlohn",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2891",
+   "name": "Verrechnete kalkulatorische Miete und Pacht",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2892",
+   "name": "Verrechnete kalkulatorische Zinsen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2893",
+   "name": "Verrechnete kalkulatorische Abschreibungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2894",
+   "name": "Verrechnete kalkulatorische Wagnisse",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "2895",
+   "name": "Verrechneter kalkulatorischer Lohn für unentgeltliche Mitarbeiter",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "3000",
+   "name": "Einkauf Roh-, Hilfs- und Betriebsstoffe",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "3010",
+   "name": "Einkauf Roh-, Hilfs- und Betriebsstoffe 7 % Vorsteuer",
+   "kennzeichen": "AV",
+   "bis": "19"
+  },
+  {
+   "nr": "3029",
+   "name": "V 3030-3106",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "3030",
+   "name": "Einkauf Roh-, Hilfs- und Betriebsstoffe 19 % Vorsteuer",
+   "kennzeichen": "AV",
+   "bis": "39"
+  },
+  {
+   "nr": "3060",
+   "name": "Einkauf Roh-, Hilfs- und Betriebsstoffe, innergemeinschaftlicher Erwerb 7 % Vorsteuer und 7 % Umsatzsteuer",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "3062",
+   "name": "Einkauf Roh-, Hilfs- und Betriebsstoffe, innergemeinschaftlicher Erwerb 19 % Vorsteuer und 19 % Umsatzsteuer",
+   "kennzeichen": "AV",
+   "bis": "63"
+  },
+  {
+   "nr": "3066",
+   "name": "Einkauf Roh-, Hilfs- und Betriebsstoffe, innergemeinschaftlicher Erwerb ohne Vorsteuer und 7 % Umsatzsteuer",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "3067",
+   "name": "Einkauf Roh-, Hilfs- und Betriebsstoffe, innergemeinschaftlicher Erwerb ohne Vorsteuer und 19 % Umsatzsteuer",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "3070",
+   "name": "Einkauf Roh-, Hilfs- und Betriebsstoffe 5,5 % Vorsteuer",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "3071",
+   "name": "Einkauf Roh-, Hilfs- und Betriebsstoffe 7,8 % Vorsteuer",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "3075",
+   "name": "Einkauf Roh-, Hilfs- und Betriebsstoffe aus einem USt-Lager § 13a UStG 7 % Vorsteuer und 7 % Umsatzsteuer",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "3076",
+   "name": "Einkauf Roh-, Hilfs- und Betriebsstoffe aus einem USt-Lager § 13a UStG 19 % Vorsteuer und 19 % Umsatzsteuer",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "3089",
+   "name": "Erwerb Roh-, Hilfs- und Betriebsstoffe als letzter Abnehmer innerhalb Dreiecksgeschäft 19 % Vorsteuer und 19 % Umsatzsteuer",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "3090",
+   "name": "Energiestoffe (Fertigung)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "3091",
+   "name": "Energiestoffe (Fertigung) 7 % VSt",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "3092",
+   "name": "Energiestoffe (Fertigung) 19 % VSt",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "3100",
+   "name": "Fremdleistungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "3106",
+   "name": "Fremdleistungen 19 % Vorsteuer",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "3109",
+   "name": "V 3110-3348",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "3110",
+   "name": "Bauleistungen eines im Inland ansässigen Unternehmers 7 % Vorsteuer und 7 % Umsatzsteuer",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "3113",
+   "name": "Sonstige Leistungen eines im anderen EU-Land ansässigen Unternehmers 7 % Vorsteuer und 7 % Umsatzsteuer",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "3115",
+   "name": "Leistungen eines im Ausland ansässigen Unternehmers 7 % Vorsteuer und 7 % Umsatzsteuer",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "3120",
+   "name": "Bauleistungen eines im Inland ansässigen Unternehmers 19 % Vorsteuer und 19 % Umsatzsteuer",
+   "kennzeichen": "AV",
+   "bis": "21"
+  },
+  {
+   "nr": "3123",
+   "name": "Sonstige Leistungen eines im anderen EU-Land ansässigen Unternehmers 19 % Vorsteuer und 19 % Umsatzsteuer",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "3125",
+   "name": "Leistungen eines im Ausland ansässigen Unternehmers 19 % Vorsteuer und 19 % Umsatzsteuer",
+   "kennzeichen": "AV",
+   "bis": "26"
+  },
+  {
+   "nr": "3130",
+   "name": "Bauleistungen eines im Inland ansässigen Unternehmers ohne Vorsteuer und 7 % Umsatzsteuer",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "3133",
+   "name": "Sonstige Leistungen eines im anderen EU-Land ansässigen Unternehmers ohne Vorsteuer und 7 % Umsatzsteuer",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "3135",
+   "name": "Leistungen eines im Ausland ansässigen Unternehmers ohne Vorsteuer und 7 % Umsatzsteuer",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "3140",
+   "name": "Bauleistungen eines im Inland ansässigen Unternehmers ohne Vorsteuer und 19 % Umsatzsteuer",
+   "kennzeichen": "AV",
+   "bis": "41"
+  },
+  {
+   "nr": "3143",
+   "name": "Sonstige Leistungen eines im anderen EU-Land ansässigen Unternehmers ohne Vorsteuer und 19 % Umsatzsteuer",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "3145",
+   "name": "Leistungen eines im Ausland ansässigen Unternehmers ohne Vorsteuer und 19 % Umsatzsteuer",
+   "kennzeichen": "AV",
+   "bis": "46"
+  },
+  {
+   "nr": "3150",
+   "name": "Erhaltene Skonti aus Leistungen, für die als Leistungsempfänger die Steuer nach § 13b UStG geschuldet wird",
+   "kennzeichen": "S/AV"
+  },
+  {
+   "nr": "3151",
+   "name": "Erhaltene Skonti aus Leistungen, für die als Leistungsempfänger die Steuer nach § 13b UStG geschuldet wird 19 % Vorsteuer und 19 % Umsatzsteuer",
+   "kennzeichen": "S/AV"
+  },
+  {
+   "nr": "3153",
+   "name": "Erhaltene Skonti aus Leistungen, für die als Leistungsempfänger die Steuer nach § 13b UStG geschuldet wird ohne Vorsteuer aber mit Umsatzsteuer",
+   "kennzeichen": "S/AV"
+  },
+  {
+   "nr": "3154",
+   "name": "Erhaltene Skonti aus Leistungen, für die als Leistungsempfänger die Steuer nach § 13b UStG geschuldet wird ohne Vorsteuer, mit 19 % Umsatzsteuer",
+   "kennzeichen": "S/AV"
+  },
+  {
+   "nr": "3160",
+   "name": "Leistungen nach § 13b UStG mit Vorsteuerabzug",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "3165",
+   "name": "Leistungen nach § 13b UStG ohne Vorsteuerabzug",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "3170",
+   "name": "Fremdleistungen (Miet- und Pachtzinsen bewegliche Wirtschaftsgüter)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "3175",
+   "name": "Fremdleistungen (Miet- und Pachtzinsen unbewegliche Wirtschaftsgüter)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "3180",
+   "name": "Fremdleistungen (Entgelte für Rechte und Lizenzen)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "3185",
+   "name": "Fremdleistungen (Vergütungen für die Überlassung von Wirtschaftsgütern - mit Sonderbetriebseinnahme korrespondierend)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "3200",
+   "name": "Wareneingang",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "3300",
+   "name": "Wareneingang 7 % Vorsteuer",
+   "kennzeichen": "AV",
+   "bis": "09"
+  },
+  {
+   "nr": "3347",
+   "name": "Wareneingang 7 % Vorsteuer",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "3349",
+   "name": "V 3350-3599 V 3700-3949 3950-3999",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "3400",
+   "name": "Wareneingang 19 % Vorsteuer",
+   "kennzeichen": "AV",
+   "bis": "09"
+  },
+  {
+   "nr": "3418",
+   "name": "Wareneingang 19 % Vorsteuer",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "3420",
+   "name": "Innergemeinschaftlicher Erwerb 7 % Vorsteuer und 7 % Umsatzsteuer",
+   "kennzeichen": "AV",
+   "bis": "24"
+  },
+  {
+   "nr": "3425",
+   "name": "Innergemeinschaftlicher Erwerb 19 % Vorsteuer und 19 % Umsatzsteuer",
+   "kennzeichen": "AV",
+   "bis": "29"
+  },
+  {
+   "nr": "3430",
+   "name": "Innergemeinschaftlicher Erwerb ohne Vorsteuer und 7 % Umsatzsteuer",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "3435",
+   "name": "Innergemeinschaftlicher Erwerb ohne Vorsteuer und 19 % Umsatzsteuer",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "3440",
+   "name": "Innergemeinschaftlicher Erwerb von Neufahrzeugen von Lieferanten ohne USt-Id-Nr. 19 % Vorsteuer und 19 % Umsatzsteuer",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "3505",
+   "name": "Wareneingang 5,5 % Vorsteuer",
+   "kennzeichen": "AV",
+   "bis": "09"
+  },
+  {
+   "nr": "3540",
+   "name": "Wareneingang zum Durchschnittssatz nach § 24 UStG 7,8 % Vorsteuer",
+   "kennzeichen": "AV",
+   "bis": "49"
+  },
+  {
+   "nr": "3550",
+   "name": "Steuerfreier innergemeinschaftlicher Erwerb",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "3551",
+   "name": "Wareneingang im Drittland steuerbar",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "3552",
+   "name": "Erwerb 1. Abnehmer innerhalb eines Dreiecksgeschäftes",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "3553",
+   "name": "Erwerb Waren als letzter Abnehmer innerhalb Dreiecksgeschäft 19 % Vorsteuer und 19 % Umsatzsteuer",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "3558",
+   "name": "Wareneingang im anderen EU-Land steuerbar",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "3559",
+   "name": "Steuerfreie Einfuhren",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "3560",
+   "name": "Waren aus einem Umsatzsteuerlager, § 13a UStG 7 % Vorsteuer und 7 % Umsatzsteuer",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "3565",
+   "name": "Waren aus einem Umsatzsteuerlager, § 13a UStG 19 % Vorsteuer und 19 % Umsatzsteuer",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "3600",
+   "name": "Nicht abziehbare Vorsteuer",
+   "kennzeichen": "",
+   "bis": "09"
+  },
+  {
+   "nr": "3610",
+   "name": "Nicht abziehbare Vorsteuer 7 %",
+   "kennzeichen": "",
+   "bis": "19"
+  },
+  {
+   "nr": "3660",
+   "name": "Nicht abziehbare Vorsteuer 19 %",
+   "kennzeichen": "",
+   "bis": "69"
+  },
+  {
+   "nr": "3700",
+   "name": "Nachlässe",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "3701",
+   "name": "Nachlässe aus Einkauf Roh-, Hilfs- und Betriebsstoffe",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "3710",
+   "name": "Nachlässe 7 % Vorsteuer",
+   "kennzeichen": "AV",
+   "bis": "11"
+  },
+  {
+   "nr": "3714",
+   "name": "Nachlässe aus Einkauf Roh-, Hilfs- und Betriebsstoffe 7 % Vorsteuer",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "3715",
+   "name": "Nachlässe aus Einkauf Roh-, Hilfs- und Betriebsstoffe 19 % Vorsteuer",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "3717",
+   "name": "Nachlässe aus Einkauf Roh-, Hilfs- und Betriebsstoffe, innergemeinschaftlicher Erwerb 7 % Vorsteuer und 7 % Umsatzsteuer",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "3718",
+   "name": "Nachlässe aus Einkauf Roh-, Hilfs- und Betriebsstoffe, innergemeinschaftlicher Erwerb 19 % Vorsteuer und 19 % Umsatzsteuer",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "3720",
+   "name": "Nachlässe 19 % Vorsteuer",
+   "kennzeichen": "AV",
+   "bis": "21"
+  },
+  {
+   "nr": "3724",
+   "name": "Nachlässe aus innergemeinschaftlichem Erwerb 7 % Vorsteuer und 7 % Umsatzsteuer",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "3725",
+   "name": "Nachlässe aus innergemeinschaftlichem Erwerb 19 % Vorsteuer und 19 % Umsatzsteuer",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "3730",
+   "name": "Erhaltene Skonti",
+   "kennzeichen": "S/AV"
+  },
+  {
+   "nr": "3731",
+   "name": "Erhaltene Skonti 7 % Vorsteuer",
+   "kennzeichen": "S/AV"
+  },
+  {
+   "nr": "3733",
+   "name": "Erhaltene Skonti aus Einkauf Roh-, Hilfs- und Betriebsstoffe",
+   "kennzeichen": "S/AV"
+  },
+  {
+   "nr": "3734",
+   "name": "Erhaltene Skonti aus Einkauf Roh-, Hilfs- und Betriebsstoffe 7 % Vorsteuer",
+   "kennzeichen": "S/AV"
+  },
+  {
+   "nr": "3736",
+   "name": "Erhaltene Skonti 19 % Vorsteuer",
+   "kennzeichen": "S/AV"
+  },
+  {
+   "nr": "3738",
+   "name": "Erhaltene Skonti aus Einkauf Roh-, Hilfs- und Betriebsstoffe 19 % Vorsteuer",
+   "kennzeichen": "S/AV"
+  },
+  {
+   "nr": "3741",
+   "name": "Erhaltene Skonti aus Einkauf Roh-, Hilfs- und Betriebsstoffe aus steuerpflichtigem innergemeinschaftlichem Erwerb 19 % Vorsteuer und 19 % Umsatzsteuer",
+   "kennzeichen": "S/AV"
+  },
+  {
+   "nr": "3743",
+   "name": "Erhaltene Skonti aus Einkauf Roh-, Hilfs- und Betriebsstoffe aus steuerpflichtigem innergemeinschaftlichem Erwerb 7 % Vorsteuer und 7 % Umsatzsteuer",
+   "kennzeichen": "S/AV"
+  },
+  {
+   "nr": "3744",
+   "name": "Erhaltene Skonti aus Einkauf Roh-, Hilfs- und Betriebsstoffe aus steuerpflichtigem innergemeinschaftlichem Erwerb",
+   "kennzeichen": "S/AV"
+  },
+  {
+   "nr": "3745",
+   "name": "Erhaltene Skonti aus steuerpflichtigem innergemeinschaftlichem Erwerb",
+   "kennzeichen": "S/AV"
+  },
+  {
+   "nr": "3746",
+   "name": "Erhaltene Skonti aus steuerpflichtigem innergemeinschaftlichem Erwerb 7 % Vorsteuer und 7 % Umsatzsteuer",
+   "kennzeichen": "S/AV"
+  },
+  {
+   "nr": "3748",
+   "name": "Erhaltene Skonti aus steuerpflichtigem innergemeinschaftlichem Erwerb 19 % Vorsteuer und 19 % Umsatzsteuer",
+   "kennzeichen": "S/AV"
+  },
+  {
+   "nr": "3750",
+   "name": "Erhaltene Boni 7 % Vorsteuer",
+   "kennzeichen": "AV",
+   "bis": "51"
+  },
+  {
+   "nr": "3753",
+   "name": "Erhaltene Boni aus Einkauf Roh-, Hilfs- und Betriebsstoffe",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "3754",
+   "name": "Erhaltene Boni aus Einkauf Roh-, Hilfs- und Betriebsstoffe 7 % Vorsteuer",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "3755",
+   "name": "Erhaltene Boni aus Einkauf Roh-, Hilfs- und Betriebsstoffe 19 % Vorsteuer",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "3760",
+   "name": "Erhaltene Boni 19 % Vorsteuer",
+   "kennzeichen": "AV",
+   "bis": "61"
+  },
+  {
+   "nr": "3769",
+   "name": "Erhaltene Boni",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "3770",
+   "name": "Erhaltene Rabatte",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "3780",
+   "name": "Erhaltene Rabatte 7 % Vorsteuer",
+   "kennzeichen": "AV",
+   "bis": "81"
+  },
+  {
+   "nr": "3783",
+   "name": "Erhaltene Rabatte aus Einkauf Roh-, Hilfs- und Betriebsstoffe",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "3784",
+   "name": "Erhaltene Rabatte aus Einkauf Roh-, Hilfs- und Betriebsstoffe 7 % Vorsteuer",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "3785",
+   "name": "Erhaltene Rabatte aus Einkauf Roh-, Hilfs- und Betriebsstoffe 19 % Vorsteuer",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "3787",
+   "name": "Erhaltene Skonti aus Einkauf Roh-, Hilfs- und Betriebsstoffe 9,0 % Vorsteuer",
+   "kennzeichen": "S/AV"
+  },
+  {
+   "nr": "3790",
+   "name": "Erhaltene Rabatte 19 % Vorsteuer",
+   "kennzeichen": "AV",
+   "bis": "91"
+  },
+  {
+   "nr": "3792",
+   "name": "Erhaltene Skonti aus Erwerb Roh-, Hilfs- und Betriebsstoffe als letzter Abnehmer innerhalb Dreiecksgeschäft 19 % Vorsteuer und 19 % Umsatzsteuer",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "3793",
+   "name": "Erhaltene Skonti aus Erwerb Waren als letzter Abnehmer innerhalb Dreiecksgeschäft 19 % Vorsteuer und 19 % Umsatzsteuer",
+   "kennzeichen": "AV"
+  },
+  {
+   "nr": "3794",
+   "name": "Erhaltene Skonti 5,5 % Vorsteuer",
+   "kennzeichen": "S/AV"
+  },
+  {
+   "nr": "3795",
+   "name": "Erhaltene Skonti 9,0 % Vorsteuer",
+   "kennzeichen": "S/AV"
+  },
+  {
+   "nr": "3798",
+   "name": "Erhaltene Skonti aus Einkauf Roh-, Hilfs- und Betriebsstoffe 5,5 % Vorsteuer",
+   "kennzeichen": "S/AV"
+  },
+  {
+   "nr": "3800",
+   "name": "Bezugsnebenkosten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "3830",
+   "name": "Leergut",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "3850",
+   "name": "Zölle und Einfuhrabgaben",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "3950",
+   "name": "Bestandsveränderungen Waren",
+   "kennzeichen": "",
+   "bis": "54"
+  },
+  {
+   "nr": "3955",
+   "name": "Bestandsveränderungen Roh-, Hilfs- und Betriebsstoffe",
+   "kennzeichen": "",
+   "bis": "59"
+  },
+  {
+   "nr": "3960",
+   "name": "Bestandsveränderungen Roh-, Hilfs- und Betriebsstoffe sowie bezogene Waren",
+   "kennzeichen": "",
+   "bis": "69"
+  },
+  {
+   "nr": "3970",
+   "name": "Roh-, Hilfs- und Betriebsstoffe (Bestand)",
+   "kennzeichen": "",
+   "bis": "79"
+  },
+  {
+   "nr": "3980",
+   "name": "Waren (Bestand)",
+   "kennzeichen": "",
+   "bis": "89"
+  },
+  {
+   "nr": "3990",
+   "name": "Verrechnete Stoffkosten (Gegenkonto zu 4000-",
+   "kennzeichen": "",
+   "bis": "99"
+  },
+  {
+   "nr": "4000",
+   "name": "Material- und Stoffverbrauch",
+   "kennzeichen": "",
+   "bis": "99"
+  },
+  {
+   "nr": "4100",
+   "name": "Löhne und Gehälter",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4110",
+   "name": "Löhne",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4120",
+   "name": "Gehälter",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4124",
+   "name": "Geschäftsführergehälter der GmbH-Gesellschafter",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4125",
+   "name": "Ehegattengehalt",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4126",
+   "name": "Tantiemen Gesellschafter- Geschäftsführer",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4127",
+   "name": "Geschäftsführergehälter",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4128",
+   "name": "Vergütungen an angestellte Mitunternehmer § 15 EStG (mit Sonderbetriebseinnahme korrespondierend)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4129",
+   "name": "Tantiemen Arbeitnehmer",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4130",
+   "name": "Gesetzliche soziale Aufwendungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4137",
+   "name": "Gesetzliche soziale Aufwendungen für Mitunternehmer § 15 EStG (mit Sonderbetriebseinnahme korrespondierend)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4138",
+   "name": "Beiträge zur Berufsgenossenschaft",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4139",
+   "name": "Ausgleichsabgabe nach dem Schwerbehindertengesetz",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4140",
+   "name": "Freiwillige soziale Aufwendungen, lohnsteuerfrei",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4141",
+   "name": "Sonstige soziale Abgaben",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4144",
+   "name": "Soziale Abgaben für Minijobber",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4145",
+   "name": "Freiwillige soziale Aufwendungen, lohnsteuerpflichtig",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4146",
+   "name": "Freiwillige Zuwendungen an Minijobber",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4147",
+   "name": "Freiwillige Zuwendungen an Gesellschafter-Geschäftsführer",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4148",
+   "name": "Freiwillige Zuwendungen an angestellte Mitunternehmer § 15 EStG (mit Sonderbetriebseinnahme korrespondierend)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4149",
+   "name": "Pauschale Steuer auf sonstige Bezüge (z. B. Fahrtkostenzuschüsse)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4150",
+   "name": "Krankengeldzuschüsse",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4151",
+   "name": "Sachzuwendungen und Dienstleistungen an Minijobber",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4152",
+   "name": "Sachzuwendungen und Dienstleistungen an Arbeitnehmer",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4153",
+   "name": "Sachzuwendungen und Dienstleistungen an Gesellschafter- Geschäftsführer",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4154",
+   "name": "Sachzuwendungen und Dienstleistungen an angestellte Mitunternehmer § 15 EStG (mit Sonderbetriebseinnahme korrespondierend)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4155",
+   "name": "Zuschüsse der Agenturen für Arbeit (Haben)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4156",
+   "name": "Aufwendungen aus der Veränderung von Urlaubsrückstellungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4157",
+   "name": "Aufwendungen aus der Veränderung von Urlaubsrückstellungen für Gesellschafter-Geschäftsführer",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4158",
+   "name": "Aufwendungen aus der Veränderung von Urlaubsrückstellungen für angestellte Mitunternehmer § 15 EStG (mit Sonderbetriebseinnahme korrespondierend)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4159",
+   "name": "Aufwendungen aus der Veränderung von Urlaubsrückstellungen für Minijobber",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4160",
+   "name": "Versorgungskassen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4165",
+   "name": "Aufwendungen für Altersversorgung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4166",
+   "name": "Aufwendungen für Altersversorgung für Gesellschafter-Geschäftsführer",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4167",
+   "name": "Pauschale Steuer auf sonstige Bezüge (z. B. Direktversicherungen)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4168",
+   "name": "Aufwendungen für Altersversorgung für Mitunternehmer § 15 EStG (mit Sonderbetriebseinnahme korrespondierend)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4169",
+   "name": "Aufwendungen für Unterstützung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4170",
+   "name": "Vermögenswirksame Leistungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4175",
+   "name": "Fahrtkostenerstattung - Wohnung/ Arbeitsstätte",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4180",
+   "name": "Bedienungsgelder",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4190",
+   "name": "Aushilfslöhne",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4194",
+   "name": "Pauschale Steuer für Minijobber",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4195",
+   "name": "Löhne für Minijobs",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4196",
+   "name": "Pauschale Steuer für Gesellschafter- Geschäftsführer",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4197",
+   "name": "Pauschale Steuer für angestellte Mitunternehmer § 15 EStG (mit Sonderbetriebseinnahme korrespondierend)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4198",
+   "name": "Pauschale Steuer für Arbeitnehmer",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4199",
+   "name": "Pauschale Steuer für Aushilfen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4200",
+   "name": "Raumkosten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4210",
+   "name": "Miete (unbewegliche Wirtschaftsgüter)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4211",
+   "name": "Aufwendungen für gemietete oder gepachtete unbewegliche Wirtschaftsgüter, die gewerbesteuerlich hinzuzurechnen sind",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4212",
+   "name": "Miete/Aufwendungen für doppelte Haushaltsführung Unternehmer",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4215",
+   "name": "Leasing (unbewegliche Wirtschaftsgüter)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4219",
+   "name": "Vergütungen an Mitunternehmer für die mietweise Überlassung ihrer unbeweglichen Wirtschaftsgüter § 15 EStG (mit Sonderbetriebseinnahme korrespondierend)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4220",
+   "name": "Pacht (unbewegliche Wirtschaftsgüter)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4222",
+   "name": "Vergütungen an Gesellschafter für die miet- oder pachtweise Überlassung ihrer unbeweglichen Wirtschaftsgüter",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4228",
+   "name": "Miet- und Pachtnebenkosten, die gewerbesteuerlich nicht hinzuzurechnen sind c 4229 Vergütungen an Mitunternehmer für die pachtweise Überlassung ihrer unbeweglichen Wirtschaftsgüter § 15 EStG (mit Sonderbetriebseinnahme korrespondierend)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4230",
+   "name": "Heizung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4240",
+   "name": "Gas, Strom, Wasser",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4250",
+   "name": "Reinigung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4260",
+   "name": "Instandhaltung betrieblicher Räume",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4270",
+   "name": "Abgaben für betrieblich genutzten Grundbesitz",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4280",
+   "name": "Sonstige Raumkosten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4287",
+   "name": "Tagespauschale für die Tätigkeit in der häuslichen Wohnung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4288",
+   "name": "Aufwendungen für ein häusliches Arbeitszimmer (abziehbarer Anteil)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4289",
+   "name": "Aufwendungen für ein häusliches Arbeitszimmer (nicht abziehbarer Anteil)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4290",
+   "name": "Grundstücksaufwendungen betrieblich",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4300",
+   "name": "Nicht abziehbare Vorsteuer",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4301",
+   "name": "Nicht abziehbare Vorsteuer 7 %",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4306",
+   "name": "Nicht abziehbare Vorsteuer 19 %",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4320",
+   "name": "Gewerbesteuer",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4340",
+   "name": "Sonstige Betriebssteuern",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4350",
+   "name": "Verbrauchsteuer (sonstige Steuern)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4355",
+   "name": "Ökosteuer",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4360",
+   "name": "Versicherungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4366",
+   "name": "Versicherungen für Gebäude",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4370",
+   "name": "Netto-Prämie für Rückdeckung künftiger Versorgungsleistungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4380",
+   "name": "Beiträge",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4390",
+   "name": "Sonstige Abgaben",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4396",
+   "name": "Steuerlich abzugsfähige Verspätungszuschläge und Zwangsgelder",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4397",
+   "name": "Steuerlich nicht abzugsfähige Verspätungszuschläge und Zwangsgelder",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4400",
+   "name": "(zur freien Verfügung)",
+   "kennzeichen": "",
+   "bis": "99"
+  },
+  {
+   "nr": "4500",
+   "name": "Fahrzeugkosten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4510",
+   "name": "Kfz-Steuer",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4520",
+   "name": "Fahrzeug-Versicherungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4530",
+   "name": "Laufende Fahrzeug-Betriebskosten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4540",
+   "name": "Fahrzeug-Reparaturen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4550",
+   "name": "Garagenmiete",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4560",
+   "name": "Mautgebühren",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4570",
+   "name": "Mietleasing Kfz",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4575",
+   "name": "Mietleasingaufwendungen für Elektrofahrzeuge und Fahrräder, die gewerbesteuerlich hinzuzurechnen sind",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4580",
+   "name": "Sonstige Fahrzeugkosten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4590",
+   "name": "Kosten für betrieblich genutzte zum Privatvermögen gehörende Fahrzeuge",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4595",
+   "name": "Fremdfahrzeugkosten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4600",
+   "name": "Werbekosten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4605",
+   "name": "Streuartikel",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4630",
+   "name": "Geschenke abzugsfähig ohne § 37b EStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4631",
+   "name": "Geschenke abzugsfähig mit § 37b EStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4632",
+   "name": "Pauschale Steuer für Geschenke und Zuwendungen abzugsfähig",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4635",
+   "name": "Geschenke nicht abzugsfähig ohne § 37b EStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4636",
+   "name": "Geschenke nicht abzugsfähig mit § 37b EStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4637",
+   "name": "Pauschale Steuer für Geschenke und Zuwendungen nicht abzugsfähig",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4638",
+   "name": "Geschenke ausschließlich betrieblich genutzt",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4639",
+   "name": "Zugaben mit § 37b EStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4640",
+   "name": "Repräsentationskosten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4650",
+   "name": "Bewirtungskosten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4651",
+   "name": "Sonstige eingeschränkt abziehbare Betriebsausgaben (abziehbarer Anteil)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4652",
+   "name": "Sonstige eingeschränkt abziehbare Betriebsausgaben (nicht abziehbarer Anteil)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4653",
+   "name": "Aufmerksamkeiten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4654",
+   "name": "Nicht abzugsfähige Bewirtungskosten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4655",
+   "name": "Nicht abzugsfähige Betriebsausgaben aus Werbe- und Repräsentationskosten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4660",
+   "name": "Reisekosten Arbeitnehmer",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4663",
+   "name": "Reisekosten Arbeitnehmer Fahrtkosten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4664",
+   "name": "Reisekosten Arbeitnehmer Verpflegungsmehraufwand",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4666",
+   "name": "Reisekosten Arbeitnehmer Übernachtungsaufwand",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4668",
+   "name": "Kilometergelderstattung Arbeitnehmer",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4670",
+   "name": "Reisekosten Unternehmer",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4672",
+   "name": "Reisekosten Unternehmer (nicht abziehbarer Anteil)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4673",
+   "name": "Reisekosten Unternehmer Fahrtkosten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4674",
+   "name": "Reisekosten Unternehmer Verpflegungsmehraufwand",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4676",
+   "name": "Reisekosten Unternehmer Übernachtungsaufwand und Reisenebenkosten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4678",
+   "name": "Fahrten zwischen Wohnung und Betriebsstätte und Familienheimfahrten (abziehbarer Anteil) - Fahrzeuge im Betriebsvermögen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4679",
+   "name": "Fahrten zwischen Wohnung und Betriebsstätte und Familienheimfahrten (nicht abziehbarer Anteil) - Fahrzeuge im Betriebsvermögen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4680",
+   "name": "Fahrten zwischen Wohnung und Betriebsstätte und Familienheimfahrten (Haben) - Fahrzeuge im Betriebsvermögen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4681",
+   "name": "Verpflegungsmehraufwendungen im Rahmen der doppelten Haushaltsführung Unternehmer",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4700",
+   "name": "Kosten der Warenabgabe",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4710",
+   "name": "Verpackungsmaterial",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4730",
+   "name": "Ausgangsfrachten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4750",
+   "name": "Transportversicherungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4760",
+   "name": "Verkaufsprovisionen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4780",
+   "name": "Fremdarbeiten (Vertrieb)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4790",
+   "name": "Aufwand für Gewährleistungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4800",
+   "name": "Reparaturen und Instandhaltungen von technischen Anlagen und Maschinen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4801",
+   "name": "Reparaturen und Instandhaltung von Bauten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4805",
+   "name": "Reparaturen und Instandhaltungen von anderen Anlagen und Betriebs- und Geschäftsausstattung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4806",
+   "name": "Wartungskosten für Hard- und Software",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4808",
+   "name": "Zuführung zu Aufwandsrückstellungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4809",
+   "name": "Sonstige Reparaturen und Instandhaltungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4810",
+   "name": "Mietleasing bewegliche Wirtschaftsgüter für technische Anlagen und Maschinen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4815",
+   "name": "Kaufleasing",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4822",
+   "name": "Abschreibungen auf immaterielle Vermögensgegenstände",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4823",
+   "name": "Abschreibungen auf selbst geschaffene immaterielle Vermögensgegenstände",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4824",
+   "name": "Abschreibungen auf den Geschäfts- oder Firmenwert",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4825",
+   "name": "Außerplanmäßige Abschreibungen auf den Geschäfts- oder Firmenwert",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4826",
+   "name": "Außerplanmäßige Abschreibungen auf immaterielle Vermögensgegenstände",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4827",
+   "name": "Außerplanmäßige Abschreibungen auf selbst geschaffene immaterielle Vermögensgegenstände",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4830",
+   "name": "Abschreibungen auf Sachanlagen (ohne AfA auf Fahrzeuge und Gebäude)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4831",
+   "name": "Abschreibungen auf Gebäude",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4832",
+   "name": "Abschreibungen auf Fahrzeuge",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4833",
+   "name": "Abschreibungen auf Gebäudeanteil des häuslichen Arbeitszimmers",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4840",
+   "name": "Außerplanmäßige Abschreibungen auf Sachanlagen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4841",
+   "name": "Absetzung für außergewöhnliche technische und wirtschaftliche Abnutzung der Gebäude",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4842",
+   "name": "Absetzung für außergewöhnliche technische und wirtschaftliche Abnutzung der Fahrzeuge",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4843",
+   "name": "Absetzung für außergewöhnliche technische und wirtschaftliche Abnutzung sonstiger Wirtschaftsgüter",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4850",
+   "name": "Abschreibungen auf Sachanlagen auf Grund steuerlicher Sondervorschriften",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4851",
+   "name": "Sonderabschreibungen nach § 7g Abs. 5 EStG (ohne Fahrzeuge)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4852",
+   "name": "Sonderabschreibungen nach § 7g Abs. 5 EStG (für Fahrzeuge)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4853",
+   "name": "Kürzung der Anschaffungs- oder Herstellungskosten nach § 7g Abs. 2 EStG (ohne Fahrzeuge)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4854",
+   "name": "Kürzung der Anschaffungs- oder Herstellungskosten nach § 7g Abs. 2 EStG (für Fahrzeuge)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4855",
+   "name": "Sofortabschreibung geringwertiger Wirtschaftsgüter",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4856",
+   "name": "Sonderabschreibungen nach § 7b EStG (Mietwohnungsneubau)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4859",
+   "name": "Abzugsbetrag nach § 6b EStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4860",
+   "name": "Abschreibungen auf aktivierte, geringwertige Wirtschaftsgüter",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4862",
+   "name": "Abschreibungen auf den Sammelposten Wirtschaftsgüter",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4865",
+   "name": "Außerplanmäßige Abschreibungen auf aktivierte, geringwertige Wirtschaftsgüter",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4866",
+   "name": "Abschreibungen auf Finanzanlagen (nicht dauerhaft)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4870",
+   "name": "Abschreibungen auf Finanzanlagen (dauerhaft)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4871",
+   "name": "Abschreibungen auf Finanzanlagen § 3 Nr. 40 EStG bzw. § 8b Abs. 3 KStG (dauerhaft)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4872",
+   "name": "Aufwendungen auf Grund von Verlustanteilen an gewerblichen und selbständigen Mitunternehmerschaften, § 8 GewStG bzw. § 18 EStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4873",
+   "name": "Abschreibungen auf Finanzanlagen auf Grund § 6b EStG-Rücklage, § 3 Nr. 40 EStG bzw. § 8b Abs. 3 KStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4874",
+   "name": "Abschreibungen auf Finanzanlagen auf Grund § 6b EStG-Rücklage",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4875",
+   "name": "Abschreibungen auf Wertpapiere des Umlaufvermögens",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4876",
+   "name": "Abschreibungen auf Wertpapiere des Umlaufvermögens § 3 Nr. 40 EStG bzw. § 8b Abs. 3 KStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4877",
+   "name": "Abschreibungen auf Finanzanlagen - verbundene Unternehmen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4878",
+   "name": "Abschreibungen auf Wertpapiere des Umlaufvermögens - verbundene Unternehmen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4880",
+   "name": "Abschreibungen auf sonstige Vermögensgegenstände des Umlaufvermögens (soweit unüblich hoch)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4882",
+   "name": "Abschreibungen auf Umlaufvermögen, steuerrechtlich bedingt (soweit unüblich hoch)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4886",
+   "name": "Abschreibungen auf Umlaufvermögen außer Vorräte und Wertpapiere des Umlaufvermögens (übliche Höhe)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4887",
+   "name": "Abschreibungen auf Umlaufvermögen außer Vorräte und Wertpapiere des Umlaufvermögens, steuerrechtlich bedingt (übliche Höhe)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4892",
+   "name": "Abschreibungen auf Roh-, Hilfs- und Betriebsstoffe/Waren (soweit unübliche Höhe)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4893",
+   "name": "Abschreibungen auf fertige und unfertige Erzeugnisse (soweit unübliche Höhe)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4900",
+   "name": "Sonstige betriebliche Aufwendungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4902",
+   "name": "Interimskonto für Aufwendungen in einem anderen Land, bei denen eine Vorsteuervergütung möglich ist",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4909",
+   "name": "Fremdleistungen/Fremdarbeiten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4910",
+   "name": "Porto",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4920",
+   "name": "Telefon",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4925",
+   "name": "Internetkosten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4930",
+   "name": "Bürobedarf",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4940",
+   "name": "Zeitschriften, Bücher, digitale Medien (Fachliteratur)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4945",
+   "name": "Fortbildungskosten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4946",
+   "name": "Freiwillige Sozialleistungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4948",
+   "name": "Sonstige Vergütungen an Mitunternehmer § 15 EStG (mit Sonderbetriebseinnahme korrespondierend)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4949",
+   "name": "Haftungsvergütung an Mitunternehmer § 15 EStG (mit Sonderbetriebseinnahme korrespondierend)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4950",
+   "name": "Rechts- und Beratungskosten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4955",
+   "name": "Buchführungskosten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4957",
+   "name": "Abschluss- und Prüfungskosten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4958",
+   "name": "Vergütungen an Gesellschafter für die miet- oder pachtweise Überlassung ihrer beweglichen Wirtschaftsgüter",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4959",
+   "name": "Vergütungen an Mitunternehmer für die miet- oder pachtweise Überlassung ihrer beweglichen Wirtschaftsgüter § 15 EStG (mit Sonderbetriebseinnahme korrespondierend)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4960",
+   "name": "Mieten für Einrichtungen (bewegliche Wirtschaftsgüter)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4961",
+   "name": "Pacht (bewegliche Wirtschaftsgüter)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4963",
+   "name": "Aufwendungen für gemietete oder gepachtete bewegliche Wirtschaftsgüter, die gewerbesteuerlich hinzuzurechnen sind",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4964",
+   "name": "Aufwendungen für die zeitlich befristete Überlassung von Rechten (Lizenzen, Konzessionen)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4965",
+   "name": "Mietleasing bewegliche Wirtschaftsgüter für Betriebs- und Geschäftsausstattung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4969",
+   "name": "Aufwendungen für Abraum- und Abfallbeseitigung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4970",
+   "name": "Nebenkosten des Geldverkehrs",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4971",
+   "name": "Verwahrentgelt",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4975",
+   "name": "Aufwendungen aus Anteilen an Kapitalgesellschaften §§ 3 Nr. 40 und 3c EStG bzw. § 8b Abs. 1 und 4 KStG1",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4976",
+   "name": "Veräußerungskosten § 3 Nr. 40 EStG bzw. § 8b Abs. 2 KStG (bei Buchgewinn)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4977",
+   "name": "Veräußerungskosten § 3 Nr. 40 EStG bzw. § 8b Abs. 2 KStG i. V. m. § 8b Abs. 3 S. 3 KStG (bei Buchverlust)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4980",
+   "name": "Sonstiger Betriebsbedarf",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4984",
+   "name": "Genossenschaftliche Rückvergütung an Mitglieder",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4985",
+   "name": "Werkzeuge und Kleingeräte",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4990",
+   "name": "Kalkulatorischer Unternehmerlohn",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4991",
+   "name": "Kalkulatorische Miete und Pacht",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4992",
+   "name": "Kalkulatorische Zinsen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4993",
+   "name": "Kalkulatorische Abschreibungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4994",
+   "name": "Kalkulatorische Wagnisse",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4995",
+   "name": "Kalkulatorischer Lohn für unentgeltliche Mitarbeiter",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4996",
+   "name": "Herstellungskosten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4997",
+   "name": "Verwaltungskosten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4998",
+   "name": "Vertriebskosten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "4999",
+   "name": "Gegenkonto 4996-4998",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "5000",
+   "name": "6",
+   "kennzeichen": "",
+   "bis": "5999"
+  },
+  {
+   "nr": "6000",
+   "name": "7 Bestände an Erzeugnissen 7000-7999",
+   "kennzeichen": "",
+   "bis": "6999"
+  },
+  {
+   "nr": "7000",
+   "name": "Unfertige Erzeugnisse, unfertige Leistungen (Bestand)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "7050",
+   "name": "Unfertige Erzeugnisse (Bestand)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "7080",
+   "name": "Unfertige Leistungen (Bestand)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "7090",
+   "name": "In Ausführung befindliche Bauaufträge",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "7095",
+   "name": "In Arbeit befindliche Aufträge",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "7100",
+   "name": "Fertige Erzeugnisse und Waren (Bestand)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "7110",
+   "name": "Fertige Erzeugnisse (Bestand)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "7140",
+   "name": "Waren (Bestand)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8000",
+   "name": "Umsatzerlöse (Zur freien Verfügung)",
+   "kennzeichen": "",
+   "bis": "99"
+  },
+  {
+   "nr": "8100",
+   "name": "Steuerfreie Umsätze § 4 Nr. 8 ff. UStG",
+   "kennzeichen": "AM",
+   "bis": "04"
+  },
+  {
+   "nr": "8105",
+   "name": "Steuerfreie Umsätze nach § 4 Nr. 12 UStG (Vermietung und Verpachtung)",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8110",
+   "name": "Sonstige steuerfreie Umsätze Inland",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8120",
+   "name": "Steuerfreie Umsätze nach § 4 Nr. 1a UStG",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8125",
+   "name": "Steuerfreie innergemeinschaftliche Lieferungen nach § 4 Nr. 1b UStG",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8130",
+   "name": "Lieferungen des ersten Abnehmers bei innergemeinschaftlichen Dreiecksgeschäften § 25b Abs. 2 UStG",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8135",
+   "name": "Steuerfreie innergemeinschaftliche Lieferungen von Neufahrzeugen an Abnehmer ohne USt-Id-Nr.",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8140",
+   "name": "Steuerfreie Umsätze Offshore usw.",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8150",
+   "name": "Sonstige steuerfreie Umsätze (z. B. § 4 Nr. 2 bis 7 UStG)",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8160",
+   "name": "Steuerfreie Umsätze ohne Vorsteuerabzug zum Gesamtumsatz gehörend, § 4 UStG",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8165",
+   "name": "Steuerfreie Umsätze ohne Vorsteuerabzug zum Gesamtumsatz gehörend",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8189",
+   "name": "Umsatzerlöse nach § 25 UStG ohne USt",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8190",
+   "name": "Erlöse, die mit den Durchschnittssätzen des § 24 UStG versteuert werden",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8191",
+   "name": "Umsatzerlöse nach §§ 25 und 25a UStG 19 % USt",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8192",
+   "name": "Steuerfreie Erlöse Kleinunternehmer nach § 19 Abs. 1 UStG",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8193",
+   "name": "Umsatzerlöse nach §§ 25 und 25a UStG ohne USt",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8194",
+   "name": "Umsatzerlöse aus Reiseleistungen § 25 Abs. 2 UStG, steuerfrei",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8197",
+   "name": "Umsatzerlöse nach § 25a UStG ohne USt",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8198",
+   "name": "Umsatzerlöse nach § 25 UStG 19 % USt",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8199",
+   "name": "Umsatzerlöse nach § 25a UStG 19 % USt",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8200",
+   "name": "Erlöse",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8290",
+   "name": "Erlöse 0 % USt",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8300",
+   "name": "Erlöse 7 % USt",
+   "kennzeichen": "AM",
+   "bis": "09"
+  },
+  {
+   "nr": "8310",
+   "name": "Erlöse aus im Inland steuerpflichtigen EU-Lieferungen 7 % USt",
+   "kennzeichen": "AM",
+   "bis": "14"
+  },
+  {
+   "nr": "8315",
+   "name": "Erlöse aus im Inland steuerpflichtigen EU-Lieferungen 19 % USt",
+   "kennzeichen": "AM",
+   "bis": "19"
+  },
+  {
+   "nr": "8320",
+   "name": "Erlöse aus im anderen EU-Land steuerpflichtigen Lieferungen, im Inland nicht steuerbar",
+   "kennzeichen": "",
+   "bis": "29"
+  },
+  {
+   "nr": "8331",
+   "name": "Erlöse aus im anderen EU-Land steuerpflichtigen elektronischen Dienstleistungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8334",
+   "name": "Erlöse 7 % USt",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8335",
+   "name": "Erlöse aus Lieferungen von Mobilfunkgeräten, Tablet-Computern, Spielekonsolen und integrierten Schaltkreisen, für die der Leistungsempfänger die Umsatzsteuer nach § 13b UStG schuldet",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8336",
+   "name": "Erlöse aus im anderen EU-Land steuerpflichtigen sonstigen Leistungen, für die der Leistungsempfänger die Umsatzsteuer schuldet",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8337",
+   "name": "Erlöse aus Leistungen, für die der Leistungsempfänger die Umsatzsteuer nach § 13b UStG schuldet",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8338",
+   "name": "Erlöse aus im Drittland steuerbaren Leistungen, im Inland nicht steuerbare Umsätze",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8339",
+   "name": "Erlöse aus im anderen EU-Land steuerbaren Leistungen, im Inland nicht steuerbare Umsätze",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8340",
+   "name": "Erlöse 16 % USt",
+   "kennzeichen": "AM",
+   "bis": "49"
+  },
+  {
+   "nr": "8400",
+   "name": "Erlöse 19 % USt",
+   "kennzeichen": "AM",
+   "bis": "09"
+  },
+  {
+   "nr": "8410",
+   "name": "Erlöse 19 % USt",
+   "kennzeichen": "AM",
+   "bis": "19"
+  },
+  {
+   "nr": "8449",
+   "name": "Erlöse aus im Inland steuerpflichtigen elektronischen Dienstleistungen 19 % USt",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8499",
+   "name": "Nebenerlöse (Bezug zu Materialaufwand)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8500",
+   "name": "Sonderbetriebseinnahmen, Tätig- SB keitsvergütung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8501",
+   "name": "Sonderbetriebseinnahmen, Miet-/ SB Pachteinnahmen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8502",
+   "name": "Sonderbetriebseinnahmen, Zinseinnahmen",
+   "kennzeichen": "SB"
+  },
+  {
+   "nr": "8503",
+   "name": "Sonderbetriebseinnahmen, Haf- SB tungsvergütung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8504",
+   "name": "Sonderbetriebseinnahmen, Pensionszahlungen",
+   "kennzeichen": "SB"
+  },
+  {
+   "nr": "8505",
+   "name": "Sonderbetriebseinnahmen, sons- SB tige Sonderbetriebseinnahmen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8510",
+   "name": "Provisionsumsätze",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8514",
+   "name": "Provisionsumsätze, steuerfrei § 4 Nr. 8 ff. UStG",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8515",
+   "name": "Provisionsumsätze, steuerfrei § 4 Nr. 5 UStG",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8519",
+   "name": "Provisionsumsätze 19 % USt",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8520",
+   "name": "Erlöse Abfallverwertung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8540",
+   "name": "Erlöse Leergut",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8570",
+   "name": "Sonstige Erträge aus Provisionen, Lizenzen und Patenten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8580",
+   "name": "Statistisches Konto Erlöse zum allgemeinen Umsatzsteuersatz (EÜR)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8581",
+   "name": "Statistisches Konto Erlöse zum ermäßigten Umsatzsteuersatz (EÜR)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8582",
+   "name": "Statistisches Konto Erlöse steuerfrei und nicht steuerbar (EÜR)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8589",
+   "name": "Gegenkonto 8580-8582 bei Aufteilung der Erlöse nach Steuersätzen (EÜR)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8590",
+   "name": "Verrechnete sonstige Sachbezüge (keine Waren)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8591",
+   "name": "Sachbezüge 7 % USt (Waren)",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8595",
+   "name": "Sachbezüge 19 % USt (Waren)",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8603",
+   "name": "Sonstige betriebliche Erträge",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8604",
+   "name": "M 8605-8613",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8605",
+   "name": "Sonstige Erträge betrieblich und regelmäßig",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8606",
+   "name": "Sonstige betriebliche Erträge von verbundenen Unternehmen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8607",
+   "name": "Andere Nebenerlöse",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8609",
+   "name": "Sonstige Erträge betrieblich und regelmäßig, steuerfrei § 4 Nr. 8 ff. UStG",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8610",
+   "name": "Verrechnete sonstige Sachbezüge",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8611",
+   "name": "Verrechnete sonstige Sachbezüge aus Fahrzeug-Gestellung 19 % USt",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8613",
+   "name": "Verrechnete sonstige Sachbezüge 19 % USt",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8614",
+   "name": "M 8615-8904 8905-8906 M 8907-8917 8918-8919 M 8920-8923",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8625",
+   "name": "Sonstige betriebliche Erträge, steuerfrei z. B. § 4 Nr. 2 bis 7 UStG",
+   "kennzeichen": "AM",
+   "bis": "29"
+  },
+  {
+   "nr": "8630",
+   "name": "Sonstige Erträge betrieblich und regelmäßig 7 % USt",
+   "kennzeichen": "AM",
+   "bis": "34"
+  },
+  {
+   "nr": "8640",
+   "name": "Sonstige Erträge betrieblich und regelmäßig 19 % USt",
+   "kennzeichen": "AM",
+   "bis": "44"
+  },
+  {
+   "nr": "8649",
+   "name": "Sonstige Erträge betrieblich und regelmäßig 16 % USt",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8650",
+   "name": "Erlöse Zinsen und Diskontspesen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8660",
+   "name": "Erlöse Zinsen und Diskontspesen aus verbundenen Unternehmen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8700",
+   "name": "Erlösschmälerungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8701",
+   "name": "Erlösschmälerungen für steuerfreie Umsätze nach § 4 Nr. 8 ff. UStG",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8702",
+   "name": "Erlösschmälerungen für steuerfreie Umsätze nach § 4 Nr. 2 bis 7 UStG",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8703",
+   "name": "Erlösschmälerungen für sonstige steuerfreie Umsätze ohne Vorsteuerabzug",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8704",
+   "name": "Erlösschmälerungen für sonstige steuerfreie Umsätze mit Vorsteuerabzug",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8705",
+   "name": "Erlösschmälerungen aus steuerfreien Umsätzen § 4 Nr. 1a UStG",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8706",
+   "name": "Erlösschmälerungen für steuerfreie innergemeinschaftliche Dreiecksgeschäfte nach § 25b Abs. 2 und 4 UStG",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8707",
+   "name": "Erlösschmälerungen für steuerfreie Umsätze nach § 19 Abs. 1 UStG",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8708",
+   "name": "Erlösschmälerungen für Umsätze nach § 25 UStG 19 % USt",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8709",
+   "name": "Erlösschmälerungen für Umsätze nach § 25a UStG 19 % USt",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8710",
+   "name": "Erlösschmälerungen 7 % USt",
+   "kennzeichen": "AM",
+   "bis": "11"
+  },
+  {
+   "nr": "8719",
+   "name": "Erlösschmälerungen 0 % USt",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8720",
+   "name": "Erlösschmälerungen 19 % USt",
+   "kennzeichen": "AM",
+   "bis": "21"
+  },
+  {
+   "nr": "8724",
+   "name": "Erlösschmälerungen aus steuerfreien innergemeinschaftlichen Lieferungen",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8725",
+   "name": "Erlösschmälerungen aus im Inland steuerpflichtigen EU-Lieferungen 7 % USt",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8726",
+   "name": "Erlösschmälerungen aus im Inland steuerpflichtigen EU-Lieferungen 19 % USt",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8727",
+   "name": "Erlösschmälerungen aus im anderen EU-Land steuerpflichtigen Lieferungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8730",
+   "name": "Gewährte Skonti",
+   "kennzeichen": "S/AM"
+  },
+  {
+   "nr": "8731",
+   "name": "Gewährte Skonti 7 % USt",
+   "kennzeichen": "S/AM"
+  },
+  {
+   "nr": "8734",
+   "name": "Gewährte Skonti 0 % USt",
+   "kennzeichen": "S/AM"
+  },
+  {
+   "nr": "8736",
+   "name": "Gewährte Skonti 19 % USt",
+   "kennzeichen": "S/AM"
+  },
+  {
+   "nr": "8738",
+   "name": "Gewährte Skonti aus Lieferungen von Mobilfunkgeräten etc., für die der Leistungsempfänger die Umsatzsteuer nach § 13b Abs. 2 Nr. 10 UStG schuldet",
+   "kennzeichen": "S/AM"
+  },
+  {
+   "nr": "8741",
+   "name": "Gewährte Skonti aus Leistungen, für die der Leistungsempfänger die Umsatzsteuer nach § 13b UStG schuldet",
+   "kennzeichen": "S/AM"
+  },
+  {
+   "nr": "8742",
+   "name": "Gewährte Skonti aus Erlösen aus im anderen EU-Land steuerpflichtigen sonstigen Leistungen, für die der Leistungsempfänger die Umsatzsteuer schuldet",
+   "kennzeichen": "S/AM"
+  },
+  {
+   "nr": "8743",
+   "name": "Gewährte Skonti aus steuerfreien innergemeinschaftlichen Lieferungen § 4 Nr. 1b UStG",
+   "kennzeichen": "S/AM"
+  },
+  {
+   "nr": "8745",
+   "name": "Gewährte Skonti aus im Inland steuerpflichtigen EU-Lieferungen",
+   "kennzeichen": "S/AM"
+  },
+  {
+   "nr": "8746",
+   "name": "Gewährte Skonti aus im Inland steuerpflichtigen EU-Lieferungen 7 % USt",
+   "kennzeichen": "S/AM"
+  },
+  {
+   "nr": "8748",
+   "name": "Gewährte Skonti aus im Inland steuerpflichtigen EU-Lieferungen 19 % USt",
+   "kennzeichen": "S/AM"
+  },
+  {
+   "nr": "8750",
+   "name": "Gewährte Boni 7 % USt",
+   "kennzeichen": "AM",
+   "bis": "51"
+  },
+  {
+   "nr": "8760",
+   "name": "Gewährte Boni 19 % USt",
+   "kennzeichen": "AM",
+   "bis": "61"
+  },
+  {
+   "nr": "8769",
+   "name": "Gewährte Boni",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8770",
+   "name": "Gewährte Rabatte",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8780",
+   "name": "Gewährte Rabatte 7 % USt",
+   "kennzeichen": "AM",
+   "bis": "81"
+  },
+  {
+   "nr": "8790",
+   "name": "Gewährte Rabatte 19 % USt",
+   "kennzeichen": "AM",
+   "bis": "91"
+  },
+  {
+   "nr": "8800",
+   "name": "Erlöse aus Verkäufen Sachanlagevermögen (bei Buchverlust)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8801",
+   "name": "Erlöse aus Verkäufen Sachanlagevermögen 19 % USt (bei Buchverlust)",
+   "kennzeichen": "AM",
+   "bis": "06"
+  },
+  {
+   "nr": "8807",
+   "name": "Erlöse aus Verkäufen Sachanlagevermögen steuerfrei § 4 Nr. 1a UStG (bei Buchverlust)",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8808",
+   "name": "Erlöse aus Verkäufen Sachanlagevermögen steuerfrei § 4 Nr. 1b UStG (bei Buchverlust)",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8817",
+   "name": "Erlöse aus Verkäufen immaterieller Vermögensgegenstände (bei Buchverlust)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8818",
+   "name": "Erlöse aus Verkäufen Finanzanlagen (bei Buchverlust)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8819",
+   "name": "Erlöse aus Verkäufen Finanzanlagen § 3 Nr. 40 EStG bzw. § 8b Abs. 2 KStG i. V. m. § 8b Abs. 3 S. 3 KStG (bei Buchverlust)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8820",
+   "name": "Erlöse aus Verkäufen Sachanlagevermögen 19 % USt (bei Buchgewinn)",
+   "kennzeichen": "AM",
+   "bis": "25"
+  },
+  {
+   "nr": "8827",
+   "name": "Erlöse aus Verkäufen Sachanlagevermögen steuerfrei § 4 Nr. 1a UStG (bei Buchgewinn)",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8828",
+   "name": "Erlöse aus Verkäufen Sachanlagevermögen steuerfrei § 4 Nr. 1b UStG (bei Buchgewinn)",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8829",
+   "name": "Erlöse aus Verkäufen Sachanlagevermögen (bei Buchgewinn)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8837",
+   "name": "Erlöse aus Verkäufen immaterieller Vermögensgegenstände (bei Buchgewinn)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8838",
+   "name": "Erlöse aus Verkäufen Finanzanlagen (bei Buchgewinn)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8839",
+   "name": "Erlöse aus Verkäufen Finanzanlagen § 3 Nr. 40 EStG bzw. § 8b Abs. 2 KStG (bei Buchgewinn)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8850",
+   "name": "Erlöse aus Verkäufen von Wirtschaftsgütern des Umlaufvermögens 19 % USt für § 4 Abs. 3 Satz 4 EStG",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8851",
+   "name": "Erlöse aus Verkäufen von Wirtschaftsgütern des Umlaufvermögens, umsatzsteuerfrei § 4 Nr. 8 ff. UStG i. V. m. § 4 Abs. 3 Satz 4 EStG",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8852",
+   "name": "Erlöse aus Verkäufen von Wirtschaftsgütern des Umlaufvermögens, umsatzsteuerfrei § 4 Nr. 8 ff. UStG i. V. m. § 4 Abs. 3 Satz 4 EStG und § 3 Nr. 40 EStG bzw. § 8b Abs. 2 KStG",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8853",
+   "name": "Erlöse aus Verkäufen von Wirtschaftsgütern des Umlaufvermögens nach § 4 Abs 3 Satz 4 EStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8900",
+   "name": "Unentgeltliche Wertabgaben",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8905",
+   "name": "Entnahme von Gegenständen ohne USt",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8906",
+   "name": "Verwendung von Gegenständen für Zwecke außerhalb des Unternehmens ohne USt",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8910",
+   "name": "Entnahme durch den Unternehmer für Zwecke außerhalb des Unternehmens (Waren) 19 % USt",
+   "kennzeichen": "AM",
+   "bis": "13"
+  },
+  {
+   "nr": "8915",
+   "name": "Entnahme durch den Unternehmer für Zwecke außerhalb des Unternehmens (Waren) 7 % USt",
+   "kennzeichen": "AM",
+   "bis": "16"
+  },
+  {
+   "nr": "8917",
+   "name": "Entnahme durch den Unternehmer für Zwecke außerhalb des Unternehmens (Waren) 7 % USt",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8918",
+   "name": "Verwendung von Gegenständen für Zwecke außerhalb des Unternehmens ohne USt (Telefon- Nutzung)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8919",
+   "name": "Entnahme durch den Unternehmer für Zwecke außerhalb des Unternehmens (Waren) ohne USt",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8920",
+   "name": "Verwendung von Gegenständen für Zwecke außerhalb des Unternehmens 19 % USt",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8921",
+   "name": "Verwendung von Gegenständen für Zwecke außerhalb des Unternehmens 19 % USt (Fahrzeug- Nutzung)",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8922",
+   "name": "Verwendung von Gegenständen für Zwecke außerhalb des Unternehmens 19 % USt (Telefon- Nutzung)",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8924",
+   "name": "M 8925-8928",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8925",
+   "name": "Unentgeltliche Erbringung einer sonstigen Leistung 19 % USt",
+   "kennzeichen": "AM",
+   "bis": "27"
+  },
+  {
+   "nr": "8929",
+   "name": "M 8930-8938",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8930",
+   "name": "Verwendung von Gegenständen für Zwecke außerhalb des Unternehmens 7 % USt",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8931",
+   "name": "Verwendung von Gegenständen für Zwecke außerhalb des Unternehmens 7 % USt",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8932",
+   "name": "Unentgeltliche Erbringung einer sonstigen Leistung 7 % USt",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8933",
+   "name": "Unentgeltliche Erbringung einer sonstigen Leistung 7 % USt",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8935",
+   "name": "Unentgeltliche Zuwendung von Gegenständen 19 % USt",
+   "kennzeichen": "AM",
+   "bis": "37"
+  },
+  {
+   "nr": "8939",
+   "name": "M 8940-8948 8949-8999",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8940",
+   "name": "Unentgeltliche Zuwendung von Waren 19 % USt",
+   "kennzeichen": "AM",
+   "bis": "43"
+  },
+  {
+   "nr": "8945",
+   "name": "Unentgeltliche Zuwendung von Waren 7 % USt",
+   "kennzeichen": "AM",
+   "bis": "46"
+  },
+  {
+   "nr": "8947",
+   "name": "Unentgeltliche Zuwendung von Waren 7 % USt",
+   "kennzeichen": "AM"
+  },
+  {
+   "nr": "8949",
+   "name": "Unentgeltliche Zuwendung von Waren ohne USt",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8950",
+   "name": "Nicht steuerbare Umsätze (Innenumsätze) 89 steuervergütungen nach 55 Umsatz § 24 UStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8959",
+   "name": "Direkt mit dem Umsatz verbundene Steuern",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8960",
+   "name": "Bestandsveränderungen unfertige Erzeugnisse",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8970",
+   "name": "Bestandsveränderungen unfertige Leistungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8975",
+   "name": "Bestandsveränderungen in Ausführung befindliche Bauaufträge",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8977",
+   "name": "Bestandsveränderungen in Arbeit befindliche Aufträge",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8980",
+   "name": "Bestandsveränderungen fertige Erzeugnisse",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8990",
+   "name": "Andere aktivierte Eigenleistungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8994",
+   "name": "Aktivierte Eigenleistungen (den Herstellungskosten zurechenbare Fremdkapitalzinsen)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "8995",
+   "name": "Aktivierte Eigenleistungen zur Erstellung von selbst geschaffenen immateriellen Vermögensgegenständen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9000",
+   "name": "Saldenvorträge, Sachkonten",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "9001",
+   "name": "Saldenvorträge, Sachkonten",
+   "kennzeichen": "F",
+   "bis": "07"
+  },
+  {
+   "nr": "9008",
+   "name": "Saldenvorträge, Debitoren",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "9009",
+   "name": "Saldenvorträge, Kreditoren",
+   "kennzeichen": "S"
+  },
+  {
+   "nr": "9051",
+   "name": "Offene Posten aus 2021",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9052",
+   "name": "Offene Posten aus 2022",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9053",
+   "name": "Offene Posten aus 2023",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9054",
+   "name": "Offene Posten aus 2024",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9055",
+   "name": "Offene Posten aus 2025",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9056",
+   "name": "Offene Posten aus 202",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9090",
+   "name": "Summenvortragskonto",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9101",
+   "name": "Verkaufstage",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9102",
+   "name": "Anzahl der Barkunden",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9120",
+   "name": "Erweiterungsinvestitionen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9135",
+   "name": "Auftragseingang im Geschäftsjahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9141",
+   "name": "Variables Kapital TH",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9142",
+   "name": "Variables Kapital - Anteil für Teilhafter",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9143",
+   "name": "Privatsteuern Kapitalertragsteuer (Sammelposten)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9144",
+   "name": "Privatsteuern Solidaritätszuschlag (Sammelposten)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9145",
+   "name": "Privatsteuern Kirchensteuer (Sammelposten)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9146",
+   "name": "Variables Kapital Vollhafter - Übertragung einer § 6b EStG-Rücklage",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9147",
+   "name": "Variables Kapital Teilhafter - Übertragung einer § 6b EStG-Rücklage",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9150",
+   "name": "Festkapital – andere Kapitalkontenanpassungen VH",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9151",
+   "name": "Variables Kapital – andere Kapitalkontenanpassungen VH",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9152",
+   "name": "Verlust-/Vortragskonto – andere Kapitalkontenanpassungen VH",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9153",
+   "name": "Kapitalkonto III – andere Kapitalkontenanpassungen VH",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9154",
+   "name": "Ausstehende Einlagen auf das Komplementär-Kapital, nicht eingefordert – andere Kapitalkontenanpassungen VH",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9155",
+   "name": "Verrechnungskonto für Einzahlungsverpflichtungen – andere Kapitalkontenanpassungen VH",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9157",
+   "name": "Privatsteuern Kapitalertragsteuer (Vollhafter)",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9158",
+   "name": "Privatsteuern Solidaritätszuschlag (Vollhafter)",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9159",
+   "name": "Privatsteuern Kirchensteuer (Vollhafter)",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9160",
+   "name": "Kommandit-Kapital – andere Kapitalkontenanpassungen TH",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9161",
+   "name": "Variables Kapital – andere Kapitalkontenanpassungen TH",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9162",
+   "name": "Verlustausgleichskonto – andere Kapitalkontenanpassungen TH",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9163",
+   "name": "Kapitalkonto III – andere Kapitalkontenanpassungen TH",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9164",
+   "name": "Ausstehende Einlagen auf das Kommandit-Kapital, nicht eingefordert – andere Kapitalkontenanpassungen TH",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9165",
+   "name": "Verrechnungskonto für Einzahlungsverpflichtungen – andere Kapitalkontenanpassungen TH",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9167",
+   "name": "Privatsteuern Kapitalertragsteuer (Teilhafter), Eigenkapital",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9168",
+   "name": "Privatsteuern Solidaritätszuschlag (Teilhafter), Eigenkapital",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9169",
+   "name": "Privatsteuern Kirchensteuer (Teilhafter), Eigenkapital",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9170",
+   "name": "Festkapital – Umbuchungen VH",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9171",
+   "name": "Variables Kapital – Umbuchungen VH",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9172",
+   "name": "Verlust-/Vortragskonto – Umbuchungen VH",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9173",
+   "name": "Kapitalkonto III – Umbuchungen VH",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9174",
+   "name": "Ausstehende Einlagen auf das Komplementär-Kapital, nicht eingefordert - Umbuchungen VH",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9175",
+   "name": "Verrechnungskonto für Einzahlungsverpflichtungen - Umbuchungen VH",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9180",
+   "name": "Kommandit-Kapital - Umbuchungen TH",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9181",
+   "name": "Variables Kapital - Umbuchungen TH",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9182",
+   "name": "Verlustausgleichskonto - Umbuchungen TH",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9183",
+   "name": "Kapitalkonto III - Umbuchungen TH",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9184",
+   "name": "Ausstehende Einlagen auf das Kommandit-Kapital, nicht eingefordert - Umbuchungen TH",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9185",
+   "name": "Verrechnungskonto für Einzahlungsverpflichtungen - Umbuchungen TH",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9186",
+   "name": "Privatsteuern Kapitalertragsteuer (Teilhafter), Fremdkapital",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9187",
+   "name": "Privatsteuern Solidaritätszuschlag (Teilhafter), Fremdkapital",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9188",
+   "name": "Privatsteuern Kirchensteuer (Teilhafter), Fremdkapital",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9189",
+   "name": "Verrechnungskonto für Umbuchungen zwischen Gesellschafter-Eigenkapitalkonten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9190",
+   "name": "Gegenkonto für statistische Mengeneinheiten Konten 9101-910",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9199",
+   "name": "Gegenkonto zu Konten 9120 und 913",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9200",
+   "name": "Beschäftigte Personen",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9208",
+   "name": "7)",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9209",
+   "name": "Gegenkonto zu 9200",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9210",
+   "name": "Produktive Löhne",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9219",
+   "name": "Gegenkonto zu 9210",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9220",
+   "name": "Gezeichnetes Kapital in DM (Art. 42 Abs. 3 Satz 1 EGHGB)",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9229",
+   "name": "Gegenkonto zu 9220",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9240",
+   "name": "Investitionsverbindlichkeiten bei den Leistungsverbindlichkeiten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9241",
+   "name": "Investitionsverbindlichkeiten aus Sachanlagekäufen bei Leistungsverbindlichkeiten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9242",
+   "name": "Investitionsverbindlichkeiten aus Käufen von immateriellen Vermögensgegenständen bei Leistungsverbindlichkeiten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9243",
+   "name": "Investitionsverbindlichkeiten aus Käufen von Finanzanlagen bei Leistungsverbindlichkeiten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9244",
+   "name": "Gegenkonto zu Konten 9240-9243",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9245",
+   "name": "Forderungen aus Sachanlageverkäufen bei sonstigen Vermögensgegenständen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9246",
+   "name": "Forderungen aus Verkäufen immaterieller Vermögensgegenstände bei sonstigen Vermögensgegenständen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9247",
+   "name": "Forderungen aus Verkäufen von Finanzanlagen bei sonstigen Vermögensgegenständen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9249",
+   "name": "Gegenkonto zu Konten 9245-9247",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9260",
+   "name": "Kurzfristige Rückstellungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9262",
+   "name": "Mittelfristige Rückstellungen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9264",
+   "name": "Langfristige Rückstellungen, außer Pensionen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9269",
+   "name": "Gegenkonto zu Konten 9260-9268",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9270",
+   "name": "Gegenkonto zu 9271-9279 (Soll-Buchung)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9271",
+   "name": "Verbindlichkeiten aus der Begebung und Übertragung von Wechseln",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9272",
+   "name": "Verbindlichkeiten aus der Begebung und Übertragung von Wechseln gegenüber verbundenen/ assoziierten Unternehmen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9273",
+   "name": "Verbindlichkeiten aus Bürgschaften, Wechsel- und Scheckbürgschaften",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9274",
+   "name": "Verbindlichkeiten aus Bürgschaften, Wechsel- und Scheckbürgschaften gegenüber verbundenen/assoziierten Unternehmen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9275",
+   "name": "Verbindlichkeiten aus Gewährleistungsverträgen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9276",
+   "name": "Verbindlichkeiten aus Gewährleistungsverträgen gegenüber verbundenen/assoziierten Unternehmen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9277",
+   "name": "Haftung aus der Bestellung von Sicherheiten für fremde Verbindlichkeiten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9278",
+   "name": "Haftung aus der Bestellung von Sicherheiten für fremde Verbindlichkeiten gegenüber verbundenen/ assoziierten Unternehmen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9279",
+   "name": "Verpflichtungen aus Treuhandvermögen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9280",
+   "name": "Gegenkonto zu 9281-9284",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9281",
+   "name": "Verpflichtungen aus Miet- und Leasingverträgen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9282",
+   "name": "Verpflichtungen aus Miet- und Leasingverträgen gegenüber verbundenen Unternehmen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9283",
+   "name": "Andere Verpflichtungen nach § 285 Nr. 3a HGB",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9284",
+   "name": "Andere Verpflichtungen nach § 285 Nr. 3a HGB gegenüber verbundenen Unternehmen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9285",
+   "name": "Unterschiedsbetrag aus der Abzinsung von Altersversorgungsverpflichtungen nach § 253 Abs. 6 HGB (Haben)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9286",
+   "name": "Gegenkonto zu 9285",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9287",
+   "name": "Zinsen bei Buchungen über Debitoren bei § 4 Abs. 3 EStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9288",
+   "name": "Mahngebühren bei Buchungen über Debitoren bei § 4 Abs. 3 EStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9289",
+   "name": "Gegenkonto zu 9287 und 9288",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9290",
+   "name": "Statistisches Konto steuerfreie Auslagen",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9291",
+   "name": "Gegenkonto zu 9290",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9292",
+   "name": "Statistisches Konto Fremdgeld",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9293",
+   "name": "Gegenkonto zu 9292",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9295",
+   "name": "Einlagen atypisch stiller Gesellschafter",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9297",
+   "name": "Steuerlicher Ausgleichsposten (Körperschaften",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9298",
+   "name": "Steuerlicher Ausgleichsposten VH (Personengesellschaften, Einzelunternehmen)",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9299",
+   "name": "Steuerlicher Ausgleichsposten TH (Personengesellschaften)",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9390",
+   "name": "(Zur freien Verfügung)",
+   "kennzeichen": "",
+   "bis": "94"
+  },
+  {
+   "nr": "9395",
+   "name": "(Zur freien Verfügung)",
+   "kennzeichen": "F",
+   "bis": "99"
+  },
+  {
+   "nr": "9400",
+   "name": "Privatentnahmen allgemein (Teilhafter), Eigenkapital",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9410",
+   "name": "Privatsteuern (Teilhafter), Eigenkapital",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9420",
+   "name": "Sonderausgaben beschränkt abzugsfähig (Teilhafter), Eigenkapital",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9430",
+   "name": "Sonderausgaben unbeschränkt abzugsfähig (Teilhafter), Eigenkapital",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9440",
+   "name": "Zuwendungen, Spenden (Teilhafter), Eigenkapital",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9450",
+   "name": "Außergewöhnliche Belastungen (Teilhafter), Eigenkapital",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9460",
+   "name": "Grundstücksaufwand (Teilhafter), Eigenkapital",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9470",
+   "name": "Grundstücksertrag (Teilhafter), Eigenkapital",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9480",
+   "name": "Unentgeltliche Wertabgaben (Teilhafter), Eigenkapital",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9490",
+   "name": "Privateinlagen (Teilhafter), Eigenkapital",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9500",
+   "name": "Anteil für Konto 0900 Teilhafter - Kommandit-Kapital",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9510",
+   "name": "Anteil für Konto 0910 Teilhafter - Verlustausgleichskonto",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9520",
+   "name": "Anteil für Konto 0920 Teilhafter - Gesellschafter-Darlehen",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9530",
+   "name": "Anteil für Konto 9950 Teilhafter - Ausstehende Einlagen auf das Kommandit-Kapital",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9540",
+   "name": "Anteil für Konto 9930 Vollhafter - Ausstehende Einlagen auf das Komplementär-Kapital",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9550",
+   "name": "Anteil für Konto 9810 Vollhafter - Kapitalkonto III",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9560",
+   "name": "Anteil für Konto 9820 Vollhafter - Verlustvortrag",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9570",
+   "name": "Anteil für Konto 0870 Vollhafter - Festkapital",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9580",
+   "name": "Anteil für Konto 0880 Vollhafter - Variables Kapital",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9590",
+   "name": "Anteil für Konto 0890 Vollhafter - Gesellschafter-Darlehen",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9600",
+   "name": "Name des Gesellschafters Vollhafter",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9610",
+   "name": "Tätigkeitsvergütung Vollhafter",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9620",
+   "name": "Tantieme Vollhafter",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9630",
+   "name": "Darlehensverzinsung Vollhafter",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9640",
+   "name": "Gebrauchsüberlassung Vollhafter",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9650",
+   "name": "Sonstige Vergütungen Vollhafter",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9660",
+   "name": "Sonstige Vergütungen Vollhafter",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9670",
+   "name": "Sonstige Vergütungen Vollhafter",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9680",
+   "name": "Sonstige Vergütungen Vollhafter",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9690",
+   "name": "Restanteil Vollhafter",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9700",
+   "name": "Name des Gesellschafters Teilhafter",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9710",
+   "name": "Tätigkeitsvergütung Teilhafter",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9720",
+   "name": "Tantieme Teilhafter",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9730",
+   "name": "Darlehensverzinsung Teilhafter",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9740",
+   "name": "Gebrauchsüberlassung Teilhafter",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9750",
+   "name": "Sonstige Vergütungen Teilhafter",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9760",
+   "name": "Sonstige Vergütungen Teilhafter",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9770",
+   "name": "Sonstige Vergütungen Teilhafter",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9780",
+   "name": "Anteil für Konto 9840 Teilhafter - Kapitalkonto III",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9790",
+   "name": "Restanteil Teilhafter",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9791",
+   "name": "Anteil Rücklagen variables Kapitalkonto Vollhafter",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9792",
+   "name": "Anteil Rücklagen Kapitalkonto III Vollhafter",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9793",
+   "name": "Anteil Rücklagen Verlust-/Vortragskonto Vollhafter",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9794",
+   "name": "Gegenkonto Anteil Rücklagen Vollhafter",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9795",
+   "name": "Anteil Rücklagen variables Kapitalkonto Teilhafter",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9796",
+   "name": "Anteil Rücklagen Kapitalkonto III Teilhafter",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9797",
+   "name": "Anteil Rücklagen Verlustausgleichskonto Teilhafter",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9798",
+   "name": "Gegenkonto Anteil Rücklagen Teilhafter",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9802",
+   "name": "Gesamthänderisch gebundene Rücklagen - andere Kapitalkontenanpassungen",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9803",
+   "name": "Gewinnvortrag/Verlustvortrag - andere Kapitalkontenanpassungen",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9804",
+   "name": "Gesamthänderisch gebundene Rücklagen – Umbuchungen",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9805",
+   "name": "Gewinnvortrag/Verlustvortrag – Umbuchungen",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9806",
+   "name": "Zuzurechnender Anteil am Jahresüberschuss/Jahresfehlbetrag - je Gesellschafter",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9807",
+   "name": "Zuzurechnender Anteil am Bilanzgewinn/Bilanzverlust - je Gesellschafter",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9808",
+   "name": "Gegenkonto für zuzurechnenden Anteil am Jahresüberschuss/Jahresfehlbetrag",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9809",
+   "name": "Gegenkonto für zuzurechnenden Anteil am Bilanzgewinn/Bilanzverlust",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9810",
+   "name": "Kapitalkonto III",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9820",
+   "name": "Verlust-/Vortragskonto",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9830",
+   "name": "Verrechnungskonto für Einzahlungsverpflichtungen",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9840",
+   "name": "Kapitalkonto III",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9850",
+   "name": "Verrechnungskonto für Einzahlungsverpflichtungen",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9860",
+   "name": "Einzahlungsverpflichtungen persönlich haftender Gesellschafter (Vollhafter)",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9870",
+   "name": "Einzahlungsverpflichtungen Kommanditisten (Teilhafter)",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9880",
+   "name": "Ausgleichsposten für aktivierte eigene Anteile",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9883",
+   "name": "Nicht durch Vermögenseinlagen gedeckte Entnahmen persönlich haftender Gesellschafter",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9884",
+   "name": "Nicht durch Vermögenseinlagen gedeckte Entnahmen Kommanditisten",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9885",
+   "name": "Verrechnungskonto für nicht durch Vermögenseinlagen gedeckte Entnahmen persönlich haftender Gesellschafter",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9886",
+   "name": "Verrechnungskonto für nicht durch Vermögenseinlagen gedeckte Entnahmen Kommanditisten",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9887",
+   "name": "Steueraufwand der Gesellschafter",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9889",
+   "name": "Gegenkonto zu 9887",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9890",
+   "name": "Statistisches Konto für den Gewinnzuschlag nach §§ 6b Abs. 7 und 6c EStG (Haben)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9891",
+   "name": "Gegenkonto zu statistischen Konten für den Gewinnzuschlag (Soll)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9892",
+   "name": "Veränderung der gesamthänderisch gebundenen Rücklagen (Einlagen/ Entnahmen",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9893",
+   "name": "Umsatzsteuer in den Forderungen zum allgemeinen Umsatzsteuersatz (EÜR)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9894",
+   "name": "Umsatzsteuer in den Forderungen zum ermäßigten Umsatzsteuersatz (EÜR)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9895",
+   "name": "Gegenkonto 9893-9894 für die Aufteilung der Umsatzsteuer (EÜR)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9896",
+   "name": "Vorsteuer in den Verbindlichkeiten zum allgemeinen Umsatzsteuersatz (EÜR)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9897",
+   "name": "Vorsteuer in den Verbindlichkeiten zum ermäßigten Umsatzsteuersatz (EÜR)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9898",
+   "name": "Vorsteuer in den Verbindlichkeiten aus verschiedenen Kosten (EÜR)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9899",
+   "name": "Gegenkonto 9896-9897 für die Aufteilung der Vorsteuer (EÜR)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9900",
+   "name": "Umsatzsteuer nicht fällig - sonstige Erlöse (EÜR)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9901",
+   "name": "Gegenkonto zu 9900",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9902",
+   "name": "Umsatzsteuer in den Forderungen aus sonstigen Erlösen (EÜR)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9906",
+   "name": "Steuerfreie Einnahmen und Entnahmen nach § 3 Nr. 72 EStG (Soll)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9907",
+   "name": "Gegenkonto zu steuerfreien Einnahmen und Entnahmen nach § 3 Nr. 72 EStG (Haben)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9908",
+   "name": "Nicht abzugsfähige Betriebsausgaben nach § 3c Abs. 1 EStG i. V. m. § 3 Nr. 72 EStG (Haben)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9909",
+   "name": "Gegenkonto zu nicht abzugsfähi- SB gen Betriebsausgaben nach § 3c Abs. 1 EStG i. V. m. § 3 Nr. 72 EStG (Soll)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9910",
+   "name": "Gegenkonto zur Minderung der SB Entnahmen § 4 Abs. 4a EStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9911",
+   "name": "Minderung der Entnahmen SB § 4 Abs. 4a EStG (Haben)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9912",
+   "name": "Erhöhung der Entnahmen SB § 4 Abs. 4a EStG",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9913",
+   "name": "Gegenkonto zur Erhöhung der Ent- SB nahmen § 4 Abs. 4a EStG (Haben)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9916",
+   "name": "Hinzurechnung Investitionsabzugsbetrag § 7g Abs. 2 EStG aus dem 2. SB vorangegangenen Wirtschaftsjahr, außerbilanziell (Haben)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9917",
+   "name": "Hinzurechnung Investitionsabzugsbetrag § 7g Abs. 2 EStG aus dem 3. SB vorangegangenen Wirtschaftsjahr, außerbilanziell (Haben)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9918",
+   "name": "Rückgängigmachung Investitions- SB abzugsbetrag § 7g Abs. 3 und 4 EStG im 2. vorangegangenen Wirtschaftsjahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9919",
+   "name": "Rückgängigmachung Investitions- SB abzugsbetrag § 7g Abs. 3 und 4 EStG im 3. vorangegangenen Wirtschaftsjahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9920",
+   "name": "Ausstehende Einlagen auf das Komplementär-Kapital, nicht eingefordert (Vollhafter)",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9930",
+   "name": "Ausstehende Einlagen auf das Komplementär-Kapital, eingefordert (Vollhafter)",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9940",
+   "name": "Ausstehende Einlagen auf das Kommandit-Kapital, nicht eingefordert (Teilhafter)",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9950",
+   "name": "Ausstehende Einlagen auf das Kommandit-Kapital, eingefordert (Teilhafter)",
+   "kennzeichen": "F"
+  },
+  {
+   "nr": "9960",
+   "name": "Bewertungskorrektur zu Forderungen aus Lieferungen und Leistungen (Währungsumrechnung)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9961",
+   "name": "Bewertungskorrektur zu sonstigen Verbindlichkeiten (Währungsumrechnung)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9962",
+   "name": "Bewertungskorrektur zu Guthaben bei Kreditinstituten (Bewertung Finanzmittelfonds)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9963",
+   "name": "Bewertungskorrektur zu Verbindlichkeiten gegenüber Kreditinstituten (Bewertung Finanzmittelfonds)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9964",
+   "name": "Bewertungskorrektur zu Verbindlichkeiten aus Lieferungen und Leistungen (Währungsumrechnung)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9965",
+   "name": "Bewertungskorrektur zu sonstigen Vermögensgegenständen (Währungsumrechnung)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9970",
+   "name": "Investitionsabzugsbetrag § 7g Abs. 1 EStG, außerbilanziell (Soll) SB",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9971",
+   "name": "Investitionsabzugsbetrag § 7g SB Abs. 1 EStG, außerbilanziell (Haben) - Gegenkonto zu 9970",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9972",
+   "name": "Hinzurechnung Investitionsabzugsbetrag § 7g Abs. 2 EStG aus dem SB vorangegangenen Wirtschaftsjahr, außerbilanziell (Haben)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9973",
+   "name": "Hinzurechnung Investitionsabzugs- SB betrag § 7g Abs. 2 EStG aus den vorangegangenen Wirtschaftsjahren, außerbilanziell (Soll) - Gegenkonto zu 9972, 9916, 9917",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9974",
+   "name": "Rückgängigmachung Investitions- SB abzugsbetrag § 7g Abs. 3 und 4 EStG im vorangegangenen Wirtschaftsjahr",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9975",
+   "name": "Rückgängigmachung Investitions- SB abzugsbetrag § 7g Abs. 3 und 4 EStG in den vorangegangenen Wirtschaftsjahren - Gegenkonto zu 9974, 9918, 9919",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9976",
+   "name": "Nicht abzugsfähige Zinsaufwendungen nach § 4h EStG (Haben)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9977",
+   "name": "Nicht abzugsfähige Zinsaufwendungen nach § 4h EStG (Soll) - Gegenkonto zu 9976",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9978",
+   "name": "Abziehbare Zinsaufwendungen aus Vorjahren nach § 4h EStG (Soll)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9979",
+   "name": "Abziehbare Zinsaufwendungen aus Vorjahren nach § 4h EStG (Haben) - Gegenkonto zu 9978",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9980",
+   "name": "Anteil Belastung auf Verbindlichkeitskonten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9981",
+   "name": "Verrechnungskonto für Anteil Belastung auf Verbindlichkeitskonten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9982",
+   "name": "Anteil Gutschrift auf Verbindlichkeitskonten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9983",
+   "name": "Verrechnungskonto für Anteil Gutschrift auf Verbindlichkeitskonten",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9984",
+   "name": "Gewinnkorrektur nach § 60 Abs. 2 EStDV - Erhöhung handelsrechtliches Ergebnis durch Habenbuchung - Minderung handelsrechtliches Ergebnis durch Sollbuchung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9985",
+   "name": "Gegenkonto zu 9984",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9986",
+   "name": "Ergebnisverteilung auf Fremdkapital",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9987",
+   "name": "Korrekturkonto für die Überleitungsrechnung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9989",
+   "name": "Gegenkonto zu 9986-9988",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9990",
+   "name": "Erträge von außergewöhnlicher Größenordnung oder Bedeutung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9991",
+   "name": "Erträge (aperiodisch)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9992",
+   "name": "Erträge von außergewöhnlicher Größenordnung oder Bedeutung (aperiodisch)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9993",
+   "name": "Aufwendungen von außergewöhnlicher Größenordnung oder Bedeutung",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9994",
+   "name": "Aufwendungen (aperiodisch)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9995",
+   "name": "Aufwendungen von außergewöhnlicher Größenordnung oder Bedeutung (aperiodisch)",
+   "kennzeichen": ""
+  },
+  {
+   "nr": "9998",
+   "name": "Gegenkonto zu 9990-9997",
+   "kennzeichen": ""
+  }
+ ]
+}

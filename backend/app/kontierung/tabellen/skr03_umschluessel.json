@@ -1,0 +1,11 @@
+{
+  "_meta": {
+    "kontenrahmen": "SKR03",
+    "zweck": "Konten, die im SKR03 2026 entfallen sind, auf das heutige Konto abbilden. Wird beim Bereinigen jeder KI-Antwort und im Vergleich mit dem Goldstandard angewendet.",
+    "quelle": "Abgleich der Testkontenliste mit DATEV-Kontenrahmen SKR03, Art.-Nr. 11174, gültig für 2026 (31.10.2026)",
+    "stand": "2026-10-31"
+  },
+  "konten": {
+    "4610": "4600"
+  }
+}

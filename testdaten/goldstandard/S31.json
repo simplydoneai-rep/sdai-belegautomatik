@@ -31,7 +31,7 @@
         "unit_price": "4.10",
         "net_amount": "820.00",
         "tax_rate": "7",
-        "account_skr03": "4610"
+        "account_skr03": "4600"
       },
       {
         "description": "Gestaltung und Satz",
@@ -40,7 +40,7 @@
         "unit_price": "72.00",
         "net_amount": "576.00",
         "tax_rate": "19",
-        "account_skr03": "4610"
+        "account_skr03": "4600"
       }
     ]
   },

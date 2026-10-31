@@ -24,8 +24,24 @@ def normalize_account(value: object, allowed: set[str]) -> str | None:
     match = re.match(r"\s*(\d{4,8})\b", str(value or ""))
     if not match:
         return None
-    number = match.group(1)
+    number = umschluesseln(match.group(1))
     return number if number in allowed else None
+
+
+def umschluesseln(number: str) -> str:
+    """Im SKR03 2026 entfallene Konten auf das heutige Konto abbilden (tabellen/skr03_umschluessel.json)."""
+    return _aliases().get(number, number)
+
+
+def _aliases() -> dict[str, str]:
+    global _ALIAS_CACHE
+    if _ALIAS_CACHE is None:
+        data = json.loads((_DIR / "skr03_umschluessel.json").read_text(encoding="utf-8"))
+        _ALIAS_CACHE = dict(data["konten"])
+    return _ALIAS_CACHE
+
+
+_ALIAS_CACHE: dict[str, str] | None = None
 
 
 def normalize_lines(data: dict[str, object], allowed: set[str]) -> int:

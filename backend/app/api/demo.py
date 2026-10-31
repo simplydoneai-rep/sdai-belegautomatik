@@ -1,6 +1,7 @@
-"""Demo-Webserver: Beleg rein → Buchungsvorschlag raus. Nur lokal (127.0.0.1), nur Testbelege.
+"""Demo-Webserver: Rechnungseingang mit Kontierung, Kreditoren und Freigabe. Nur lokal (127.0.0.1), nur Testbelege.
 
 Start (aus ``backend/``): ``.venv/Scripts/python -m uvicorn app.api.demo:app --host 127.0.0.1 --port 8077``
+oder Doppelklick auf ``demo_starten.bat`` im Projektordner.
 """
 
 from __future__ import annotations
@@ -13,9 +14,11 @@ from typing import Any, AsyncIterator
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse, PlainTextResponse, Response
 from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
 
-from app.demo.verarbeitung import (MODELLE, TESTDATEN, aufzeichnungen, mandanten, seitenbilder, testbelege,
-                                  verarbeite, verarbeite_upload)
+from app.demo import ansicht, zustand
+from app.demo.verarbeitung import MODELLE, aufzeichnungen, mandanten, seitenbilder
+from app.kontierung.kontensuche import alle_konten, suchen
 
 STATIC = Path(__file__).resolve().parents[1] / "demo" / "static"
 MAX_UPLOAD = 15 * 1024 * 1024
@@ -24,79 +27,154 @@ log = logging.getLogger("demo")  # nur IDs, Status, Laufzeiten (CLAUDE.md Regel 
 
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
-    # Texterkennung vorladen, damit der erste Scan in der Vorführung nicht 15 s braucht.
+    # Texterkennung und Kontenliste vorladen, Eingang im Hintergrund lesen (Liste füllt sich nach und nach).
     from app.ocr.text import _predictor
 
     _predictor()
     aufzeichnungen()
+    alle_konten()
+    ansicht.liste()  # stößt das Lesen aller Belege im Hintergrund an
     yield
 
 
 app = FastAPI(title="Simply Done AI – Belegautomatik (Demo)", lifespan=lifespan)
 
 
+def _fehler(exc: Exception) -> HTTPException:
+    return HTTPException(400, str(exc))
+
+
+def _modell(modell: str) -> str:
+    if modell not in MODELLE:
+        raise HTTPException(400, "Unbekanntes Modell")
+    return modell
+
+
+def _key(key: str) -> str:
+    if key not in {b["key"] for b in ansicht.eingang()}:
+        raise HTTPException(404, "Beleg nicht gefunden")
+    return key
+
+
 @app.get("/api/stammdaten")
 def stammdaten() -> dict[str, Any]:
+    lo, hi = zustand.kreditor_bereich(ansicht.SACHKONTENLAENGE)
     return {
         "mandanten": [{"id": k, "name": v["name"], "branche": v["branche"]} for k, v in mandanten().items()],
         "modelle": [{"id": k, **v} for k, v in MODELLE.items()],
-        "testbelege": [{"nr": i, "id": b["id"], "datei": b["datei"], "art": b["art"], "client_id": b["client_id"],
-                        "merkmale": b["merkmale"]} for i, b in enumerate(testbelege())],
+        "standard_modell": ansicht.STANDARD_MODELL,
+        "kreditoren_bereich": [lo, hi],
     }
 
 
-def _beleg(nr: int) -> dict[str, Any]:
-    belege = testbelege()
-    if not 0 <= nr < len(belege):
-        raise HTTPException(404, "Testbeleg nicht gefunden")
-    return belege[nr]
+@app.get("/api/eingang")
+def eingang(mandant: str | None = None, modell: str = ansicht.STANDARD_MODELL) -> dict[str, Any]:
+    return ansicht.liste(mandant or None, _modell(modell))
 
 
-@app.get("/api/testbelege/{nr}/datei", response_model=None)
-def testbeleg_datei(nr: int) -> FileResponse | PlainTextResponse:
-    path = TESTDATEN / _beleg(nr)["datei"]
-    if path.suffix == ".xml":
-        return PlainTextResponse(path.read_text(encoding="utf-8"))
-    return FileResponse(path)
+@app.get("/api/beleg")
+def beleg(key: str, modell: str = ansicht.STANDARD_MODELL) -> dict[str, Any]:
+    return ansicht.ansicht(_key(key), _modell(modell))
 
 
-@app.get("/api/testbelege/{nr}/seiten")
-def testbeleg_seiten(nr: int) -> dict[str, int]:
-    return {"anzahl": len(seitenbilder(TESTDATEN / _beleg(nr)["datei"]))}
+@app.get("/api/beleg/seiten")
+def beleg_seiten(key: str) -> dict[str, int]:
+    return {"anzahl": len(seitenbilder(ansicht.pfad(_key(key))))}
 
 
-@app.get("/api/testbelege/{nr}/seite/{i}")
-def testbeleg_seite(nr: int, i: int) -> Response:
-    seiten = seitenbilder(TESTDATEN / _beleg(nr)["datei"])
+@app.get("/api/beleg/seite")
+def beleg_seite(key: str, i: int) -> Response:
+    seiten = seitenbilder(ansicht.pfad(_key(key)))
     if not 0 <= i < len(seiten):
         raise HTTPException(404, "Seite nicht gefunden")
     return Response(seiten[i], media_type="image/png")
 
 
-@app.post("/api/testbelege/{nr}/verarbeiten")
-def testbeleg_verarbeiten(nr: int, modell: str = Form("ionos_qwen")) -> dict[str, Any]:
-    b = _beleg(nr)
-    if modell not in MODELLE:
-        raise HTTPException(400, "Unbekanntes Modell")
-    result = verarbeite(TESTDATEN / b["datei"], b["client_id"], modell, b["erwartet"])
-    log.info("beleg=%s modell=%s ampel=%s", b["id"], modell, result["ampel"])
+@app.get("/api/beleg/datei", response_model=None)
+def beleg_datei(key: str) -> FileResponse | PlainTextResponse:
+    path = ansicht.pfad(_key(key))
+    if path.suffix == ".xml":
+        return PlainTextResponse(path.read_text(encoding="utf-8"))
+    return FileResponse(path)
+
+
+@app.get("/api/konten")
+def konten(q: str = "") -> list[dict[str, Any]]:
+    return suchen(q)
+
+
+class KontoWahl(BaseModel):
+    key: str
+    pos: int
+    nr: str
+    modell: str = ansicht.STANDARD_MODELL
+
+
+class KreditorNeu(BaseModel):
+    key: str
+    nr: int
+    name: str
+    modell: str = ansicht.STANDARD_MODELL
+
+
+class BelegAktion(BaseModel):
+    key: str
+    modell: str = ansicht.STANDARD_MODELL
+
+
+@app.post("/api/beleg/konto")
+def konto_waehlen(w: KontoWahl) -> dict[str, Any]:
+    try:
+        return ansicht.konto_waehlen(_key(w.key), w.pos, w.nr, _modell(w.modell))
+    except ValueError as exc:
+        raise _fehler(exc) from exc
+
+
+@app.post("/api/beleg/kreditor")
+def kreditor_anlegen(k: KreditorNeu) -> dict[str, Any]:
+    try:
+        return ansicht.kreditor_anlegen(_key(k.key), k.nr, k.name, _modell(k.modell))
+    except ValueError as exc:
+        raise _fehler(exc) from exc
+
+
+@app.post("/api/beleg/freigeben")
+def freigeben(a: BelegAktion) -> dict[str, Any]:
+    try:
+        result = ansicht.freigeben(_key(a.key), _modell(a.modell))
+    except ValueError as exc:
+        raise _fehler(exc) from exc
+    log.info("freigegeben beleg=%s", result["id"])
     return result
+
+
+@app.post("/api/beleg/wiedereroeffnen")
+def wiedereroeffnen(a: BelegAktion) -> dict[str, Any]:
+    try:
+        zustand.wiedereroeffnen(_key(a.key))
+    except ValueError as exc:
+        raise _fehler(exc) from exc
+    return ansicht.ansicht(a.key, _modell(a.modell))
 
 
 @app.post("/api/upload")
-async def upload(datei: UploadFile = File(...), mandant: str = Form("M1"),
-                 modell: str = Form("ionos_qwen")) -> dict[str, Any]:
-    if mandant not in mandanten() or modell not in MODELLE:
-        raise HTTPException(400, "Unbekannter Mandant oder unbekanntes Modell")
-    content = await datei.read()
-    if len(content) > MAX_UPLOAD:
+async def upload(datei: UploadFile = File(...), mandant: str = Form("M1")) -> dict[str, str]:
+    if mandant not in mandanten():
+        raise HTTPException(400, "Unbekannter Mandant")
+    inhalt = await datei.read()
+    if len(inhalt) > MAX_UPLOAD:
         raise HTTPException(413, "Datei zu groß (höchstens 15 MB)")
     try:
-        result = verarbeite_upload(content, datei.filename or "beleg.pdf", mandant, modell)
+        key = ansicht.hochladen(inhalt, datei.filename or "beleg.pdf", mandant)
     except ValueError as exc:
-        raise HTTPException(400, str(exc)) from exc
-    log.info("upload modell=%s ampel=%s", modell, result["ampel"])
-    return result
+        raise _fehler(exc) from exc
+    return {"key": key}
+
+
+@app.post("/api/demo/zuruecksetzen")
+def zuruecksetzen() -> dict[str, str]:
+    zustand.zuruecksetzen()
+    return {"status": "zurückgesetzt"}
 
 
 app.mount("/", StaticFiles(directory=STATIC, html=True), name="static")

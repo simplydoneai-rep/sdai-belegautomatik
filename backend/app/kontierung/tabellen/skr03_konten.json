@@ -2,7 +2,7 @@
   "_meta": {
     "kontenrahmen": "SKR03",
     "zweck": "Erlaubte Kontenliste für den Machbarkeitstest (Auswahl typischer Aufwandskonten)",
-    "quelle": "DATEV SKR03, Kontenbezeichnungen sinngemäß; Abgleich mit der offiziellen DATEV-Kontenrahmenliste steht aus",
+    "quelle": "Auswahl aus DATEV SKR03 (Art.-Nr. 11174, gültig 2026), abgeglichen am 31.10.2026; vollständige Liste: skr03_vollstaendig.json",
     "stand": "2026-10-28"
   },
   "konten": [
@@ -59,7 +59,7 @@
       "Kfz-Reparaturen"
     ],
     [
-      "4610",
+      "4600",
       "Werbekosten"
     ],
     [

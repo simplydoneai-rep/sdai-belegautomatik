@@ -3,77 +3,119 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Belegautomatik – Demo</title>
+  <title>Belegautomatik – Rechnungseingang</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <div class="brand"><strong>Simply Done AI</strong> · Belegautomatik</div>
-    <div class="badge" title="Die KI-Antworten stammen aus den Messläufen vom 30./31.10.2026. Auslesen, Texterkennung, Pseudonymisierung und Steuerlogik laufen live.">
-      Demo · nur Testbelege · KI-Antworten aus dem Messlauf
+  <header class="topbar">
+    <div class="brand"><span class="logo">S</span> Simply Done AI <span class="sub">Belegautomatik</span></div>
+    <div class="topbar-rechts">
+      <label class="pill-select" title="Die KI-Antworten stammen aus den Messläufen vom 30./31.10.2026 und werden ohne Kosten abgespielt.">
+        <span>KI</span>
+        <select id="modell"></select>
+      </label>
+      <span class="demo-hinweis">Demo · nur Testbelege</span>
     </div>
   </header>
 
-  <section class="toolbar">
-    <label>Testbeleg
-      <select id="beleg"></select>
-    </label>
-    <label>KI-Modell
-      <select id="modell"></select>
-    </label>
-    <button id="los" class="primary">Verarbeiten</button>
-    <div id="drop" class="drop" tabindex="0">
-      oder eigene Datei hierher ziehen
-      <input id="datei" type="file" accept=".pdf,.xml,.jpg,.jpeg,.png,.tif,.tiff">
-      <label class="inline">für Mandant <select id="mandant"></select></label>
-    </div>
-  </section>
+  <div class="app">
+    <!-- Spalte 1: Rechnungseingang -->
+    <aside class="eingang">
+      <div class="eingang-kopf">
+        <h1>Rechnungen</h1>
+        <div class="segment" role="tablist">
+          <button class="aktiv" data-filter="offen" role="tab">Zu verbuchen <span id="z-offen" class="zahl">–</span></button>
+          <button data-filter="freigegeben" role="tab">Erledigt <span id="z-erledigt" class="zahl">–</span></button>
+        </div>
+        <div class="filterzeile">
+          <select id="mandant" class="feld"><option value="">Alle Mandanten</option></select>
+        </div>
+        <input id="suche" class="feld suchfeld" type="search" placeholder="Lieferant suchen">
+      </div>
+      <div id="summe" class="summe"></div>
+      <ul id="liste" class="liste"></ul>
+      <details id="nach-konto" class="karte nach-konto">
+        <summary>Offene Positionen nach Sachkonto</summary>
+        <ul id="konto-liste"></ul>
+      </details>
+      <div class="eingang-fuss">
+        <label class="knopf hell">＋ Rechnung hinzufügen
+          <input id="datei" type="file" accept=".pdf,.xml,.jpg,.jpeg,.png,.tif,.tiff" hidden>
+        </label>
+        <button id="reset" class="link">Demo zurücksetzen</button>
+      </div>
+    </aside>
 
-  <main>
-    <section class="links">
-      <div id="vorschau" class="vorschau leer">Beleg auswählen und „Verarbeiten“ klicken</div>
-    </section>
-
-    <section class="rechts">
-      <div id="leer" class="hinweis">Noch kein Beleg verarbeitet.</div>
-      <div id="ergebnis" hidden>
-        <div id="status" class="status"></div>
-        <ol id="schritte" class="schritte"></ol>
-
-        <h2>Kopfdaten</h2>
-        <table id="kopf" class="kv"></table>
-
-        <h2>Buchungsvorschlag je Position</h2>
-        <table id="positionen" class="pos">
-          <thead><tr><th></th><th>Bezeichnung</th><th class="r">Netto</th><th class="r">USt</th><th>Sachkonto SKR03</th></tr></thead>
-          <tbody></tbody>
-        </table>
-
-        <div class="zwei">
+    <!-- Spalte 2: Rechnung bearbeiten -->
+    <main class="detail">
+      <div id="leer" class="leer-zustand">
+        <div class="leer-icon">📄</div>
+        <p>Wählen Sie links eine Rechnung aus.</p>
+      </div>
+      <div id="beleg" hidden>
+        <div class="detail-kopf">
           <div>
-            <h2>Steuerlogik</h2>
-            <div id="steuerlogik"></div>
+            <div id="b-status" class="status-chip"></div>
+            <h2 id="b-lieferant"></h2>
+            <p id="b-meta" class="meta"></p>
           </div>
-          <div>
-            <h2>KI</h2>
-            <div id="ki"></div>
+          <div class="betrag-gross">
+            <span class="klein">Brutto</span>
+            <strong id="b-brutto"></strong>
+            <span id="b-steuer" class="klein"></span>
           </div>
         </div>
 
-        <div id="soll" class="soll" hidden></div>
+        <section class="karte" id="kreditor-karte"></section>
 
-        <details id="pseudo">
-          <summary>Was ging an die KI? <span id="pseudo-zahl"></span></summary>
-          <p class="klein">Name, Anschrift und Ansprechpartner des Mandanten, IBAN, Telefon, E-Mail, Steuernummer und Namen
-            von Personen werden vor dem KI-Aufruf durch Platzhalter ersetzt. Die Zuordnung bleibt bei uns.</p>
-          <div id="pseudo-typen" class="chips"></div>
-          <pre id="pseudo-text"></pre>
-        </details>
+        <section class="karte">
+          <div class="karte-titel">Positionen <span class="klein" id="b-pos-info"></span></div>
+          <ul id="positionen" class="positionen"></ul>
+        </section>
+
+        <section class="karte gruppe">
+          <details>
+            <summary>Rechnungsdaten</summary>
+            <table id="kopf" class="kv"></table>
+          </details>
+          <details>
+            <summary>Verarbeitung und KI</summary>
+            <ol id="schritte" class="schritte"></ol>
+            <div id="ki" class="klein"></div>
+            <div id="soll" class="klein soll"></div>
+          </details>
+          <details id="pseudo">
+            <summary>Was ging an die KI? <span id="pseudo-zahl" class="klein"></span></summary>
+            <p class="klein">Name, Anschrift und Ansprechpartner des Mandanten, IBAN, Telefon, E-Mail, Steuernummer und
+              Namen von Personen werden vor dem KI-Aufruf durch Platzhalter ersetzt. Die Zuordnung bleibt bei uns.</p>
+            <pre id="pseudo-text"></pre>
+          </details>
+          <details>
+            <summary>Verlauf</summary>
+            <ul id="verlauf" class="verlauf"></ul>
+          </details>
+        </section>
+        <div class="platzhalter-unten"></div>
       </div>
-    </section>
-  </main>
 
-  <footer>Nur synthetische Testbelege. Kein automatisches Buchen: Jeder Vorschlag wird von einem Sachbearbeiter geprüft und freigegeben.</footer>
+      <div id="aktionsleiste" class="aktionsleiste" hidden>
+        <div id="a-hinweis" class="a-hinweis"></div>
+        <button id="a-knopf" class="knopf blau gross">Freigeben</button>
+      </div>
+    </main>
+
+    <!-- Spalte 3: Beleg -->
+    <section class="vorschau">
+      <div class="vorschau-kopf">
+        <span>Beleg</span>
+        <span id="v-seiten" class="klein"></span>
+      </div>
+      <div id="vorschau" class="vorschau-inhalt"><p class="klein mitte">Keine Rechnung gewählt</p></div>
+    </section>
+  </div>
+
+  <div id="dropdown" class="dropdown" hidden></div>
+  <div id="toast" class="toast" hidden></div>
   <script src="app.js"></script>
 </body>
 </html>

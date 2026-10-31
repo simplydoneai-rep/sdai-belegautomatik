@@ -29,7 +29,7 @@
         "unit_price": "0.042",
         "net_amount": "210.00",
         "tax_rate": "19",
-        "account_skr03": "4610"
+        "account_skr03": "4600"
       },
       {
         "description": "Visitenkarten 85 x 55 mm",
@@ -38,7 +38,7 @@
         "unit_price": "0.09",
         "net_amount": "45.00",
         "tax_rate": "19",
-        "account_skr03": "4610"
+        "account_skr03": "4600"
       },
       {
         "description": "Roll-up Display 85 x 200 cm",
@@ -47,7 +47,7 @@
         "unit_price": "89.00",
         "net_amount": "89.00",
         "tax_rate": "19",
-        "account_skr03": "4610"
+        "account_skr03": "4600"
       }
     ]
   },

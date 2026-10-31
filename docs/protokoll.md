@@ -253,6 +253,19 @@ Die SimplyDoneAI GbR ist seit 01.08.2026 bei Markel Insurance SE versichert (Mak
 
 **Für die Vorführung empfohlen:** S25 (28 Positionen, alle Konten richtig), S02 (gemischte Steuersätze), S05 (Reverse Charge), eine KoSIT-E-Rechnung (ohne KI), S30 (Handyfoto).
 
+## 31.10.2026 – Demo: Rechnungseingang mit Kreditoren, Kontoauswahl und Ampel
+
+Vorgaben Paul Graß umgesetzt, Details: `docs/entscheidungen/2026-10-31_rechnungseingang-kontierung.md`.
+
+- **SKR03 vollständig:** 1.524 Konten aus der DATEV-PDF (SKR03 2026, BilRUG) eingelesen. Dabei gefunden: **Konto 4610 gibt es 2026 nicht mehr**, Werbekosten sind 4600. Testliste und Goldstandard angepasst; Messwerte unverändert.
+- **Kreditoren** 70000–99999 je Mandant, nächste freie Nummer vorgeschlagen, Pflicht vor der Freigabe, danach fest. Hinweis: Das sind fünfstellige Nummern (DATEV-Standard bei 4-stelligen Sachkonten); sechsstellig wäre 700000–999999.
+- **Kontoauswahl** je Position mit Vorschlägen und Suche („War“ → Wareneingang 7 %, 19 % …; „Kfz“ → Fahrzeug).
+- **Ampel** je Position: grün sicher, gelb unsicher, rot frei. Auch eine manuelle Wahl wird gegen den Steuersatz geprüft.
+- **Eingangsliste** mit Zählern „Zu verbuchen“ und „Erledigt“, Summe, Filter je Mandant, Suche und Übersicht offener Positionen je Sachkonto. Freigabe öffnet automatisch die nächste offene Rechnung.
+- **Gestaltung** im Stil von iOS: drei Spalten (Liste, Rechnung, Beleg), große Bedienelemente, klare Hinweise, was vor der Freigabe noch fehlt.
+- Beim Test gefunden und behoben: manuelle Kontowahl wurde ohne Steuersatzprüfung grün; Hinweismeldung lag über dem Freigabe-Knopf und fing Klicks ab; KoSIT-Platzhalter „[Seller name]“ als Lieferant angezeigt.
+- 116 Tests grün.
+
 ## Nächste Schritte
 
 Die aktuelle Aufgabenliste steht in `docs/projektplan.md`, Abschnitt 10. Die Liste unten ist der Stand vom 28.10.2026 vor dem Projektplan.

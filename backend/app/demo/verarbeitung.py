@@ -69,7 +69,9 @@ def testbelege() -> list[dict[str, Any]]:
                 continue  # CII-Variante: gleicher Inhalt wie UBL
             out.append({"key": f'{gold["id"]}|{doc["pfad"]}', "id": gold["id"], "datei": doc["pfad"],
                         "art": doc["art"], "client_id": gold["client_id"], "merkmale": gold.get("merkmale", []),
-                        "erwartet": {**gold["erwartet"], **doc.get("abweichend", {})}})
+                        "erwartet": {**gold["erwartet"], **doc.get("abweichend", {})},
+                        # KoSIT-Dateien enthalten Platzhalter wie „[Seller name]“; für die Anzeige der erfundene Name
+                        "anzeige_lieferant": gold["erwartet"].get("supplier_name")})
     return out
 
 

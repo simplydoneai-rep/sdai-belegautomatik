@@ -21,3 +21,8 @@ testdaten/ausgaben/
 .idea/
 Thumbs.db
 .DS_Store
+
+# Zustand und Uploads der Demo
+testdaten/demo/zustand.json
+testdaten/demo/zustand.tmp
+testdaten/demo/uploads/

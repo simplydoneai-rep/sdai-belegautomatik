@@ -1,0 +1,37 @@
+{
+  "_meta": {
+    "zweck": "Umgangssprachliche Suchbegriffe für die Kontensuche auf Begriffe der DATEV-Kontenbezeichnungen abbilden",
+    "stand": "2026-10-31"
+  },
+  "begriffe": {
+    "kfz": "fahrzeug",
+    "auto": "fahrzeug",
+    "pkw": "fahrzeug",
+    "tanken": "fahrzeug betriebskosten",
+    "benzin": "fahrzeug betriebskosten",
+    "diesel": "fahrzeug betriebskosten",
+    "handy": "telefon",
+    "mobilfunk": "telefon",
+    "internet": "telefon",
+    "werbung": "werbekosten",
+    "marketing": "werbekosten",
+    "essen": "bewirtung",
+    "restaurant": "bewirtung",
+    "software": "software",
+    "lizenz": "lizenzen",
+    "strom": "strom",
+    "miete": "miete",
+    "ware": "wareneingang",
+    "material": "wareneingang",
+    "werkzeug": "werkzeuge",
+    "gwg": "geringwertige",
+    "papier": "buerobedarf",
+    "buero": "buerobedarf",
+    "kurier": "porto",
+    "versand": "porto",
+    "anwalt": "rechts beratungskosten",
+    "steuerberater": "rechts beratungskosten",
+    "reinigung": "reinigung",
+    "reparatur": "reparaturen instandhaltung"
+  }
+}

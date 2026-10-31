@@ -9,6 +9,7 @@ from typing import Any
 from rapidfuzz import fuzz
 
 from app.kontierung.betraege import parse_amount
+from app.kontierung.konten import umschluesseln
 
 TOLERANZ = Decimal("0.01")
 LIEFERANT_MIN_SCORE = 90.0
@@ -97,7 +98,7 @@ def compare(expected: dict[str, Any], actual: dict[str, Any] | None) -> dict[str
         betrag += 1
         satz += _rate(exp.get("tax_rate")) == _rate(act.get("tax_rate"))
         if exp.get("account_skr03"):
-            konto += str(exp["account_skr03"]) == str(act.get("account_skr03"))
+            konto += umschluesseln(str(exp["account_skr03"])) == umschluesseln(str(act.get("account_skr03")))
 
     return {
         "felder": felder,

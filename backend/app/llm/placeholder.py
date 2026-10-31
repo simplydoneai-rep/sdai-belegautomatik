@@ -25,7 +25,7 @@ _ROW = re.compile(r"^\s*(\d{1,3})\s{2,}(.+)$")
 KEYWORDS: list[tuple[str, str]] = [
     (r"strom|kwh|grundpreis|gas|wasser", "4240"),
     (r"reinigung", "4250"),
-    (r"flyer|visitenkarte|roll-?up|werb|plakat", "4610"),
+    (r"flyer|visitenkarte|roll-?up|werb|plakat", "4600"),
     (r"lizenz", "4964"),
     (r"wartung|support", "4806"),
     (r"kurier|porto|versand|express", "4910"),

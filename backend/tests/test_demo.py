@@ -35,3 +35,63 @@ def test_e_rechnung_ohne_ki() -> None:
     beleg = next(b for b in demo.testbelege() if b["datei"].endswith("01.01a-INVOICE_ubl.xml"))
     result = verarbeite(TESTDATEN / beleg["datei"], beleg["client_id"], "ionos_qwen", beleg["erwartet"])
     assert result["quelle"] == "e-rechnung" and result["pseudonymisiert"] == ""
+
+
+@pytest.fixture()
+def leerer_zustand(tmp_path, monkeypatch):  # type: ignore[no-untyped-def]
+    from app.demo import zustand
+
+    monkeypatch.setattr(zustand, "ZUSTAND", tmp_path / "zustand.json")
+    return zustand
+
+
+@pytest.mark.skipif(not (TESTDATEN / "demo" / "aufzeichnungen.json").exists(), reason="Aufzeichnungen fehlen")
+def test_rechnungseingang_ablauf(leerer_zustand) -> None:  # type: ignore[no-untyped-def]
+    from app.demo import ansicht
+
+    key = next(b["key"] for b in ansicht.eingang() if b["id"] == "S02")
+    a = ansicht.ansicht(key)
+    assert a["kreditor"] is None and a["kreditor_vorschlag"]["nr"] == 70000
+    assert not a["freigabe_moeglich"] and "Kreditor anlegen" in a["offen"]
+    assert all(p["ampel"] == "gruen" for p in a["positionen"])  # 5 von 5 Modellen einig
+
+    with pytest.raises(ValueError):
+        ansicht.kreditor_anlegen(key, 69999, "Getränke Hanse")  # außerhalb 70000–99999
+    a = ansicht.kreditor_anlegen(key, 70000, "Getränke Hanse")
+    assert a["kreditor"]["nr"] == "70000" and a["freigabe_moeglich"]
+    with pytest.raises(ValueError):
+        ansicht.kreditor_anlegen(key, 70000, "Anderer Lieferant")  # Nummer doppelt
+
+    a = ansicht.konto_waehlen(key, 2, "3400")  # 19-%-Konto für 7-%-Position
+    assert a["positionen"][2]["ampel"] == "gelb" and "passt nicht" in a["positionen"][2]["grund"]
+    a = ansicht.konto_waehlen(key, 2, "3300")
+    assert a["positionen"][2]["ampel"] == "gruen" and a["positionen"][2]["grund"] == "Von Ihnen bestätigt"
+    with pytest.raises(ValueError):
+        ansicht.konto_waehlen(key, 0, "1234")  # gibt es im SKR03 nicht
+
+    a = ansicht.freigeben(key)
+    assert a["status"] == "freigegeben"
+    felder = [e["feld"] for e in leerer_zustand.protokoll(key)]
+    assert "Status" in felder and any("Sachkonto" in f for f in felder)
+
+    # Nächster Beleg: nächste freie Kreditorennummer
+    key2 = next(b["key"] for b in ansicht.eingang() if b["id"] == "S01")
+    assert ansicht.ansicht(key2)["kreditor_vorschlag"]["nr"] == 70001
+
+
+def test_kontensuche() -> None:
+    from app.kontierung.kontensuche import suchen
+
+    assert [k["nr"] for k in suchen("War")][:2] == ["3200", "3300"]
+    assert "3400" in [k["nr"] for k in suchen("War")]
+    assert suchen("34")[0]["nr"] == "3400"
+    assert suchen("kfz rep")[0]["nr"] == "4540"
+    assert suchen("") == []
+
+
+def test_skr03_2026_ohne_4610() -> None:
+    from app.kontierung.konten import umschluesseln
+    from app.kontierung.kontensuche import konto
+
+    assert konto("4610") is None and konto("4600")["name"] == "Werbekosten"
+    assert umschluesseln("4610") == "4600"
