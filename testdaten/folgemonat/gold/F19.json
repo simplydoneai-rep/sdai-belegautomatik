@@ -1,0 +1,46 @@
+{
+  "id": "F19",
+  "quelle": "folgemonat",
+  "client_id": "M2",
+  "merkmale": [
+    "EU-Lieferant",
+    "innergemeinschaftlicher Erwerb"
+  ],
+  "dokumente": [
+    {
+      "pfad": "folgemonat/F19_gereedschap.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Gereedschap Groothandel B.V.",
+    "invoice_number": "GG-26-04417",
+    "invoice_date": "2026-11-17",
+    "currency": "EUR",
+    "net_total": "447.00",
+    "tax_total": "0.00",
+    "gross_total": "447.00",
+    "reverse_charge": true,
+    "lines": [
+      {
+        "description": "Drehmomentschlüssel 1/2 Zoll, 40–200 Nm",
+        "quantity": "2",
+        "unit": "Stück",
+        "unit_price": "129.00",
+        "net_amount": "258.00",
+        "tax_rate": "0",
+        "account_skr03": "4985"
+      },
+      {
+        "description": "Steckschlüsselsatz 94-teilig",
+        "quantity": "1",
+        "unit": "Satz",
+        "unit_price": "189.00",
+        "net_amount": "189.00",
+        "tax_rate": "0",
+        "account_skr03": "4985"
+      }
+    ]
+  }
+}

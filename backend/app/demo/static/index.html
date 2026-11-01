@@ -3,33 +3,73 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Belegautomatik – Rechnungseingang</title>
-  <link rel="stylesheet" href="style.css?v=4">
+  <title>Belegautomatik</title>
+  <link rel="stylesheet" href="style.css?v=7">
 </head>
 <body>
   <header class="topbar">
     <div class="brand"><span class="logo">S</span> Simply Done AI <span class="sub">Belegautomatik</span></div>
+    <nav class="hauptnav" aria-label="Bereiche">
+      <a href="#/uebersicht" data-nav="uebersicht">Übersicht</a>
+      <a href="#/belege" data-nav="belege">Belegverarbeitung</a>
+    </nav>
     <div class="topbar-rechts">
-      <label class="pill-select" title="Die KI-Antworten stammen aus den Messläufen vom 30./31.10.2026 und werden ohne Kosten abgespielt.">
-        <span>KI</span>
-        <select id="modell"></select>
+      <label class="nutzer-wahl" title="Demo ohne Anmeldung: Person wählen, um die Rechte zu sehen. Anmeldung mit Zwei-Faktor folgt.">
+        <span id="nutzer-avatar" class="avatar">–</span>
+        <select id="nutzer"></select>
       </label>
       <span class="demo-hinweis">Demo · nur Testbelege</span>
     </div>
   </header>
 
-  <div class="app">
-    <!-- Spalte 1: Rechnungseingang -->
+  <!-- ============================== Übersicht ============================== -->
+  <section id="seite-uebersicht" class="uebersicht" hidden>
+    <div class="ue-innen">
+      <div class="ue-kopf">
+        <div>
+          <h1>Übersicht</h1>
+          <p class="meta" id="ue-gruss"></p>
+        </div>
+        <div class="ue-aktionen" id="ue-aktionen">
+          <button id="ue-rechte" class="knopf grau">Sachbearbeiter und Rechte</button>
+          <button id="ue-neu" class="knopf blau">＋ Mandant</button>
+        </div>
+      </div>
+      <div class="kacheln">
+        <div class="kachel"><span class="klein">Offene Belege</span><b id="k-offen">–</b></div>
+        <div class="kachel gruen"><span class="klein">Sicher vorkontiert</span><b id="k-sicher">–</b></div>
+        <div class="kachel gelb"><span class="klein">Zur Prüfung</span><b id="k-pruefen">–</b></div>
+        <div class="kachel blau"><span class="klein" id="k-mandanten-text">Mandanten</span><b id="k-mandanten">–</b></div>
+      </div>
+      <div class="karte ue-liste">
+        <div class="ue-listenkopf">
+          <b id="ue-titel">Mandanten</b>
+          <input id="ue-suche" class="feld suchfeld" type="search" placeholder="Mandant, Nummer oder Ansprechpartner">
+        </div>
+        <div class="ue-zeile ue-spalten">
+          <span></span><span>Mandant</span><span>Nummer</span><span>Kontenrahmen</span><span>Sachbearbeiter</span>
+          <span>Offen</span><span>Monat</span><span></span>
+        </div>
+        <div id="ue-tabelle"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== Belegverarbeitung ============================== -->
+  <div id="seite-belege" class="app" hidden>
+    <!-- Spalte 1: Rechnungseingang des Mandanten -->
     <aside class="eingang">
       <div class="eingang-kopf">
-        <h1>Rechnungen</h1>
+        <a href="#/uebersicht" class="zurueck">‹ Übersicht</a>
+        <label class="mandant-wahl">
+          <select id="mandant" aria-label="Mandant wechseln"></select>
+        </label>
+        <div id="mandant-info" class="klein mandant-info"></div>
+        <div id="mandant-hinweis" class="mini-hinweis" hidden></div>
         <div class="segment drei" role="tablist">
           <button class="aktiv" data-filter="sicher" role="tab">Sicher <span id="z-sicher" class="zahl">–</span></button>
           <button data-filter="pruefen" role="tab">Prüfen <span id="z-pruefen" class="zahl">–</span></button>
           <button data-filter="erledigt" role="tab">Erledigt <span id="z-erledigt" class="zahl">–</span></button>
-        </div>
-        <div class="filterzeile">
-          <select id="mandant" class="feld"><option value="">Alle Mandanten</option></select>
         </div>
         <input id="suche" class="feld suchfeld" type="search" placeholder="Lieferant suchen">
       </div>
@@ -51,8 +91,9 @@
           <button id="demo-knopf" class="link">Demo ▾</button>
           <div id="demo-liste" class="menue" hidden>
             <button data-demo="oktober">Oktober als gebucht übernehmen<small>Kreditoren anlegen, Konten buchen, freigeben – wie nach einem Monat Arbeit</small></button>
-            <button data-demo="november">Belege November einspielen<small>17 neue Rechnungen derselben Lieferanten</small></button>
-            <button data-demo="reset" class="gefahr">Demo zurücksetzen<small>Kreditoren, Regeln und Freigaben löschen</small></button>
+            <button data-demo="november">Belege November einspielen<small>19 neue Rechnungen, auch aus den USA (Dollar) und den Niederlanden</small></button>
+            <label class="menue-zeile">KI-Aufzeichnung<select id="modell"></select></label>
+            <button data-demo="reset" class="gefahr">Demo zurücksetzen<small>Kreditoren, Regeln, Freigaben und Kanzlei-Stammdaten auf Anfang</small></button>
           </div>
         </div>
       </div>
@@ -65,47 +106,48 @@
         <p>Wählen Sie links eine Rechnung aus.</p>
       </div>
       <div id="beleg" hidden>
-        <div class="detail-kopf">
-          <div>
-            <div id="b-status" class="status-chip"></div>
-            <h2 id="b-lieferant"></h2>
-            <p id="b-meta" class="meta"></p>
+        <section class="abschnitt kopf-karte">
+          <div class="detail-kopf">
+            <div>
+              <div class="kopf-zeile"><div id="b-status" class="status-chip"></div>
+                <button id="b-verlauf" class="link verlauf-knopf" title="Alle Änderungen an diesem Beleg">Verlauf</button></div>
+              <h2 id="b-lieferant"></h2>
+              <p id="b-meta" class="meta"></p>
+            </div>
+            <div class="betrag-gross">
+              <span class="klein">Brutto</span>
+              <strong id="b-brutto"></strong>
+              <span id="b-steuer" class="klein"></span>
+              <span id="b-summen" class="summen-ok"></span>
+            </div>
           </div>
-          <div class="betrag-gross">
-            <span class="klein">Brutto</span>
-            <strong id="b-brutto"></strong>
-            <span id="b-steuer" class="klein"></span>
-          </div>
-        </div>
+          <div id="b-fakten" class="fakten"></div>
+        </section>
 
         <div id="b-ausnahmen" class="hinweis-karte" hidden></div>
-        <section class="karte" id="kreditor-karte"></section>
 
-        <section class="karte">
-          <div class="karte-titel">Positionen <span class="klein" id="b-pos-info"></span></div>
+        <section class="abschnitt" id="kreditor-abschnitt">
+          <div class="abschnitt-kopf"><span class="ikon lila" data-ikon="person"></span>Kreditor</div>
+          <div id="kreditor-karte"></div>
+        </section>
+
+        <section class="abschnitt">
+          <div class="abschnitt-kopf"><span class="ikon gruen" data-ikon="liste"></span>Positionen und Konten
+            <span class="klein rechts" id="b-pos-info"></span></div>
           <ul id="positionen" class="positionen"></ul>
         </section>
 
-        <section class="karte gruppe">
+        <section class="abschnitt">
+          <div class="abschnitt-kopf"><span class="ikon indigo" data-ikon="buchung"></span>Buchungssätze
+            <span class="klein rechts">wie im DATEV-Buchungsstapel</span></div>
+          <div class="tabelle-rahmen"><table id="buchungen" class="buchungen"></table></div>
+          <p id="buchungen-hinweis" class="klein buchungen-hinweis"></p>
+        </section>
+
+        <section class="abschnitt gruppe">
           <details>
-            <summary>Rechnungsdaten</summary>
+            <summary><span><span class="ikon grau" data-ikon="beleg"></span>Rechnungsdaten</span></summary>
             <table id="kopf" class="kv"></table>
-          </details>
-          <details>
-            <summary>Verarbeitung und KI</summary>
-            <ol id="schritte" class="schritte"></ol>
-            <div id="ki" class="klein"></div>
-            <div id="soll" class="klein soll"></div>
-          </details>
-          <details id="pseudo">
-            <summary>Was ging an die KI? <span id="pseudo-zahl" class="klein"></span></summary>
-            <p class="klein">Name, Anschrift und Ansprechpartner des Mandanten, IBAN, Telefon, E-Mail, Steuernummer und
-              Namen von Personen werden vor dem KI-Aufruf durch Platzhalter ersetzt. Die Zuordnung bleibt bei uns.</p>
-            <pre id="pseudo-text"></pre>
-          </details>
-          <details>
-            <summary>Verlauf</summary>
-            <ul id="verlauf" class="verlauf"></ul>
           </details>
         </section>
         <div class="platzhalter-unten"></div>
@@ -123,11 +165,25 @@
         <span>Beleg</span>
         <span id="v-seiten" class="klein"></span>
       </div>
-      <div id="vorschau" class="vorschau-inhalt"><p class="klein mitte">Keine Rechnung gewählt</p></div>
+      <div class="vorschau-rahmen">
+        <div id="vorschau" class="vorschau-inhalt"><p class="klein mitte">Keine Rechnung gewählt</p></div>
+        <div id="werkzeuge" class="werkzeuge" hidden>
+          <div class="w-seite"><input id="w-seite" inputmode="numeric" aria-label="Seite"><span id="w-gesamt"></span></div>
+          <button id="w-hoch" title="Vorherige Seite" data-ikon="hoch"></button>
+          <button id="w-runter" title="Nächste Seite" data-ikon="runter"></button>
+          <span class="w-trenn"></span>
+          <button id="w-passend" title="An Breite anpassen" data-ikon="passend"></button>
+          <button id="w-plus" title="Vergrößern (Strg + Mausrad)" data-ikon="plus"></button>
+          <button id="w-minus" title="Verkleinern" data-ikon="minus"></button>
+          <span id="w-zoom" class="w-zoom">100 %</span>
+        </div>
+      </div>
     </section>
   </div>
 
+  <!-- ============================== Blätter (Dialoge) ============================== -->
   <div id="dropdown" class="dropdown" hidden></div>
+
   <div id="blatt-hintergrund" class="blatt-hintergrund" hidden>
     <div class="blatt" role="dialog" aria-modal="true">
       <div class="blatt-kopf">
@@ -145,7 +201,79 @@
       </div>
     </div>
   </div>
+
+  <div id="verlauf-blatt" class="blatt-hintergrund" hidden>
+    <div class="blatt" role="dialog" aria-modal="true">
+      <div class="blatt-kopf">
+        <span></span><b>Verlauf des Belegs</b>
+        <button class="link blau-link schliessen" data-schliessen="verlauf-blatt">Fertig</button>
+      </div>
+      <p class="klein blatt-info">Jede Änderung mit Zeitpunkt, Person und Quelle. Einträge werden nur ergänzt, nie geändert.</p>
+      <ul id="verlauf" class="blatt-liste verlauf"></ul>
+      <div class="blatt-fuss"></div>
+    </div>
+  </div>
+
+  <div id="mandant-blatt" class="blatt-hintergrund" hidden>
+    <form class="blatt schmal" id="mandant-form" role="dialog" aria-modal="true">
+      <div class="blatt-kopf">
+        <button type="button" class="link blau-link" data-schliessen="mandant-blatt">Abbrechen</button>
+        <b id="mandant-titel">Neuer Mandant</b>
+        <button type="submit" class="link blau-link fett rechts">Sichern</button>
+      </div>
+      <div class="formular">
+        <div class="form-gruppe">
+          <label>Unternehmensname<input name="name" class="feld" required autocomplete="off"></label>
+          <label>Mandantennummer<input name="nummer" class="feld" inputmode="numeric" required autocomplete="off"></label>
+          <label>Ansprechpartner im Unternehmen<input name="ansprechpartner" class="feld" autocomplete="off"></label>
+        </div>
+        <div class="form-gruppe">
+          <span class="form-label">Kontenrahmen</span>
+          <div class="segment zwei" id="f-kontenrahmen">
+            <button type="button" data-wert="SKR03" class="aktiv">SKR03</button>
+            <button type="button" data-wert="SKR04">SKR04</button>
+          </div>
+        </div>
+        <div class="form-gruppe">
+          <label>Sachbearbeiter (zuständig)<select name="zustaendig" class="feld" required></select></label>
+          <label>Vertretung<select name="vertretung" class="feld"></select></label>
+          <p class="klein">Beide sehen den Mandanten automatisch. Gesperrte Personen stehen nicht zur Auswahl.</p>
+        </div>
+        <p id="mandant-fehler" class="fehlertext" hidden></p>
+      </div>
+    </form>
+  </div>
+
+  <div id="rechte-blatt" class="blatt-hintergrund" hidden>
+    <div class="blatt breit" role="dialog" aria-modal="true">
+      <div class="blatt-kopf">
+        <span></span><b>Sachbearbeiter und Rechte</b>
+        <button class="link blau-link fett schliessen" data-schliessen="rechte-blatt">Fertig</button>
+      </div>
+      <div class="rechte">
+        <div class="rechte-links">
+          <ul id="sb-liste" class="sb-liste"></ul>
+          <form id="sb-form" class="sb-form">
+            <b>Sachbearbeiter erfassen</b>
+            <div class="sb-form-zeile">
+              <input name="kuerzel" class="feld" placeholder="Kürzel" maxlength="4" autocomplete="off" required>
+              <input name="name" class="feld" placeholder="Vor- und Nachname" autocomplete="off" required>
+            </div>
+            <div class="sb-form-zeile">
+              <select name="rolle" class="feld"><option value="sachbearbeitung">Sachbearbeitung</option><option value="leitung">Kanzleileitung</option></select>
+              <button class="knopf blau" type="submit">Anlegen</button>
+            </div>
+          </form>
+        </div>
+        <div class="rechte-rechts">
+          <div id="rechte-kopf" class="rechte-kopf"></div>
+          <ul id="rechte-liste" class="rechte-liste"></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div id="toast" class="toast" hidden></div>
-  <script src="app.js?v=4"></script>
+  <script src="app.js?v=8"></script>
 </body>
 </html>

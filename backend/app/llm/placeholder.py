@@ -16,9 +16,9 @@ from app.kontierung.betraege import parse_amount, q2
 from app.llm.base import LLMProvider
 
 _AMOUNT = r"-?\d{1,3}(?:[.,]\d{3})*[.,]\d{2}"
-_NUMBER = re.compile(r"(?i)(?:Rechnungs-?(?:nummer|nr\.?)|Gutschrift-?Nr\.?|Beleg-?Nr\.?|Invoice No\.?)\s*:?\s+([A-Z0-9][\w\-/.]*)")
+_NUMBER = re.compile(r"(?i)(?:Rechnungs-?(?:nummer|nr\.?)|Gutschrift-?Nr\.?|Beleg-?Nr\.?|Invoice No\.?)(?:\s*:\s*|\s+)([A-Z0-9][\w\-/.]*)")
 _DATE = re.compile(r"(?i)(?:Rechnungsdatum|Belegdatum|Datum)\s*:?\s+(\d{1,2})\.(\d{1,2})\.(\d{4})")
-_MONEY = re.compile(rf"({_AMOUNT})\s*(?:€|EUR|E\b)")
+_MONEY = re.compile(rf"({_AMOUNT})\s*(?:€|EUR|E\b|USD|CHF|GBP|\$|£)")
 _RATE = re.compile(r"(\d{1,2})[.,]?\s*%")
 _ROW = re.compile(r"^\s*(\d{1,3})\s{2,}(.+)$")
 
@@ -121,7 +121,7 @@ def extract_rule_based(text: str) -> dict[str, Any]:
         "supplier_name": supplier,
         "invoice_number": m_nr.group(1) if m_nr else None,
         "invoice_date": date,
-        "currency": "EUR",
+        "currency": next((c for c in ("USD", "CHF", "GBP") if re.search(rf"\b{c}\b", text)), "EUR"),
         "net_total": s(net),
         "tax_total": s(tax),
         "gross_total": s(gross),

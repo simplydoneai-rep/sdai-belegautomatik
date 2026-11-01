@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import re
+from contextvars import ContextVar
 import threading
 import time
 from datetime import datetime
@@ -20,6 +21,7 @@ from app.lernen import regeln as lernregeln
 
 ZUSTAND = Path(__file__).resolve().parents[3] / "testdaten" / "demo" / "zustand.json"
 _LOCK = threading.Lock()
+NUTZER: ContextVar[str] = ContextVar("nutzer", default="Demo")  # angemeldete Person, je Anfrage gesetzt
 
 
 def kreditor_bereich(sachkontenlaenge: int = 4) -> tuple[int, int]:
@@ -58,8 +60,15 @@ def zuruecksetzen() -> None:
 
 
 def _protokoll(z: dict[str, Any], beleg: str | None, feld: str, alt: Any, neu: Any, quelle: str) -> None:
-    z["protokoll"].append({"zeit": datetime.now().isoformat(timespec="seconds"), "nutzer": "Demo",
+    z["protokoll"].append({"zeit": datetime.now().isoformat(timespec="seconds"), "nutzer": NUTZER.get(),
                            "beleg": beleg, "feld": feld, "alt": alt, "neu": neu, "quelle": quelle})
+
+
+def protokoll_ergaenzen(beleg: str | None, feld: str, alt: Any, neu: Any, quelle: str) -> None:
+    with _LOCK:
+        z = laden()
+        _protokoll(z, beleg, feld, alt, neu, quelle)
+        _speichern(z)
 
 
 def _norm(name: str) -> str:

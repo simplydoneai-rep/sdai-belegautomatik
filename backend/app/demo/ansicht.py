@@ -23,9 +23,10 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
-from app.demo import zustand
-from app.demo.verarbeitung import MODELLE, TESTDATEN, TABELLEN, aufzeichnungen, mandanten, testbelege, verarbeite
-from app.kontierung.betraege import parse_amount
+from app.demo import kanzlei, zustand
+from app.demo.verarbeitung import MODELLE, TESTDATEN, aufzeichnungen, testbelege, verarbeite
+from app.kontierung import steuerschluessel
+from app.kontierung.betraege import parse_amount, q2
 from app.kontierung.konten import umschluesseln
 from app.kontierung.kontensuche import konto, oeffentlich
 from app.lernen import regeln as lernregeln
@@ -34,6 +35,7 @@ STANDARD_MODELL = "ionos_qwen"
 MIN_STIMMEN = 3
 SACHKONTENLAENGE = 4  # je Mandant konfigurierbar, Demo: alle Mandanten 4-stellig
 STANDARD_JE_SATZ = {"19": "3400", "7": "3300"}
+STANDARD_JE_FALL = {"ige": ("3425",), "13b": ("3125", "3123")}  # Automatikkonten für i. g. Erwerb und § 13b
 MIN_SICHERHEIT = Decimal("0.80")
 KLEINBETRAG = Decimal("250")
 BETRAG_FAKTOR = Decimal("2")  # mehr als doppelt so hoch wie bisher → prüfen
@@ -113,12 +115,6 @@ def _sha(datei: str) -> str:
     return hashlib.sha256((TESTDATEN / datei).read_bytes()).hexdigest()
 
 
-@lru_cache(maxsize=1)
-def _steuersatz_konten() -> dict[str, set[int]]:
-    rates = json.loads((TABELLEN / "skr03_konto_steuersatz.json").read_text(encoding="utf-8"))["konten"]
-    return {k: set(v) for k, v in rates.items()}
-
-
 # --------------------------------------------------------------------------- Verarbeitung (zwischengespeichert)
 
 
@@ -189,7 +185,7 @@ def _datum(iso: str) -> str:
 
 
 def _position(i: int, pos: dict[str, Any], modell: str, je_modell: dict[str, list[dict[str, Any]]],
-              gewaehlt: dict[str, Any], regeln: list[dict[str, Any]], rc: bool) -> dict[str, Any]:
+              gewaehlt: dict[str, Any], regeln: list[dict[str, Any]], fall: str) -> dict[str, Any]:
     betrag = parse_amount(pos.get("net_amount"))
     satz = parse_amount(pos.get("tax_rate"))
     stimmen: dict[str, list[str]] = {}
@@ -225,16 +221,19 @@ def _position(i: int, pos: dict[str, Any], modell: str, je_modell: dict[str, lis
     for r in regeln:
         if r.get("aktiv", True):
             add(r["konto"], "Bisher für diesen Kreditor")
-    if satz is not None and str(satz.normalize()) in STANDARD_JE_SATZ:
+    if fall == "inland" and satz is not None and str(satz.normalize()) in STANDARD_JE_SATZ:
         add(STANDARD_JE_SATZ[str(satz.normalize())], f"Standard bei {satz.normalize()} %")
+    for kto in STANDARD_JE_FALL.get(fall, ()):
+        add(kto, f"Standard bei {steuerschluessel.FALL_TEXT[fall]}")
 
-    passt = not (nr and satz is not None and nr in _steuersatz_konten() and int(satz) not in _steuersatz_konten()[nr])
+    k = konto(nr) if nr else None
+    steuer = steuerschluessel.bestimmen(k, satz, fall)
     n_stimmen = len(stimmen.get(nr or "", []))
     quelle = "manuell" if bestaetigt else ("regel" if regel else ("ki" if ki_konto else None))
     if not nr:
         ampel, grund, sicher = "rot", "Frei – bitte Konto wählen", 0.0
-    elif not passt:  # Steuerlogik prüft immer, auch bei manueller Wahl (CLAUDE.md Regel 15)
-        ampel, grund, sicher = "gelb", f"Konto {nr} passt nicht zu {satz.normalize() if satz is not None else '?'} % Steuer", 0.3
+    elif steuer.hinweis:  # Steuerlogik prüft immer, auch bei manueller Wahl (CLAUDE.md Regel 15)
+        ampel, grund, sicher = "gelb", steuer.hinweis, 0.3
     elif bestaetigt:
         ampel, grund, sicher = "gruen", "Von Ihnen bestätigt", 1.0
     elif regel and lernregeln.ist_sicher(regel):
@@ -255,14 +254,11 @@ def _position(i: int, pos: dict[str, Any], modell: str, je_modell: dict[str, lis
         grund = (f"Nur {n_stimmen} von {len(je_modell)} Modellen schlagen dieses Konto vor" if je_modell
                  else "Vorschlag ohne Bestätigung")
         sicher = 0.5
-    if rc and satz == 0 and nr in ("3300", "3400"):
-        ampel, grund, sicher = "gelb", "Reverse Charge: Konto für § 13b oder i. g. Erwerb prüfen", 0.3
-
-    k = konto(nr) if nr else None
     return {"pos": i, "bezeichnung": pos.get("description"), "menge": pos.get("quantity"), "einheit": pos.get("unit"),
             "netto": pos.get("net_amount"), "steuersatz": pos.get("tax_rate"),
             "konto": oeffentlich(k) if k else None, "vorschlag_nr": vorschlag_nr, "bestaetigt": bestaetigt,
             "quelle": quelle, "regel": regel and {"id": regel["id"], "bestaetigungen": regel["bestaetigungen"]},
+            "steuer": steuer.oeffentlich(),
             "ampel": ampel, "grund": grund, "sicherheit": round(sicher, 2), "vorschlaege": vorschlaege[:6]}
 
 
@@ -277,8 +273,15 @@ def _ausnahmen(kopf: dict[str, Any], r: dict[str, Any], kreditor: dict[str, Any]
         aus.append("Neuer Lieferant")
     if kopf.get("document_type") == "credit_note":
         aus.append("Gutschrift")
-    if kopf.get("reverse_charge"):
-        aus.append("Reverse Charge")
+    fall = kopf.get("steuerfall") or "inland"
+    if fall == "13b":
+        aus.append("Reverse Charge (§ 13b UStG)")
+    elif fall == "ige":
+        aus.append("Innergemeinschaftlicher Erwerb")
+    if (kopf.get("currency") or "EUR") != "EUR":
+        aus.append(f'Fremdwährung {kopf["currency"]} – Umrechnung in Euro nötig')
+    if not kopf.get("leistung") and (brutto is None or abs(brutto) > KLEINBETRAG):
+        aus.append("Leistungsdatum fehlt (§ 14 Abs. 4 Nr. 6 UStG)")
     if re.search(r"(?i)\b(abschlag|anzahlung|schlussrechnung)", r.get("pseudonymisiert") or ""):
         aus.append("Anzahlung oder Schlussrechnung")
     if not kopf.get("invoice_number") and (brutto is None or abs(brutto) > KLEINBETRAG):
@@ -289,6 +292,40 @@ def _ausnahmen(kopf: dict[str, Any], r: dict[str, Any], kreditor: dict[str, Any]
     if brutto and bisher and brutto > max(bisher) * BETRAG_FAKTOR:
         aus.append(f"Betrag ungewöhnlich hoch (bisher höchstens {max(bisher):.2f} €)")
     return aus
+
+
+def _buchungssaetze(positionen: list[dict[str, Any]], kopf: dict[str, Any], kreditor: dict[str, Any] | None,
+                    fall: str) -> list[dict[str, Any]]:
+    """Buchungsvorschau wie im DATEV-Buchungsstapel: eine Zeile je Sachkonto und Steuerschlüssel (CLAUDE.md
+    Abschnitt 6). Umsatz bei Inlandsrechnungen brutto (DATEV rechnet die Vorsteuer heraus), bei § 13b und
+    i. g. Erwerb netto. Gutschriften im Haben."""
+    gruppen: dict[tuple[str, str], dict[str, Any]] = {}
+    for p in positionen:
+        if not p["konto"]:
+            continue
+        st = p["steuer"]
+        g = gruppen.setdefault((p["konto"]["nr"], st["bu"]), {
+            "konto": p["konto"]["nr"], "konto_name": p["konto"]["name"], "bu": st["bu"], "steuer": st["text"],
+            "satz": st["satz"], "netto": Decimal(0), "positionen": 0})
+        g["netto"] += parse_amount(p["netto"]) or Decimal(0)
+        g["positionen"] += 1
+    leistung = kopf.get("leistung") or {}
+    saetze = []
+    for g in gruppen.values():
+        netto = g.pop("netto")
+        satz = Decimal(g["satz"] or 0)
+        umsatz = netto + q2(netto * satz / 100) if fall == "inland" else netto
+        saetze.append({**g, "umsatz": str(abs(umsatz)), "soll_haben": "S" if umsatz >= 0 else "H",
+                       "gegenkonto": kreditor["nr"] if kreditor else None, "belegdatum": kopf.get("invoice_date"),
+                       "leistungsdatum": leistung.get("von"), "belegfeld1": kopf.get("invoice_number"),
+                       "buchungstext": (kopf.get("supplier_name") or "")[:60], "waehrung": kopf.get("currency") or "EUR"})
+    return saetze
+
+
+def _mandant_kurz(mid: str) -> dict[str, Any]:
+    m = kanzlei.mandant(mid)
+    return {"id": mid, "name": m["name"], "nummer": m["nummer"], "kontenrahmen": m["kontenrahmen"],
+            "branche": m.get("branche", "")}
 
 
 def _gesamt(positionen: list[dict[str, Any]], summen_ok: bool, kreditor_ok: bool) -> str:
@@ -312,8 +349,8 @@ def ansicht(key: str, modell: str = STANDARD_MODELL) -> dict[str, Any]:
     knr = kreditor["nr"] if kreditor else None
     regeln = zustand.regeln(mandant, knr)
     je_modell = _aufgezeichnete_positionen(b)
-    rc = bool(kopf.get("reverse_charge"))
-    positionen = [_position(i, p, modell, je_modell, st.get("konten", {}), regeln, rc)
+    fall = kopf.get("steuerfall") or "inland"
+    positionen = [_position(i, p, modell, je_modell, st.get("konten", {}), regeln, fall)
                   for i, p in enumerate(r["positionen"])]
 
     offen = []
@@ -342,7 +379,7 @@ def ansicht(key: str, modell: str = STANDARD_MODELL) -> dict[str, Any]:
     return {
         "key": key, "id": b["id"], "nr": b["nr"], "art": b["art"], "datei": b["datei"], "merkmale": b["merkmale"],
         "monat": b.get("monat"),
-        "mandant": {"id": mandant, "name": mandanten()[mandant]["name"], "branche": mandanten()[mandant]["branche"]},
+        "mandant": _mandant_kurz(mandant),
         "status": status, "bereich": bereich, "freigegeben_am": st.get("freigegeben_am"),
         "kopf": kopf, "steuerlogik": r["steuerlogik"], "schritte": r["schritte"], "ki": r["ki"],
         "quelle": r["quelle"], "pseudonymisiert": r["pseudonymisiert"], "platzhalter": r["platzhalter"], "soll": r["soll"],
@@ -352,6 +389,8 @@ def ansicht(key: str, modell: str = STANDARD_MODELL) -> dict[str, Any]:
         "regeln": [{**rg, "sicher": lernregeln.ist_sicher(rg),
                     "konto_name": (konto(rg["konto"]) or {}).get("name", "")} for rg in regeln],
         "positionen": positionen, "ampel": ampel, "ausnahmen": ausnahmen,
+        "steuerfall": {"id": fall, "text": steuerschluessel.FALL_TEXT[fall]},
+        "buchungen": _buchungssaetze(positionen, kopf, kreditor, fall),
         "sicherheit": round(sicherheit, 2), "gelernt": gelernt,
         "offen": offen, "freigabe_moeglich": not offen and status != "freigegeben",
         "protokoll": zustand.protokoll(key)[-30:],
@@ -369,11 +408,12 @@ def liste(mandant: str | None = None, modell: str = STANDARD_MODELL) -> dict[str
         with _LOCK:
             fertig = (b["key"], modell) in _CACHE
         e: dict[str, Any] = {"key": b["key"], "id": b["id"], "art": b["art"], "monat": b.get("monat"),
-                             "mandant": mandanten()[b["client_id"]]["name"], "mandant_id": b["client_id"],
+                             "mandant": _mandant_kurz(b["client_id"])["name"], "mandant_id": b["client_id"],
                              "bereit": fertig, "bereich": "pruefen", "status": "offen"}
         if fertig:
             a = ansicht(b["key"], modell)
             e.update({"lieferant": a["kopf"].get("supplier_name"), "datum": a["kopf"].get("invoice_date"),
+                      "leistung": a["kopf"].get("leistung"), "waehrung": a["kopf"].get("currency") or "EUR",
                       "brutto": a["kopf"].get("gross_total"), "ampel": a["ampel"], "status": a["status"],
                       "bereich": a["bereich"], "sicherheit": a["sicherheit"], "ausnahmen": a["ausnahmen"],
                       "kreditor": a["kreditor"] and a["kreditor"]["nr"], "positionen": len(a["positionen"]),
@@ -402,6 +442,24 @@ def liste(mandant: str | None = None, modell: str = STANDARD_MODELL) -> dict[str
         "bereit": all(e["bereit"] for e in eintraege),
         "folgemonat": bool(zustand.laden().get("folgemonat")),
     }
+
+
+def uebersicht(nutzer: str, modell: str = STANDARD_MODELL) -> dict[str, Any]:
+    """Dashboard: je sichtbarem Mandant offene Belege (sicher, prüfen) und betroffene Monate (Belegdatum)."""
+    l = liste(None, modell)
+    k = kanzlei.laden()
+    zeilen = []
+    for m in kanzlei.sichtbare_mandanten(nutzer):
+        es = [e for e in l["eintraege"] if e["mandant_id"] == m["id"]]
+        offen = [e for e in es if e["bereich"] != "erledigt"]
+        monate = sorted({(e.get("datum") or e.get("monat") or "")[:7] for e in offen} - {""})
+        zeilen.append({**kanzlei.mandant_oeffentlich(m, k), "offen": len(offen),
+                       "sicher": sum(1 for e in offen if e["bereich"] == "sicher" and e["bereit"]),
+                       "pruefen": sum(1 for e in offen if e["bereich"] == "pruefen" and e["bereit"]),
+                       "erledigt": len(es) - len(offen), "lesen": sum(1 for e in es if not e["bereit"]),
+                       "monate": monate})
+    summe = {f: sum(z[f] for z in zeilen) for f in ("offen", "sicher", "pruefen", "erledigt")}
+    return {"mandanten": zeilen, "summe": summe, "bereit": l["bereit"]}
 
 
 # --------------------------------------------------------------------------- Aktionen

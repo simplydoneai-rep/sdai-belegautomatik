@@ -278,6 +278,20 @@ Wunsch Paul Graß: Rechnungen bekannter Lieferanten im Folgemonat schon vorkonti
 - Beim Test gefunden und behoben: Monatsnamen in der Positionsbezeichnung („Oktober“ → „November“) lagen genau an der Ähnlichkeitsschwelle und werden jetzt ignoriert; bei abgeschalteter Regel stand fälschlich „noch nicht gelernt“; Datum im deutschen Format.
 - 123 Tests grün.
 
+## 01.11.2026 – Dashboard, Rechte, Steuerschlüssel, Leistungsdatum, Währung, Belegansicht
+
+Vorgaben Paul Graß umgesetzt, Details: `docs/entscheidungen/2026-11-01_dashboard-steuerschluessel-design.md`.
+
+- **Steuerschlüssel nach DATEV** je Position und neuer Abschnitt „Buchungssätze“ wie im Buchungsstapel. Automatikkonten ohne Schlüssel, sonst 9 / 8, i. g. Erwerb 19 / 18, § 13b 94 / 91. Recherche mit Quellen: `docs/recherche/2026-11-01_datev-steuerschluessel.md`. Hinweis an Paul: 7 % Vorsteuer ist Schlüssel **8**, nicht 7; 19 gilt für den i. g. **Erwerb**.
+- **Leistungsdatum/-zeitraum und Währung** lokal aus dem Beleg gelesen und überall angezeigt; fehlendes Leistungsdatum und Fremdwährung gehen zur Prüfung. Neue Testrechnungen F18 (USA, US-Dollar, BU 94) und F19 (Niederlande, i. g. Erwerb).
+- **Belegverarbeitung neu gegliedert:** Spalten farblich getrennt, Abschnitte als Karten mit Symbol; KI-Details und „Steuerlogik“ entfernt, Verlauf als Blatt hinter einem Knopf. Kontofeld öffnet beim Klick sofort die Suche.
+- **Belegansicht:** „Seite x von y“, schwebende Werkzeugleiste mit Seitenwahl und Zoom.
+- **Dashboard** mit Mandanten, Ansprechpartner, Nummer, Sachbearbeiter-Kürzeln (Name beim Überfahren), offenen Belegen und Monat; Erfassung von Mandanten (SKR03/SKR04, zuständig und Vertretung) und Sachbearbeitern mit Rechten (Zugriff, kein Zugriff, gesperrt). Der Server prüft den Zugriff.
+- **Entscheidung:** Belegverarbeitung immer je Mandant, Wechsel nur zwischen eigenen Mandanten.
+- Beim Test gefunden und behoben: ausgeschriebene Leistungsdaten („26. Oktober 2026“, „November 2, 2026“) wurden nicht erkannt; USt-IdNr. las ein folgendes Wort mit; Rechnungsnummer ohne Leerzeichen nach dem Doppelpunkt; Seitenzähler sprang vor dem Laden der Bilder auf Seite 2; Esc im Kontofeld ließ den Suchtext stehen.
+- `docs/verfahrensdokumentation.md` gibt es noch nicht (Phase 5); die Änderungen an der Verarbeitung stehen bis dahin in den Entscheidungen.
+- 132 Tests grün.
+
 ## Nächste Schritte
 
 Die aktuelle Aufgabenliste steht in `docs/projektplan.md`, Abschnitt 10. Die Liste unten ist der Stand vom 28.10.2026 vor dem Projektplan.

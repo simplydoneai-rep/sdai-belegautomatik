@@ -25,6 +25,13 @@ ORDNER = basis.ROOT / "folgemonat"
 
 basis.SUPPLIERS["bohnenglueck"] = basis._supplier(40, "Kaffeerösterei Bohnenglück GmbH", "Röstweg 3", "90443 Nürnberg",
                                                   "Mila Vogt", "Mila Vogt")
+# Drittland (USA, Rechnung in US-Dollar) und EU-Lieferant (Niederlande, innergemeinschaftliche Lieferung)
+basis.SUPPLIERS["pixelcloud"] = {**basis._supplier(41, "PixelCloud Software Inc.", "500 Market Street", "San Francisco, CA 94105",
+                                                   "Billing Team", "Dana Whitfield", country="USA", vat="99-9990041"),
+                                 "id_label": "Tax ID (EIN)", "steuernr": None, "email": "billing@pixelcloud-example.com"}
+basis.SUPPLIERS["gereedschap"] = {**basis._supplier(42, "Gereedschap Groothandel B.V.", "Havenweg 12", "3011 Rotterdam",
+                                                    "Sanne de Vries", "Pieter Bakker", country="NL", vat="NL999999042B01"),
+                                  "steuernr": None}
 
 # Gleiche Schreibweise der Positionen wie im Oktober, damit die Lernregeln greifen.
 RECHNUNGEN: list[dict[str, Any]] = [
@@ -52,14 +59,17 @@ RECHNUNGEN: list[dict[str, Any]] = [
      "lines": [("Flyer DIN A5, 4/4-farbig, 135 g", "2500", "Stück", "0.042", 19, "4600"),
                ("Visitenkarten 85 x 55 mm", "250", "Stück", "0.09", 19, "4600")]},
     {"id": "F07", "sup": "cloudkontor", "client": "M4", "nr": "CK-INV-78110", "date": "2026-11-01", "tags": ["wiederkehrend", "19 %"],
+     "leistung": ("Leistungszeitraum", "01.11.26–31.10.27"),
      "lines": [("Support- und Wartungspaket, 12 Monate", "1", "Jahr", "240.00", 19, "4806")]},
     {"id": "F08", "sup": "hollerbach", "client": "M5", "nr": "MH-26-1302", "date": "2026-11-03", "tags": ["wiederkehrend", "7 %"],
      "lines": [("Weizenmehl Type 550, 25-kg-Sack", "1200", "kg", "0.62", 7, "3300"),
                ("Roggenmehl Type 1150", "300", "kg", "0.71", 7, "3300")]},
     {"id": "F09", "sup": "talgrund", "client": "M1", "nr": "ET-2026-501288", "date": "2026-11-03", "tags": ["Dauerbeleg", "Energie"],
+     "leistung": ("Leistungszeitraum", "01.10.–31.10.2026"),
      "lines": [("Strom Arbeitspreis 01.10.–31.10.2026", "1650", "kWh", "0.289", 19, "4240"),
                ("Grundpreis", "1", "Monat", "14.50", 19, "4240")]},
     {"id": "F10", "sup": "glanzpunkt", "client": "M1", "nr": "RG-11-2026-15", "date": "2026-11-30", "tags": ["Dauerbeleg", "19 %"],
+     "leistung": ("Leistungszeitraum", "01.11.–30.11.2026"),
      "lines": [("Unterhaltsreinigung Gastraum November 2026", "1", "Monat", "680.00", 19, "4250")]},
     {"id": "F11", "sup": "paragraph", "client": "M4", "nr": "FP-104902", "date": "2026-11-09", "tags": ["wiederkehrend", "7 %"],
      "lines": [("Fachbuch Gestaltungs- und Urheberrecht, 4. Auflage", "1", "Stück", "49.00", 7, "4940")]},
@@ -82,6 +92,19 @@ RECHNUNGEN: list[dict[str, Any]] = [
                ("Vollmilch 3,5 %", "60", "l", "1.09", 7, "3300"),
                ("Weizenmehl Type 405", "400", "kg", "0.85", 7, "3300"),
                ("Süßrahmbutter", "120", "kg", "7.40", 7, "3300")]},
+    {"id": "F18", "sup": "pixelcloud", "client": "M4", "nr": "PC-2026-118842", "date": "2026-11-02",
+     "tags": ["Drittland", "US-Dollar", "Reverse Charge § 13b"], "currency": "USD", "reverse_charge": True,
+     "leistung": ("Leistungszeitraum", "01.11.–30.11.2026"),
+     "notes": ["Reverse Charge: Steuerschuldnerschaft des Leistungsempfängers (§ 13b UStG).",
+               "Amounts in US-Dollar (USD)."],
+     "lines": [("Design-Software Lizenz Team, Monatsabo", "4", "Nutzer", "54.00", 0, "4964")]},
+    {"id": "F19", "sup": "gereedschap", "client": "M2", "nr": "GG-26-04417", "date": "2026-11-17",
+     "tags": ["EU-Lieferant", "innergemeinschaftlicher Erwerb"], "reverse_charge": True,
+     "leistung": ("Lieferdatum", "13.11.2026"),
+     "notes": ["Steuerfreie innergemeinschaftliche Lieferung gemäß Art. 138 MwStSystRL.",
+               "USt-IdNr. des Leistungsempfängers: DE999100002"],
+     "lines": [("Drehmomentschlüssel 1/2 Zoll, 40–200 Nm", "2", "Stück", "129.00", 0, "4985"),
+               ("Steckschlüsselsatz 94-teilig", "1", "Satz", "189.00", 0, "4985")]},
 ]
 
 

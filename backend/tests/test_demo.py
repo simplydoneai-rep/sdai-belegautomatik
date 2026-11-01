@@ -39,9 +39,10 @@ def test_e_rechnung_ohne_ki() -> None:
 
 @pytest.fixture()
 def leerer_zustand(tmp_path, monkeypatch):  # type: ignore[no-untyped-def]
-    from app.demo import zustand
+    from app.demo import kanzlei, zustand
 
     monkeypatch.setattr(zustand, "ZUSTAND", tmp_path / "zustand.json")
+    monkeypatch.setattr(kanzlei, "DATEI", tmp_path / "kanzlei.json")
     return zustand
 
 
@@ -117,6 +118,15 @@ def test_folgemonat_ist_vorkontiert_und_bleibt_kontrollierbar(leerer_zustand) ->
     assert ansicht.regel_aktiv(eingang["F10"], regel, True)["bereich"] == "sicher"
 
     # Sammelfreigabe nur für sichere Belege; Wieder öffnen nimmt das Gelernte zurück
+    # Steuerschlüssel: Reinigung ohne Automatik → BU 9; US-Software (Dollar) → § 13b, BU 94, netto
+    assert sicher["positionen"][0]["steuer"]["bu"] == "9" and sicher["buchungen"][0]["bu"] == "9"
+    usa = ansicht.ansicht(eingang["F18"])
+    assert usa["kopf"]["currency"] == "USD" and usa["steuerfall"]["id"] == "13b"
+    assert usa["positionen"][0]["steuer"]["bu"] == "94" and usa["buchungen"][0]["umsatz"] == "216.00"
+    assert any("Fremdwährung" in a for a in usa["ausnahmen"])
+    assert usa["kopf"]["leistung"] == {"von": "2026-11-01", "bis": "2026-11-30", "art": "beleg"}
+    assert ansicht.ansicht(eingang["F19"])["steuerfall"]["id"] == "ige"
+
     r = ansicht.sammelfreigabe([eingang["F10"], eingang["F16"]])
     assert r["freigegeben"] == [eingang["F10"]] and [u["key"] for u in r["uebersprungen"]] == [eingang["F16"]]
     assert ansicht.ansicht(eingang["F10"])["positionen"][0]["regel"]["bestaetigungen"] == 2

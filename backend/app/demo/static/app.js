@@ -2,21 +2,68 @@
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-const eur = (v) => v == null || v === "" ? "–" : Number(v).toLocaleString("de-DE", { style: "currency", currency: "EUR" });
+const geld = (v, w = "EUR") => v == null || v === "" ? "–" : Number(v).toLocaleString("de-DE", { style: "currency", currency: w || "EUR" });
 const datum = (iso) => iso && /^\d{4}-\d{2}-\d{2}$/.test(iso) ? iso.split("-").reverse().join(".") : (iso || "–");
 const prozent = (x) => `${Math.round((x || 0) * 100)} %`;
-const AMPEL = { gruen: "Sicher", gelb: "Unsicher", rot: "Frei" };
 const anzahl = (n, eins, mehr) => `${n} ${n === 1 ? eins : mehr}`;
+const AMPEL = { gruen: "Sicher", gelb: "Unsicher", rot: "Frei" };
+const MONATE = ["Jan.", "Feb.", "März", "Apr.", "Mai", "Juni", "Juli", "Aug.", "Sept.", "Okt.", "Nov.", "Dez."];
+const HERKUNFT = { inland: "Inland", eu: "EU-Ausland", drittland: "Drittland" };
 const BEREICH_TEXT = {
-  sicher: (n, s) => `<b>${anzahl(n, "Rechnung", "Rechnungen")}</b> sicher vorkontiert · ${eur(s)}`,
-  pruefen: (n, s) => `<b>${anzahl(n, "Rechnung", "Rechnungen")}</b> zur Prüfung · ${eur(s)}`,
+  sicher: (n, s) => `<b>${anzahl(n, "Rechnung", "Rechnungen")}</b> sicher vorkontiert · ${geld(s)}`,
+  pruefen: (n, s) => `<b>${anzahl(n, "Rechnung", "Rechnungen")}</b> zur Prüfung · ${geld(s)}`,
   erledigt: (n) => `<b>${anzahl(n, "Rechnung", "Rechnungen")}</b> freigegeben`,
 };
 
-const zustand = { filter: "sicher", mandant: "", suche: "", modell: "", key: null, beleg: null, liste: null, stamm: null, erstesLaden: true };
+/* Symbole (Linien, weiß auf farbigem Quadrat wie in den iOS-Einstellungen) */
+const PFADE = {
+  person: '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',
+  liste: '<path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/>',
+  buchung: '<path d="M4 8h15l-4-4M20 16H5l4 4"/>',
+  beleg: '<path d="M6 2h8l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/><path d="M14 2v5h5M8 13h8M8 17h5"/>',
+  hoch: '<path d="M6 15l6-6 6 6"/>',
+  runter: '<path d="M6 9l6 6 6-6"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  minus: '<path d="M5 12h14"/>',
+  passend: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
+};
+const svg = (name) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${PFADE[name] || ""}</svg>`;
+const setzeSymbole = (wurzel = document) => wurzel.querySelectorAll("[data-ikon]").forEach((el) => { el.innerHTML = svg(el.dataset.ikon); });
+
+const zustand = {
+  nutzer: "AK", stamm: null, seite: null, filter: "sicher", mandant: null, suche: "", modell: "",
+  key: null, beleg: null, liste: null, uebersicht: null, ersterBlick: true, timer: null, sbGewaehlt: null,
+};
+
+/* ---------- Hilfen ---------- */
+function monatText(ym) {
+  if (!ym) return "–";
+  const [j, m] = ym.split("-").map(Number);
+  return `${MONATE[m - 1]} ${j}`;
+}
+
+function monateText(liste) {
+  if (!liste || !liste.length) return "–";
+  if (liste.length === 1) return monatText(liste[0]);
+  const [a, b] = [liste[0], liste[liste.length - 1]];
+  return a.slice(0, 4) === b.slice(0, 4)
+    ? `${MONATE[Number(a.slice(5)) - 1]}–${monatText(b)}` : `${monatText(a)} – ${monatText(b)}`;
+}
+
+/* Leistungsdatum: ganzer Monat → „Okt. 2026“, Zeitraum → „01.10.–15.10.2026“, sonst Datum */
+function leistungText(l, lang = false) {
+  if (!l || !l.von) return "fehlt";
+  if (l.art === "wie_rechnung") return `${datum(l.von)} (wie Rechnungsdatum)`;
+  if (!l.bis) return datum(l.von);
+  const [vj, vm, vt] = l.von.split("-");
+  const [bj, bm, bt] = l.bis.split("-");
+  const letzter = new Date(Number(bj), Number(bm), 0).getDate();
+  if (!lang && vj === bj && vm === bm && vt === "01" && Number(bt) === letzter) return monatText(`${vj}-${vm}`);
+  return vj === bj ? `${vt}.${vm}.–${bt}.${bm}.${bj}` : `${datum(l.von)} – ${datum(l.bis)}`;
+}
 
 async function api(url, opts = {}) {
-  const r = await fetch(url, opts);
+  const r = await fetch(url, { ...opts, headers: { ...(opts.headers || {}), "X-Nutzer": zustand.nutzer } });
   const d = await r.json().catch(() => ({}));
   if (!r.ok) throw new Error(d.detail || `Fehler ${r.status}`);
   return d;
@@ -32,16 +79,25 @@ function toast(text, fehler = false) {
   toast.timer = setTimeout(() => { t.hidden = true; }, 2800);
 }
 
+function merke(name, wert) { try { localStorage.setItem(name, wert); } catch { /* ohne Speicher weiter */ } }
+function lies(name) { try { return localStorage.getItem(name); } catch { return null; } }
+
 /* ---------- Start ---------- */
 async function init() {
-  zustand.stamm = await api("/api/stammdaten");
-  zustand.modell = zustand.stamm.standard_modell;
-  for (const m of zustand.stamm.modelle) $("modell").add(new Option(m.kurz, m.id, false, m.id === zustand.modell));
-  for (const m of zustand.stamm.mandanten) $("mandant").add(new Option(`${m.name} · ${m.branche}`, m.id));
+  zustand.nutzer = lies("nutzer") || "AK";
+  setzeSymbole();
+  await ladeStamm();
 
-  document.querySelectorAll(".segment button").forEach((b) => b.addEventListener("click", () => setzeFilter(b.dataset.filter)));
-  $("mandant").addEventListener("change", (e) => { zustand.mandant = e.target.value; ladeListe(); });
+  $("nutzer").addEventListener("change", async (e) => {
+    zustand.nutzer = e.target.value; merke("nutzer", zustand.nutzer);
+    await ladeStamm();
+    toast(`Angemeldet als ${zustand.stamm.nutzer.name}`);
+    route();
+  });
+  document.querySelectorAll(".segment.drei button").forEach((b) => b.addEventListener("click", () => setzeFilter(b.dataset.filter)));
+  $("mandant").addEventListener("change", (e) => { location.hash = `#/belege/${e.target.value}`; });
   $("suche").addEventListener("input", (e) => { zustand.suche = e.target.value.toLowerCase(); zeigeListe(); });
+  $("ue-suche").addEventListener("input", zeigeUebersicht);
   $("modell").addEventListener("change", async (e) => {
     zustand.modell = e.target.value;
     await ladeListe();
@@ -52,32 +108,262 @@ async function init() {
   $("sammel-knopf").addEventListener("click", oeffneSammelfreigabe);
   $("blatt-abbrechen").addEventListener("click", () => { $("blatt-hintergrund").hidden = true; });
   $("blatt-ok").addEventListener("click", sammelfreigabe);
+  $("b-verlauf").addEventListener("click", () => { $("verlauf-blatt").hidden = false; });
   $("demo-knopf").addEventListener("click", (e) => { e.stopPropagation(); $("demo-liste").hidden = !$("demo-liste").hidden; });
   document.querySelectorAll("#demo-liste button").forEach((b) => b.addEventListener("click", () => demoAktion(b.dataset.demo)));
+  document.querySelectorAll("[data-schliessen]").forEach((b) => b.addEventListener("click", () => { $(b.dataset.schliessen).hidden = true; }));
   document.addEventListener("click", (e) => {
     if (!e.target.closest(".konto-feld, .dropdown")) schliesseDropdown();
     if (!e.target.closest(".demo-menue")) $("demo-liste").hidden = true;
   });
-  await ladeListe();
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") document.querySelectorAll(".blatt-hintergrund").forEach((b) => { b.hidden = true; });
+  });
+  $("ue-neu").addEventListener("click", () => oeffneMandant(null));
+  $("ue-rechte").addEventListener("click", oeffneRechte);
+  $("mandant-form").addEventListener("submit", sichereMandant);
+  document.querySelectorAll("#f-kontenrahmen button").forEach((b) => b.addEventListener("click", () => {
+    document.querySelectorAll("#f-kontenrahmen button").forEach((x) => x.classList.toggle("aktiv", x === b));
+  }));
+  $("sb-form").addEventListener("submit", sichereSachbearbeiter);
+  bindeWerkzeuge();
+  window.addEventListener("hashchange", route);
+  route();
+}
+
+async function ladeStamm() {
+  zustand.stamm = await api("/api/stammdaten");
+  const s = zustand.stamm;
+  if (!s.nutzer) { zustand.nutzer = s.sachbearbeiter[0].kuerzel; merke("nutzer", zustand.nutzer); return ladeStamm(); }
+  zustand.modell = zustand.modell || s.standard_modell;
+  $("nutzer").innerHTML = s.sachbearbeiter.map((p) => `<option value="${esc(p.kuerzel)}" ${p.kuerzel === zustand.nutzer ? "selected" : ""}>
+    ${esc(p.name)} · ${esc(s.rollen[p.rolle])}</option>`).join("");
+  $("nutzer-avatar").textContent = s.nutzer.kuerzel;
+  $("modell").innerHTML = s.modelle.map((m) => `<option value="${m.id}" ${m.id === zustand.modell ? "selected" : ""}>${esc(m.kurz)}</option>`).join("");
+  $("mandant").innerHTML = s.mandanten.map((m) => `<option value="${esc(m.id)}">${esc(m.name)}</option>`).join("");
+  $("ue-aktionen").hidden = !s.leitung;
+}
+
+function route() {
+  clearTimeout(zustand.timer);
+  const m = location.hash.match(/^#\/belege(?:\/(\w+))?/);
+  if (m) {
+    const ziel = m[1] || lies("mandant") || zustand.stamm.mandanten[0]?.id;
+    if (!zustand.stamm.mandanten.some((x) => x.id === ziel)) {
+      if (m[1]) toast("Kein Zugriff auf diesen Mandanten", true);
+      location.hash = "#/uebersicht";
+      return;
+    }
+    if (!m[1]) { location.hash = `#/belege/${ziel}`; return; }
+    return zeigeSeite("belege", ziel);
+  }
+  zeigeSeite("uebersicht");
+}
+
+function zeigeSeite(seite, mandant) {
+  zustand.seite = seite;
+  $("seite-uebersicht").hidden = seite !== "uebersicht";
+  $("seite-belege").hidden = seite !== "belege";
+  document.querySelectorAll(".hauptnav a").forEach((a) => a.classList.toggle("aktiv", a.dataset.nav === seite));
+  document.title = seite === "uebersicht" ? "Belegautomatik – Übersicht" : "Belegautomatik – Belegverarbeitung";
+  if (seite === "uebersicht") return ladeUebersicht();
+  if (mandant !== zustand.mandant) {
+    zustand.mandant = mandant; merke("mandant", mandant);
+    zustand.key = null; zustand.ersterBlick = true;
+    $("beleg").hidden = true; $("aktionsleiste").hidden = true; $("leer").hidden = false;
+    leereVorschau();
+  }
+  $("mandant").value = mandant;
+  zeigeMandantKopf();
+  ladeListe();
+}
+
+/* ---------- Übersicht (Dashboard) ---------- */
+async function ladeUebersicht() {
+  try {
+    zustand.uebersicht = await api(`/api/uebersicht?${new URLSearchParams({ modell: zustand.modell })}`);
+  } catch (e) { return toast(e.message, true); }
+  zeigeUebersicht();
+  if (!zustand.uebersicht.bereit && zustand.seite === "uebersicht") zustand.timer = setTimeout(ladeUebersicht, 2500);
+}
+
+function team(personen) {
+  return personen.map((p) => `<span class="kuerzel ${p.rolle === "Vertretung" ? "vertretung" : ""}"
+    data-name="${esc(p.name)} · ${esc(p.rolle)}">${esc(p.kuerzel)}</span>`).join("") || `<span class="klein">–</span>`;
+}
+
+function zeigeUebersicht() {
+  const u = zustand.uebersicht;
+  if (!u) return;
+  const s = zustand.stamm;
+  const stunde = new Date().getHours();
+  $("ue-gruss").textContent = `${stunde < 11 ? "Guten Morgen" : stunde < 18 ? "Guten Tag" : "Guten Abend"}, ${s.nutzer.name} · `
+    + (s.leitung ? "Kanzleileitung: Sie sehen alle Mandanten" : `${anzahl(u.mandanten.length, "Mandant", "Mandanten")} zugeordnet`);
+  $("k-offen").textContent = u.summe.offen;
+  $("k-sicher").textContent = u.summe.sicher;
+  $("k-pruefen").textContent = u.summe.pruefen;
+  $("k-mandanten").textContent = u.mandanten.length;
+  $("k-mandanten-text").textContent = s.leitung ? "Mandanten" : "Meine Mandanten";
+  $("ue-titel").textContent = s.leitung ? "Alle Mandanten" : "Meine Mandanten";
+  const q = $("ue-suche").value.trim().toLowerCase();
+  const zeilen = u.mandanten.filter((m) => !q || `${m.name} ${m.nummer} ${m.ansprechpartner}`.toLowerCase().includes(q));
+  $("ue-tabelle").innerHTML = zeilen.map((m) => `
+    <div class="ue-zeile" data-mandant="${esc(m.id)}" tabindex="0">
+      <span class="m-avatar">${esc(m.name.replace(/[^A-Za-zÄÖÜäöü ]/g, "").split(" ").filter(Boolean).slice(0, 2).map((w) => w[0]).join("").toUpperCase())}</span>
+      <span class="m-name"><b>${esc(m.name)}</b><small>${esc(m.ansprechpartner || "Kein Ansprechpartner")}</small></span>
+      <span class="m-nr">${esc(m.nummer)}</span>
+      <span><span class="marke">${esc(m.kontenrahmen)}</span></span>
+      <span class="m-team">${team(m.team)}</span>
+      <span class="m-offen">${m.lesen ? `<span class="klein">wird gelesen …</span>` : m.offen
+        ? `<b class="offen-zahl">${m.offen}</b><small>${m.sicher} sicher · ${m.pruefen} prüfen</small>`
+        : `<span class="erledigt-haken">✓ erledigt</span>`}</span>
+      <span class="m-monat">${m.offen ? esc(monateText(m.monate)) : "–"}</span>
+      <span class="m-aktion">${s.leitung ? `<button class="link blau-link" data-bearbeiten="${esc(m.id)}">Bearbeiten</button>` : ""}<span class="chevron">›</span></span>
+    </div>`).join("") || `<p class="klein mitte">Keine Mandanten${q ? " zu dieser Suche" : " zugeordnet"}.</p>`;
+  $("ue-tabelle").querySelectorAll(".ue-zeile").forEach((z) => {
+    const oeffnen = () => { location.hash = `#/belege/${z.dataset.mandant}`; };
+    z.addEventListener("click", (e) => { if (!e.target.closest("[data-bearbeiten]")) oeffnen(); });
+    z.addEventListener("keydown", (e) => { if (e.key === "Enter") oeffnen(); });
+  });
+  $("ue-tabelle").querySelectorAll("[data-bearbeiten]").forEach((b) => b.addEventListener("click", () => oeffneMandant(b.dataset.bearbeiten)));
+}
+
+/* ---------- Mandant erfassen und bearbeiten ---------- */
+function oeffneMandant(id) {
+  const s = zustand.stamm;
+  const m = id ? s.alle_mandanten.find((x) => x.id === id) : null;
+  const f = $("mandant-form");
+  f.reset();
+  f.dataset.id = id || "";
+  $("mandant-titel").textContent = m ? "Mandant bearbeiten" : "Neuer Mandant";
+  f.name.value = m?.name || "";
+  f.nummer.value = m?.nummer || naechsteNummer();
+  f.ansprechpartner.value = m?.ansprechpartner || "";
+  const rahmen = m?.kontenrahmen || "SKR03";
+  document.querySelectorAll("#f-kontenrahmen button").forEach((b) => b.classList.toggle("aktiv", b.dataset.wert === rahmen));
+  const option = (p, gewaehlt) => {
+    const gesperrt = id && p.zugriff[id] === "gesperrt";
+    return `<option value="${esc(p.kuerzel)}" ${gewaehlt === p.kuerzel ? "selected" : ""} ${gesperrt ? "disabled" : ""}>
+      ${esc(p.kuerzel)} · ${esc(p.name)}${gesperrt ? " (gesperrt)" : ""}</option>`;
+  };
+  f.zustaendig.innerHTML = `<option value="">Bitte wählen</option>` + s.sachbearbeiter.map((p) => option(p, m?.zustaendig)).join("");
+  f.vertretung.innerHTML = `<option value="">Keine Vertretung</option>` + s.sachbearbeiter.map((p) => option(p, m?.vertretung)).join("");
+  $("mandant-fehler").hidden = true;
+  $("mandant-blatt").hidden = false;
+  f.name.focus();
+}
+
+function naechsteNummer() {
+  const vergeben = new Set(zustand.stamm.alle_mandanten.map((m) => Number(m.nummer)));
+  let n = 10001;
+  while (vergeben.has(n)) n++;
+  return n;
+}
+
+async function sichereMandant(e) {
+  e.preventDefault();
+  const f = e.target;
+  const daten = {
+    id: f.dataset.id || null, name: f.name.value, nummer: f.nummer.value, ansprechpartner: f.ansprechpartner.value,
+    kontenrahmen: document.querySelector("#f-kontenrahmen .aktiv").dataset.wert,
+    zustaendig: f.zustaendig.value || null, vertretung: f.vertretung.value || null,
+  };
+  try {
+    await post("/api/kanzlei/mandant", daten);
+    $("mandant-blatt").hidden = true;
+    toast(daten.id ? "Mandant gesichert" : `Mandant ${daten.nummer} angelegt`);
+    await ladeStamm();
+    ladeUebersicht();
+  } catch (err) {
+    $("mandant-fehler").textContent = err.message;
+    $("mandant-fehler").hidden = false;
+  }
+}
+
+/* ---------- Sachbearbeiter und Rechte ---------- */
+function oeffneRechte() {
+  zustand.sbGewaehlt = zustand.sbGewaehlt || zustand.stamm.sachbearbeiter.find((p) => p.rolle !== "leitung")?.kuerzel;
+  zeigeRechte();
+  $("rechte-blatt").hidden = false;
+}
+
+function zeigeRechte() {
+  const s = zustand.stamm;
+  const sbs = s.sachbearbeiter;
+  if (!sbs.some((p) => p.kuerzel === zustand.sbGewaehlt)) zustand.sbGewaehlt = sbs[0].kuerzel;
+  $("sb-liste").innerHTML = sbs.map((p) => {
+    const n = Object.values(p.zugriff).filter((w) => w === "an").length;
+    return `<li class="${p.kuerzel === zustand.sbGewaehlt ? "gewaehlt" : ""}" data-sb="${esc(p.kuerzel)}">
+      <span class="avatar">${esc(p.kuerzel)}</span>
+      <span><b>${esc(p.name)}</b><small>${esc(s.rollen[p.rolle])} · ${p.rolle === "leitung" ? "alle Mandanten" : anzahl(n, "Mandant", "Mandanten")}</small></span>
+    </li>`;
+  }).join("");
+  $("sb-liste").querySelectorAll("li").forEach((li) => li.addEventListener("click", () => { zustand.sbGewaehlt = li.dataset.sb; zeigeRechte(); }));
+
+  const p = sbs.find((x) => x.kuerzel === zustand.sbGewaehlt);
+  $("rechte-kopf").innerHTML = `<div><b>${esc(p.name)}</b> <span class="klein">${esc(p.kuerzel)} · ${esc(s.rollen[p.rolle])}</span></div>
+    <p class="klein">${p.rolle === "leitung" ? "Die Kanzleileitung sieht alle Mandanten. Die Einstellungen unten gelten, falls die Rolle geändert wird."
+      : "Zugriff: sieht und bearbeitet den Mandanten. Gesperrt: darf diesem Mandanten nie zugeordnet werden (z. B. Interessenkonflikt)."}</p>`;
+  $("rechte-liste").innerHTML = s.alle_mandanten.map((m) => {
+    const wert = p.zugriff[m.id] || "aus";
+    const rolle = m.zustaendig === p.kuerzel ? "zuständig" : m.vertretung === p.kuerzel ? "Vertretung" : null;
+    const knopf = (w, text) => `<button data-wert="${w}" class="${wert === w ? "aktiv " + w : ""}" ${rolle && w !== "an" ? "disabled" : ""}>${text}</button>`;
+    return `<li data-mandant="${esc(m.id)}">
+      <span><b>${esc(m.name)}</b><small>${esc(m.nummer)} · ${esc(m.kontenrahmen)}${rolle ? ` · <span class="rolle-marke">${rolle}</span>` : ""}</small></span>
+      <div class="segment klein-segment">${knopf("an", "Zugriff")}${knopf("aus", "Kein Zugriff")}${knopf("gesperrt", "Gesperrt")}</div>
+    </li>`;
+  }).join("");
+  $("rechte-liste").querySelectorAll("li").forEach((li) => li.querySelectorAll("button").forEach((b) => b.addEventListener("click", async () => {
+    try {
+      zustand.stamm = { ...zustand.stamm, ...(await post("/api/kanzlei/zugriff", { kuerzel: p.kuerzel, mandant: li.dataset.mandant, wert: b.dataset.wert })) };
+      zeigeRechte();
+    } catch (e) { toast(e.message, true); }
+  })));
+}
+
+async function sichereSachbearbeiter(e) {
+  e.preventDefault();
+  const f = e.target;
+  try {
+    zustand.stamm = { ...zustand.stamm, ...(await post("/api/kanzlei/sachbearbeiter", { kuerzel: f.kuerzel.value, name: f.name.value, rolle: f.rolle.value })) };
+    zustand.sbGewaehlt = f.kuerzel.value.trim().toUpperCase();
+    toast(`${f.name.value} angelegt – jetzt Mandanten zuordnen`);
+    f.reset();
+    await ladeStamm();
+    zeigeRechte();
+  } catch (err) { toast(err.message, true); }
+}
+
+/* ---------- Belegverarbeitung: Liste ---------- */
+function zeigeMandantKopf() {
+  const m = zustand.stamm.mandanten.find((x) => x.id === zustand.mandant);
+  if (!m) return;
+  $("mandant-info").innerHTML = `Mandant ${esc(m.nummer)} · ${esc(m.kontenrahmen)} · ${team(m.team)}`;
+  const h = $("mandant-hinweis");
+  h.hidden = m.kontenrahmen !== "SKR04";
+  h.textContent = "SKR04 ist in der Demo noch nicht hinterlegt – Kontovorschläge kommen aus dem SKR03.";
 }
 
 function setzeFilter(f) {
   zustand.filter = f;
-  document.querySelectorAll(".segment button").forEach((x) => x.classList.toggle("aktiv", x.dataset.filter === f));
+  document.querySelectorAll(".segment.drei button").forEach((x) => x.classList.toggle("aktiv", x.dataset.filter === f));
   zeigeListe();
 }
 
-/* ---------- Liste ---------- */
 async function ladeListe() {
-  const q = new URLSearchParams({ modell: zustand.modell });
-  if (zustand.mandant) q.set("mandant", zustand.mandant);
-  zustand.liste = await api("/api/eingang?" + q);
-  if (zustand.erstesLaden && zustand.liste.bereit) {
-    zustand.erstesLaden = false;
-    if (!zustand.liste.anzahl.sicher) setzeFilter("pruefen");
+  clearTimeout(zustand.timer);
+  const mandant = zustand.mandant;
+  try {
+    const l = await api("/api/eingang?" + new URLSearchParams({ modell: zustand.modell, mandant }));
+    if (mandant !== zustand.mandant) return;
+    zustand.liste = l;
+  } catch (e) { return toast(e.message, true); }
+  if (zustand.ersterBlick && zustand.liste.bereit) {
+    zustand.ersterBlick = false;
+    if (!zustand.liste.anzahl.sicher) setzeFilter(zustand.liste.anzahl.pruefen ? "pruefen" : "erledigt");
   }
   zeigeListe();
-  if (!zustand.liste.bereit) setTimeout(ladeListe, 2000);
+  if (!zustand.liste.bereit && zustand.seite === "belege") zustand.timer = setTimeout(ladeListe, 2000);
 }
 
 function zelle(e) {
@@ -86,7 +372,7 @@ function zelle(e) {
   const art = { xml: "E-Rechnung", scan: "Scan", foto: "Foto", pdf: "PDF" }[e.art] || e.art;
   const marken = [];
   if (e.bereich === "sicher") marken.push(`<span class="marke gruen">Sicher ${prozent(e.sicherheit)}</span>`);
-  for (const a of e.ausnahmen || []) marken.push(`<span class="marke orange">${esc(a.split(" (")[0])}</span>`);
+  for (const a of e.ausnahmen || []) marken.push(`<span class="marke orange">${esc(a.split(" (")[0].split(" – ")[0])}</span>`);
   if (e.gelernt) marken.push(`<span class="marke blau">${e.gelernt}/${e.positionen} gelernt</span>`);
   if (e.frei) marken.push(`<span class="marke orange">${e.frei} ohne Konto</span>`);
   if (e.kreditor) marken.push(`<span class="marke">Kreditor ${esc(e.kreditor)}</span>`);
@@ -94,8 +380,8 @@ function zelle(e) {
   return `<li class="zelle ${e.key === zustand.key ? "gewaehlt" : ""}" data-key="${esc(e.key)}">
     <span class="punkt ${e.bereich === "erledigt" ? "grau" : e.ampel}"></span>
     <span class="z1">${esc(e.lieferant || e.id)}</span>
-    <span class="z-betrag">${eur(e.brutto)}</span>
-    <span class="z2"><span>${esc(e.mandant)} · ${datum(e.datum)}</span>${marken.join("")}</span>
+    <span class="z-betrag">${geld(e.brutto, e.waehrung)}</span>
+    <span class="z2"><span>Rechnung ${datum(e.datum)} · Leistung ${esc(leistungText(e.leistung))}</span>${marken.join("")}</span>
   </li>`;
 }
 
@@ -107,8 +393,7 @@ function zeigeListe() {
   $("z-erledigt").textContent = l.anzahl.erledigt;
   const f = zustand.filter;
   $("summe").innerHTML = BEREICH_TEXT[f](l.anzahl[f], l.summe[f]) + (l.bereit ? "" : " · <i>werden gelesen …</i>");
-  const sammel = $("sammel");
-  sammel.hidden = !(f === "sicher" && l.anzahl.sicher > 0);
+  $("sammel").hidden = !(f === "sicher" && l.anzahl.sicher > 0);
   $("sammel-zahl").textContent = `${l.anzahl.sicher} sicher vorkontiert`;
   $("sammel-text").textContent = "Nur ansehen und freigeben";
 
@@ -118,7 +403,7 @@ function zeigeListe() {
   $("liste").innerHTML = eintraege.map(zelle).join("") || `<li class="klein mitte">${leer}</li>`;
   $("liste").querySelectorAll(".zelle[data-key]").forEach((z) => z.addEventListener("click", () => oeffne(z.dataset.key)));
   $("konto-liste").innerHTML = l.nach_konto.map((g) => `<li><b>${esc(g.nr)}</b><span>${esc(g.name)}</span>
-    <span class="klein">${g.anzahl}× · ${eur(g.summe)}</span></li>`).join("") || `<li class="klein">Alles verbucht</li>`;
+    <span class="klein">${g.anzahl}× · ${geld(g.summe)}</span></li>`).join("") || `<li class="klein">Alles verbucht</li>`;
 }
 
 /* ---------- Detail ---------- */
@@ -139,18 +424,29 @@ function zeigeBeleg(b) {
   $("beleg").hidden = false;
   $("aktionsleiste").hidden = false;
   const fertig = b.status === "freigegeben";
+  const k = b.kopf;
+  const w = k.currency || "EUR";
   const chip = $("b-status");
   if (fertig) { chip.className = "status-chip fertig"; chip.innerHTML = "✓ Freigegeben"; }
   else if (b.bereich === "sicher") { chip.className = "status-chip gruen"; chip.innerHTML = `<span class="punkt gruen"></span>Sicher vorkontiert · ${prozent(b.sicherheit)}`; }
   else { chip.className = `status-chip ${b.ampel === "rot" ? "rot" : "gelb"}`; chip.innerHTML = `<span class="punkt ${b.ampel === "rot" ? "rot" : "gelb"}"></span>Bitte prüfen`; }
 
-  const k = b.kopf;
   $("b-lieferant").textContent = k.supplier_name || "Unbekannter Lieferant";
-  $("b-meta").textContent = [b.mandant.name, k.invoice_number ? `Rechnung ${k.invoice_number}` : "ohne Rechnungsnummer",
-    datum(k.invoice_date), k.document_type === "credit_note" ? "Gutschrift" : null, k.reverse_charge ? "Reverse Charge" : null]
-    .filter(Boolean).join(" · ");
-  $("b-brutto").textContent = eur(k.gross_total);
-  $("b-steuer").textContent = `Netto ${eur(k.net_total)} · USt ${eur(k.tax_total)}`;
+  $("b-meta").textContent = [b.mandant.name, k.document_type === "credit_note" ? "Gutschrift" : "Rechnung",
+    k.invoice_number || "ohne Rechnungsnummer"].join(" · ");
+  $("b-brutto").textContent = geld(k.gross_total, w);
+  $("b-steuer").textContent = `Netto ${geld(k.net_total, w)} · USt ${geld(k.tax_total, w)}`;
+  $("b-summen").textContent = b.steuerlogik.ok ? "✓ Summen stimmen" : "⚠ Summen passen nicht zusammen";
+  $("b-summen").className = b.steuerlogik.ok ? "summen-ok" : "summen-fehler";
+  const fakten = [
+    ["Rechnungsdatum", datum(k.invoice_date)],
+    ["Leistungsdatum", leistungText(k.leistung, true), !k.leistung],
+    ["Währung", w === "EUR" ? "EUR" : `${w} (Fremdwährung)`, w !== "EUR"],
+    ["Steuerfall", { inland: "Inland", ige: "i. g. Erwerb", "13b": "§ 13b UStG" }[b.steuerfall.id] || b.steuerfall.text, b.steuerfall.id !== "inland",
+      `${b.steuerfall.text}${k.herkunft ? ` · Lieferant: ${HERKUNFT[k.herkunft]}` : ""}`],
+  ];
+  $("b-fakten").innerHTML = fakten.map(([t, v, auffaellig, titel]) => `<div class="fakt ${auffaellig ? "auffaellig" : ""}" title="${esc(titel || v)}">
+    <span>${t}</span><b>${esc(v)}</b></div>`).join("");
 
   const aus = $("b-ausnahmen");
   aus.hidden = fertig || !b.ausnahmen.length;
@@ -164,37 +460,33 @@ function zeigeBeleg(b) {
     <li class="position">
       <div class="p-text">${esc(p.bezeichnung || "Position " + (p.pos + 1))}
         <small>${p.menge ? esc(Number(p.menge).toLocaleString("de-DE")) + " " + esc(p.einheit || "") : ""}</small></div>
-      <div class="p-betrag">${eur(p.netto)}<small>${p.steuersatz ?? "–"} % USt</small></div>
+      <div class="p-betrag">${geld(p.netto, w)}<small>${p.steuersatz ?? "–"} % USt</small></div>
       <div class="p-konto">
         <div class="konto-feld ${p.ampel}">
           <input data-pos="${p.pos}" ${fertig ? "disabled" : ""} autocomplete="off"
             value="${p.konto ? esc(p.konto.nr + " · " + p.konto.name) : ""}"
             placeholder="Konto wählen: Nummer oder Begriff, z. B. „War“">
         </div>
+        ${steuerChip(p.steuer)}
         <div class="ampel ${p.ampel}" title="${esc(p.grund)}"><span class="punkt ${p.ampel}"></span>
           <span><b>${AMPEL[p.ampel]}</b><br>${esc(p.grund)}</span></div>
       </div>
     </li>`).join("");
   $("positionen").querySelectorAll("input[data-pos]").forEach(bindeKontoFeld);
 
-  $("kopf").innerHTML = [["Lieferant", esc(k.supplier_name)], ["Rechnungsnummer", esc(k.invoice_number ?? "–")],
-    ["Rechnungsdatum", datum(k.invoice_date)], ["Netto", eur(k.net_total)], ["Umsatzsteuer", eur(k.tax_total)],
-    ["Brutto", eur(k.gross_total)], ["Reverse Charge / i. g. Erwerb", k.reverse_charge ? "ja" : "nein"],
-    ["Steuerlogik", b.steuerlogik.ok ? "Netto + Steuer = Brutto ✓" : "Widerspruch: " + esc(b.steuerlogik.hinweise.join(", "))],
-    ["Sicherheit des Belegs", prozent(b.sicherheit)],
-    ["Mandant", esc(b.mandant.name + " · " + b.mandant.branche)]].map(([a, c]) => `<tr><td>${a}</td><td>${c}</td></tr>`).join("");
-  $("schritte").innerHTML = b.schritte.map((s) => `<li title="${esc(s.detail)}">${esc(s.name)} · ${s.dauer_s.toLocaleString("de-DE")} s</li>`).join("");
-  $("ki").innerHTML = b.ki.art === "aufzeichnung"
-    ? `${esc(b.ki.modell)}: Antwort aus dem Messlauf (damals ${Number(b.ki.laufzeit_s).toLocaleString("de-DE", { maximumFractionDigits: 1 })} s,
-       ${(b.ki.kosten_eur * 100).toLocaleString("de-DE", { maximumFractionDigits: 2 })} Cent), heute ohne Kosten abgespielt.`
-    : esc(b.ki.text) + (b.gelernt ? " Die Konten kommen aus den gelernten Regeln." : "");
-  $("soll").innerHTML = b.soll ? `Abgleich mit dem Sollwert: Pflichtfelder ${b.soll.pflichtfelder.join("/")} · Positionen ${b.soll.positionen.join("/")}` : "";
-  $("pseudo").hidden = !b.pseudonymisiert;
-  const n = Object.values(b.platzhalter).reduce((a, c) => a + c, 0);
-  $("pseudo-zahl").textContent = n ? `${n} Angaben ersetzt` : "";
-  $("pseudo-text").innerHTML = esc(b.pseudonymisiert).replace(/\[[A-Z_]+_\d+\]/g, (m) => `<mark>${m}</mark>`);
-  $("verlauf").innerHTML = b.protokoll.slice().reverse().map((e) => `<li><b>${esc(e.feld)}</b>: ${esc(e.alt ?? "–")} → ${esc(e.neu ?? "–")}
-    <br>${new Date(e.zeit).toLocaleString("de-DE")} · ${esc(e.quelle || e.nutzer)}</li>`).join("") || `<li>Noch keine Änderungen</li>`;
+  zeigeBuchungen(b);
+
+  const lief = `${HERKUNFT[k.herkunft] || "–"}${k.lieferant_ustid ? ` · USt-IdNr. ${k.lieferant_ustid}` : ""}`;
+  $("kopf").innerHTML = [["Lieferant", esc(k.supplier_name)], ["Sitz des Lieferanten", esc(lief)],
+    ["Rechnungsnummer", esc(k.invoice_number ?? "–")], ["Rechnungsdatum", datum(k.invoice_date)],
+    ["Leistungsdatum / -zeitraum", esc(leistungText(k.leistung, true))], ["Währung", esc(w)],
+    ["Netto", geld(k.net_total, w)], ["Umsatzsteuer", geld(k.tax_total, w)], ["Brutto", geld(k.gross_total, w)],
+    ["Steuerfall", esc(b.steuerfall.text)],
+    ["Mandant", esc(`${b.mandant.name} · ${b.mandant.nummer} · ${b.mandant.kontenrahmen}`)]]
+    .map(([a, c]) => `<tr><td>${a}</td><td>${c}</td></tr>`).join("");
+  $("verlauf").innerHTML = b.protokoll.slice().reverse().map((e) => `<li><span><b>${esc(e.feld)}</b>: ${esc(e.alt ?? "–")} → ${esc(e.neu ?? "–")}
+    <small>${new Date(e.zeit).toLocaleString("de-DE")} · ${esc(e.nutzer)} · ${esc(e.quelle)}</small></span></li>`).join("")
+    || `<li><span class="klein">Noch keine Änderungen</span></li>`;
 
   const knopf = $("a-knopf");
   if (fertig) {
@@ -211,6 +503,32 @@ function zeigeBeleg(b) {
       : b.bereich === "sicher" ? "Alles sicher erkannt – ansehen und freigeben."
       : "Freigabe möglich – gelbe Punkte bitte kurz prüfen.";
   }
+}
+
+function steuerChip(st) {
+  if (!st || (!st.bu && !st.text)) return `<span class="bu-chip leer" title="Steuerschlüssel folgt mit dem Konto">BU –</span>`;
+  if (st.automatik) return `<span class="bu-chip auto" title="${esc(st.text)} – DATEV rechnet die Steuer aus dem Konto, kein Steuerschlüssel">Automatik</span>`;
+  if (!st.bu) return `<span class="bu-chip leer" title="${esc(st.text)}">ohne BU</span>`;
+  return `<span class="bu-chip" title="DATEV-Steuerschlüssel ${esc(st.bu)}: ${esc(st.text)}">BU ${esc(st.bu)}</span>`;
+}
+
+function zeigeBuchungen(b) {
+  const w = b.kopf.currency || "EUR";
+  const zeilen = b.buchungen.map((z) => `<tr>
+      <td class="zahl-sp">${geld(z.umsatz, z.waehrung)}</td><td>${z.soll_haben}</td>
+      <td><b>${esc(z.konto)}</b><small>${esc(z.konto_name)}</small></td>
+      <td>${z.gegenkonto ? `<b>${esc(z.gegenkonto)}</b><small>Kreditor</small>` : `<span class="fehlt">fehlt</span>`}</td>
+      <td>${z.bu ? `<b>${esc(z.bu)}</b>` : "–"}<small>${esc(z.steuer)}</small></td>
+      <td>${datum(z.belegdatum)}<small>Leistung ${z.leistungsdatum ? datum(z.leistungsdatum) : "fehlt"}</small></td>
+      <td>${esc(z.belegfeld1 || "–")}</td>
+    </tr>`).join("");
+  $("buchungen").innerHTML = `<thead><tr><th class="zahl-sp">Umsatz</th><th>S/H</th><th>Konto</th><th>Gegenkonto</th><th>BU</th><th>Belegdatum</th><th>Belegfeld 1</th></tr></thead>
+    <tbody>${zeilen || `<tr><td colspan="7" class="klein">Noch keine Konten gewählt</td></tr>`}</tbody>`;
+  const hinweise = [];
+  if (b.steuerfall.id === "inland") hinweise.push("Umsatz brutto: DATEV rechnet die Vorsteuer aus Konto oder Steuerschlüssel heraus.");
+  else hinweise.push("Umsatz netto: Vorsteuer und Umsatzsteuer bucht DATEV über Konto oder Steuerschlüssel.");
+  if (w !== "EUR") hinweise.push(`Beträge in ${w}: Vor dem Export in Euro umrechnen (Kurs zum Leistungsdatum).`);
+  $("buchungen-hinweis").textContent = hinweise.join(" ");
 }
 
 function zeigeKreditor(b, fertig) {
@@ -252,11 +570,17 @@ function zeigeKreditor(b, fertig) {
   });
 }
 
-/* ---------- Kontoauswahl ---------- */
+/* ---------- Kontoauswahl: Klick leert das Feld und öffnet sofort die Suche ---------- */
 let dd = { input: null, eintraege: [], aktiv: 0, timer: null };
 
 function bindeKontoFeld(input) {
-  input.addEventListener("focus", () => { input.select(); zeigeDropdown(input, ""); });
+  input.addEventListener("focus", () => {
+    input.dataset.bisher = input.value;
+    input.placeholder = input.value ? `Suchen … (bisher ${input.value})` : "Konto suchen: Nummer oder Begriff, z. B. „War“";
+    input.value = "";
+    zeigeDropdown(input, "");
+  });
+  input.addEventListener("blur", () => { input.value = input.dataset.bisher || ""; });  // ohne Auswahl: altes Konto bleibt
   input.addEventListener("input", () => {
     clearTimeout(dd.timer);
     dd.timer = setTimeout(() => zeigeDropdown(input, input.value), 120);
@@ -272,22 +596,24 @@ function bindeKontoFeld(input) {
 
 async function zeigeDropdown(input, text) {
   const pos = zustand.beleg.positionen[Number(input.dataset.pos)];
-  const q = text.includes("·") ? "" : text.trim();
+  const q = text.trim();
   const vorschlaege = pos.vorschlaege;
   const treffer = q ? await api("/api/konten?" + new URLSearchParams({ q })) : [];
+  if (document.activeElement !== input) return;
   dd = { ...dd, input, eintraege: [...(q ? [] : vorschlaege), ...treffer], aktiv: 0 };
   const zeile = (k, i) => `<div class="dd-eintrag" data-i="${i}"><b>${esc(k.nr)}</b><span>${esc(k.name)}${k.kennzeichen ? `<span class="kennz">${esc(k.kennzeichen)}</span>` : ""}</span>
     ${k.quelle ? `<small class="quelle">${esc(k.quelle)}</small>` : ""}</div>`;
   let html = "";
   if (!q) html += `<div class="dd-titel">Vorschläge</div>` + (vorschlaege.map(zeile).join("") || `<div class="dd-leer">Keine Vorschläge – tippen Sie eine Nummer oder einen Begriff</div>`);
   if (q) html += `<div class="dd-titel">Konten im SKR03</div>` + (treffer.map((k, i) => zeile(k, i)).join("") || `<div class="dd-leer">Kein Konto zu „${esc(q)}“</div>`);
+  html += `<div class="dd-fuss">AV = Automatikkonto (Vorsteuer im Konto) · sonst setzt das Programm den Steuerschlüssel</div>`;
   const d = $("dropdown");
   d.innerHTML = html;
   const r = input.getBoundingClientRect();
   d.style.left = r.left + "px";
-  d.style.width = Math.max(r.width, 380) + "px";
+  d.style.width = Math.max(r.width, 400) + "px";
   const unten = window.innerHeight - r.bottom;
-  if (unten < 260) { d.style.top = ""; d.style.bottom = (window.innerHeight - r.top + 6) + "px"; }
+  if (unten < 280) { d.style.top = ""; d.style.bottom = (window.innerHeight - r.top + 6) + "px"; }
   else { d.style.bottom = ""; d.style.top = (r.bottom + 6) + "px"; }
   d.hidden = false;
   d.querySelectorAll(".dd-eintrag").forEach((el) => el.addEventListener("mousedown", (e) => {
@@ -300,17 +626,22 @@ function markiere() {
   $("dropdown").querySelectorAll(".dd-eintrag").forEach((el) => el.classList.toggle("aktiv", Number(el.dataset.i) === dd.aktiv));
 }
 
-function schliesseDropdown() { $("dropdown").hidden = true; dd.input = null; }
+function schliesseDropdown() {
+  $("dropdown").hidden = true;
+  if (dd.input) dd.input.value = dd.input.dataset.bisher || "";
+  dd.input = null;
+}
 
 async function waehle(nr) {
   const pos = Number(dd.input.dataset.pos);
-  schliesseDropdown();
+  dd.input.dataset.bisher = nr;
+  $("dropdown").hidden = true;
+  dd.input.blur();
+  dd.input = null;
   try {
     const b = await post("/api/beleg/konto", { key: zustand.key, pos, nr, modell: zustand.modell });
     zeigeBeleg(b); ladeListe();
-    const naechstes = $("positionen").querySelector(".konto-feld.rot input, .konto-feld.gelb input");
     toast(`Position ${pos + 1}: Konto ${nr} übernommen`);
-    if (naechstes && Number(naechstes.dataset.pos) > pos) naechstes.focus();
   } catch (e) { toast(e.message, true); }
 }
 
@@ -336,8 +667,8 @@ function oeffneSammelfreigabe() {
   const sichere = zustand.liste.eintraege.filter((e) => e.bereich === "sicher");
   $("blatt-liste").innerHTML = sichere.map((e) => `
     <li><input type="checkbox" checked data-key="${esc(e.key)}" data-brutto="${esc(e.brutto)}">
-      <span><b>${esc(e.lieferant)}</b><small>${esc(e.mandant)} · Kreditor ${esc(e.kreditor)} · ${datum(e.datum)} · ${e.gelernt}/${e.positionen} gelernt</small></span>
-      <span class="z-betrag">${eur(e.brutto)}</span>
+      <span><b>${esc(e.lieferant)}</b><small>Kreditor ${esc(e.kreditor)} · Rechnung ${datum(e.datum)} · Leistung ${esc(leistungText(e.leistung))} · ${e.gelernt}/${e.positionen} gelernt</small></span>
+      <span class="z-betrag">${geld(e.brutto, e.waehrung)}</span>
       <button class="link blau-link" data-oeffnen="${esc(e.key)}">Ansehen</button></li>`).join("");
   $("blatt-liste").querySelectorAll("input").forEach((i) => i.addEventListener("change", sammelSumme));
   $("blatt-liste").querySelectorAll("[data-oeffnen]").forEach((b) => b.addEventListener("click", () => {
@@ -350,7 +681,7 @@ function oeffneSammelfreigabe() {
 function sammelSumme() {
   const gewaehlt = [...$("blatt-liste").querySelectorAll("input:checked")];
   const summe = gewaehlt.reduce((a, i) => a + Number(i.dataset.brutto || 0), 0);
-  $("blatt-summe").textContent = `${gewaehlt.length} ausgewählt · ${eur(summe)}`;
+  $("blatt-summe").textContent = `${gewaehlt.length} ausgewählt · ${geld(summe)}`;
   $("blatt-ok").textContent = `${gewaehlt.length} freigeben`;
   $("blatt-ok").disabled = !gewaehlt.length;
 }
@@ -380,28 +711,130 @@ async function demoAktion(was) {
       toast(`${r.eingespielt} Rechnungen für November eingespielt`);
       await ladeListe(); setzeFilter("sicher");
     } else if (was === "reset") {
-      if (!confirm("Alle Kreditoren, Lernregeln, Kontoänderungen und Freigaben der Demo löschen?")) return;
+      if (!confirm("Alle Kreditoren, Lernregeln, Kontoänderungen, Freigaben und Kanzlei-Stammdaten der Demo zurücksetzen?")) return;
       await post("/api/demo/zuruecksetzen", {});
       zustand.key = null; $("beleg").hidden = true; $("aktionsleiste").hidden = true; $("leer").hidden = false;
-      await ladeListe(); setzeFilter("pruefen");
+      leereVorschau();
+      await ladeStamm();
+      route();
       toast("Demo zurückgesetzt");
     }
   } catch (e) { toast(e.message, true); }
 }
 
-/* ---------- Beleg ---------- */
+/* ---------- Belegansicht: Seite x von y, Zoom ---------- */
+const ansichtZ = { seiten: 0, seite: 1, zoom: 1 };
+const ZOOM = [0.5, 0.75, 1, 1.25, 1.5, 2, 2.5, 3];
+
+function leereVorschau() {
+  $("vorschau").innerHTML = `<p class="klein mitte">Keine Rechnung gewählt</p>`;
+  $("v-seiten").textContent = "";
+  $("werkzeuge").hidden = true;
+}
+
 async function ladeVorschau(b) {
   const v = $("vorschau");
+  ansichtZ.zoom = 1;
   if (b.art === "xml") {
-    const t = await (await fetch(`/api/beleg/datei?${new URLSearchParams({ key: b.key })}`)).text();
+    const t = await (await fetch(`/api/beleg/datei?${new URLSearchParams({ key: b.key })}`, { headers: { "X-Nutzer": zustand.nutzer } })).text();
     v.innerHTML = `<pre>${esc(t)}</pre>`;
     $("v-seiten").textContent = "E-Rechnung (XML)";
+    $("werkzeuge").hidden = true;
     return;
   }
-  const { anzahl } = await api(`/api/beleg/seiten?${new URLSearchParams({ key: b.key })}`);
-  $("v-seiten").textContent = `${anzahl} Seite${anzahl === 1 ? "" : "n"}`;
-  v.innerHTML = [...Array(anzahl).keys()].map((i) =>
-    `<img src="/api/beleg/seite?${new URLSearchParams({ key: b.key, i })}" alt="Seite ${i + 1}">`).join("");
+  const { anzahl: n } = await api(`/api/beleg/seiten?${new URLSearchParams({ key: b.key })}`);
+  ansichtZ.seiten = n; ansichtZ.seite = 1;
+  v.innerHTML = [...Array(n).keys()].map((i) => `<div class="seite" data-seite="${i + 1}">
+    <img src="/api/beleg/seite?${new URLSearchParams({ key: b.key, i, nutzer: zustand.nutzer })}" alt="Seite ${i + 1} von ${n}" draggable="false"></div>`).join("");
+  v.querySelectorAll("img").forEach((img) => img.addEventListener("load", aktuelleSeite));
+  $("werkzeuge").hidden = false;
+  $("w-gesamt").textContent = `/ ${n}`;
+  wendeZoomAn();
+  v.scrollTop = 0;
+  zeigeSeitenzahl();
+}
+
+function zeigeSeitenzahl() {
+  $("v-seiten").textContent = ansichtZ.seiten ? `Seite ${ansichtZ.seite} von ${ansichtZ.seiten}` : "";
+  if (document.activeElement !== $("w-seite")) $("w-seite").value = ansichtZ.seite;
+  $("w-hoch").disabled = ansichtZ.seite <= 1;
+  $("w-runter").disabled = ansichtZ.seite >= ansichtZ.seiten;
+}
+
+function wendeZoomAn() {
+  document.querySelectorAll("#vorschau .seite").forEach((s) => {
+    s.style.width = `${ansichtZ.zoom * 100}%`;
+    const img = s.querySelector("img");
+    if (ansichtZ.zoom > 1.2 && !img.dataset.scharf) { img.dataset.scharf = "1"; img.src += "&dpi=200"; }  // schärfer beim Vergrößern
+  });
+  $("w-zoom").textContent = `${Math.round(ansichtZ.zoom * 100)} %`;
+  $("w-minus").disabled = ansichtZ.zoom <= ZOOM[0];
+  $("w-plus").disabled = ansichtZ.zoom >= ZOOM[ZOOM.length - 1];
+}
+
+function zoome(richtung, mitte = null) {
+  const v = $("vorschau");
+  const alt = ansichtZ.zoom;
+  const i = ZOOM.findIndex((z) => z >= alt - 0.001);
+  const neu = richtung > 0 ? ZOOM[Math.min((ZOOM[i] > alt + 0.001 ? i : i + 1), ZOOM.length - 1)] : ZOOM[Math.max(i - 1, 0)];
+  if (neu === alt) return;
+  const mx = mitte ? mitte.x : v.clientWidth / 2;
+  const my = mitte ? mitte.y : v.clientHeight / 2;
+  const fx = (v.scrollLeft + mx) / v.scrollWidth, fy = (v.scrollTop + my) / v.scrollHeight;
+  ansichtZ.zoom = neu;
+  wendeZoomAn();
+  v.scrollLeft = fx * v.scrollWidth - mx;
+  v.scrollTop = fy * v.scrollHeight - my;
+}
+
+/* Aktuelle Seite: die Seite, die das obere Drittel der Ansicht füllt (erst wenn die Bilder Höhe haben) */
+function aktuelleSeite() {
+  const v = $("vorschau");
+  const seiten = [...v.querySelectorAll(".seite")];
+  if (!ansichtZ.seiten || seiten.some((s) => !s.offsetHeight)) return;
+  const linie = v.scrollTop + v.clientHeight / 3;
+  let aktuell = 1;
+  seiten.forEach((s) => { if (s.offsetTop <= linie) aktuell = Number(s.dataset.seite); });
+  if (aktuell !== ansichtZ.seite) { ansichtZ.seite = aktuell; zeigeSeitenzahl(); }
+}
+
+function springeZuSeite(n) {
+  n = Math.max(1, Math.min(ansichtZ.seiten, n));
+  const ziel = document.querySelector(`#vorschau .seite[data-seite="${n}"]`);
+  if (ziel) $("vorschau").scrollTo({ top: ziel.offsetTop - 12, behavior: "smooth" });
+  ansichtZ.seite = n;
+  zeigeSeitenzahl();
+}
+
+function bindeWerkzeuge() {
+  const v = $("vorschau");
+  v.addEventListener("scroll", aktuelleSeite);
+  v.addEventListener("wheel", (e) => {
+    if (!e.ctrlKey || $("werkzeuge").hidden) return;
+    e.preventDefault();
+    const r = v.getBoundingClientRect();
+    zoome(e.deltaY < 0 ? 1 : -1, { x: e.clientX - r.left, y: e.clientY - r.top });
+  }, { passive: false });
+  $("w-plus").addEventListener("click", () => zoome(1));
+  $("w-minus").addEventListener("click", () => zoome(-1));
+  $("w-passend").addEventListener("click", () => { ansichtZ.zoom = 1; wendeZoomAn(); });
+  $("w-hoch").addEventListener("click", () => springeZuSeite(ansichtZ.seite - 1));
+  $("w-runter").addEventListener("click", () => springeZuSeite(ansichtZ.seite + 1));
+  $("w-seite").addEventListener("change", (e) => springeZuSeite(Number(e.target.value) || 1));
+  $("w-seite").addEventListener("focus", (e) => e.target.select());
+  // Verschieben mit gedrückter Maustaste, wenn vergrößert
+  let ziehen = null;
+  v.addEventListener("mousedown", (e) => {
+    if (ansichtZ.zoom <= 1 || e.button !== 0 || !e.target.closest(".seite")) return;
+    ziehen = { x: e.clientX, y: e.clientY, l: v.scrollLeft, t: v.scrollTop };
+    v.classList.add("zieht"); e.preventDefault();
+  });
+  window.addEventListener("mousemove", (e) => {
+    if (!ziehen) return;
+    v.scrollLeft = ziehen.l - (e.clientX - ziehen.x);
+    v.scrollTop = ziehen.t - (e.clientY - ziehen.y);
+  });
+  window.addEventListener("mouseup", () => { ziehen = null; v.classList.remove("zieht"); });
 }
 
 async function hochladen(e) {
@@ -409,9 +842,9 @@ async function hochladen(e) {
   if (!datei) return;
   const form = new FormData();
   form.append("datei", datei);
-  form.append("mandant", zustand.mandant || zustand.stamm.mandanten[0].id);
+  form.append("mandant", zustand.mandant);
   try {
-    const r = await fetch("/api/upload", { method: "POST", body: form });
+    const r = await fetch("/api/upload", { method: "POST", body: form, headers: { "X-Nutzer": zustand.nutzer } });
     const d = await r.json();
     if (!r.ok) throw new Error(d.detail);
     toast("Rechnung wird gelesen …");

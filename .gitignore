@@ -24,5 +24,7 @@ Thumbs.db
 
 # Zustand und Uploads der Demo
 testdaten/demo/zustand.json
+testdaten/demo/kanzlei.json
+testdaten/demo/kanzlei.tmp
 testdaten/demo/zustand.tmp
 testdaten/demo/uploads/

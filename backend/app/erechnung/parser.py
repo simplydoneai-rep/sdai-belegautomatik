@@ -100,6 +100,13 @@ def _ubl_party(party: etree._Element | None) -> dict[str, Any]:
     }
 
 
+def _zeitraum(start: str | None, ende: str | None, lieferung: str | None) -> dict[str, str | None] | None:
+    """Leistungszeitraum (BT-73/74) oder Lieferdatum (BT-72)."""
+    if start or ende:
+        return {"von": start or ende, "bis": ende if start and ende != start else None}
+    return {"von": lieferung, "bis": None} if lieferung else None
+
+
 def _parse_ubl(root: etree._Element, credit: bool) -> dict[str, Any]:
     currency = _text(root, "DocumentCurrencyCode") or "EUR"
     type_code = _text(root, "CreditNoteTypeCode" if credit else "InvoiceTypeCode") or ""
@@ -140,6 +147,8 @@ def _parse_ubl(root: etree._Element, credit: bool) -> dict[str, Any]:
         "invoice_number": _text(root, "ID"),
         "invoice_date": _text(root, "IssueDate"),
         "currency": currency,
+        "service_period": _zeitraum(_text(root, "InvoicePeriod", "StartDate"), _text(root, "InvoicePeriod", "EndDate"),
+                                    _text(root, "Delivery", "ActualDeliveryDate")),
         "net_total": _dec(_text(totals, "TaxExclusiveAmount")),
         "tax_total": tax_total or "0",
         "gross_total": _dec(_text(totals, "TaxInclusiveAmount")),
@@ -228,6 +237,11 @@ def _parse_cii(root: etree._Element) -> dict[str, Any]:
         "invoice_number": _text(doc, "ID"),
         "invoice_date": _cii_date(_text(doc, "IssueDateTime", "DateTimeString")),
         "currency": currency,
+        "service_period": _zeitraum(
+            _cii_date(_text(settlement, "BillingSpecifiedPeriod", "StartDateTime", "DateTimeString")),
+            _cii_date(_text(settlement, "BillingSpecifiedPeriod", "EndDateTime", "DateTimeString")),
+            _cii_date(_text(tx, "ApplicableHeaderTradeDelivery", "ActualDeliverySupplyChainEvent", "OccurrenceDateTime",
+                            "DateTimeString"))),
         "net_total": _dec(_text(summary, "TaxBasisTotalAmount")),
         "tax_total": tax_total or "0",
         "gross_total": _dec(_text(summary, "GrandTotalAmount")),

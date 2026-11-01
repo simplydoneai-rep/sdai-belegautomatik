@@ -11,13 +11,13 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Any, AsyncIterator
 
-from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
+from fastapi import Depends, FastAPI, File, Form, Header, HTTPException, Request, UploadFile
 from fastapi.responses import FileResponse, PlainTextResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from app.demo import ansicht, zustand
-from app.demo.verarbeitung import MODELLE, aufzeichnungen, mandanten, seitenbilder
+from app.demo import ansicht, kanzlei, zustand
+from app.demo.verarbeitung import MODELLE, aufzeichnungen, seitenbilder
 from app.kontierung.kontensuche import alle_konten, suchen
 
 STATIC = Path(__file__).resolve().parents[1] / "demo" / "static"
@@ -37,7 +37,16 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     yield
 
 
-app = FastAPI(title="Simply Done AI – Belegautomatik (Demo)", lifespan=lifespan)
+async def _nutzer_setzen(x_nutzer: str | None = Header(None), nutzer: str | None = None) -> str:
+    """Demo ohne Anmeldung: Die Oberfläche schickt das Kürzel der gewählten Person mit (Phase 5: Anmeldung mit
+    Zwei-Faktor). Asynchron, damit die Angabe in den Protokolleinträgen der Anfrage ankommt."""
+    wer = x_nutzer or nutzer or "AK"  # Bilder (img src) schicken das Kürzel als Parameter
+    zustand.NUTZER.set(wer)
+    return wer
+
+
+app = FastAPI(title="Simply Done AI – Belegautomatik (Demo)", lifespan=lifespan,
+              dependencies=[Depends(_nutzer_setzen)])
 
 
 @app.middleware("http")
@@ -59,16 +68,25 @@ def _modell(modell: str) -> str:
 
 
 def _key(key: str) -> str:
-    if key not in {b["key"] for b in ansicht.eingang()}:
+    beleg = next((b for b in ansicht.eingang() if b["key"] == key), None)
+    if beleg is None:
         raise HTTPException(404, "Beleg nicht gefunden")
+    _mandant(beleg["client_id"])
     return key
+
+
+def _mandant(mid: str) -> str:
+    """Sachbearbeiter sehen nur zugeordnete Mandanten (CLAUDE.md Abschnitt 3)."""
+    if not kanzlei.darf(zustand.NUTZER.get(), mid):
+        raise HTTPException(403, "Kein Zugriff auf diesen Mandanten")
+    return mid
 
 
 @app.get("/api/stammdaten")
 def stammdaten() -> dict[str, Any]:
     lo, hi = zustand.kreditor_bereich(ansicht.SACHKONTENLAENGE)
     return {
-        "mandanten": [{"id": k, "name": v["name"], "branche": v["branche"]} for k, v in mandanten().items()],
+        **kanzlei.stammdaten(zustand.NUTZER.get()),
         "modelle": [{"id": k, **v} for k, v in MODELLE.items()],
         "standard_modell": ansicht.STANDARD_MODELL,
         "kreditoren_bereich": [lo, hi],
@@ -76,8 +94,60 @@ def stammdaten() -> dict[str, Any]:
 
 
 @app.get("/api/eingang")
-def eingang(mandant: str | None = None, modell: str = ansicht.STANDARD_MODELL) -> dict[str, Any]:
-    return ansicht.liste(mandant or None, _modell(modell))
+def eingang(mandant: str, modell: str = ansicht.STANDARD_MODELL) -> dict[str, Any]:
+    return ansicht.liste(_mandant(mandant), _modell(modell))
+
+
+@app.get("/api/uebersicht")
+def uebersicht(modell: str = ansicht.STANDARD_MODELL) -> dict[str, Any]:
+    return ansicht.uebersicht(zustand.NUTZER.get(), _modell(modell))
+
+
+class MandantDaten(BaseModel):
+    id: str | None = None
+    name: str
+    nummer: int | str
+    kontenrahmen: str
+    ansprechpartner: str = ""
+    zustaendig: str | None = None
+    vertretung: str | None = None
+
+
+class SachbearbeiterDaten(BaseModel):
+    kuerzel: str
+    name: str
+    rolle: str = "sachbearbeitung"
+
+
+class Zugriff(BaseModel):
+    kuerzel: str
+    mandant: str
+    wert: str
+
+
+def _kanzlei(aufruf: Any) -> dict[str, Any]:
+    try:
+        aufruf()
+    except PermissionError as exc:
+        raise HTTPException(403, str(exc)) from exc
+    except ValueError as exc:
+        raise _fehler(exc) from exc
+    return kanzlei.stammdaten(zustand.NUTZER.get())
+
+
+@app.post("/api/kanzlei/mandant")
+def mandant_speichern(m: MandantDaten) -> dict[str, Any]:
+    return _kanzlei(lambda: kanzlei.mandant_speichern(zustand.NUTZER.get(), m.model_dump()))
+
+
+@app.post("/api/kanzlei/sachbearbeiter")
+def sachbearbeiter_speichern(s: SachbearbeiterDaten) -> dict[str, Any]:
+    return _kanzlei(lambda: kanzlei.sachbearbeiter_speichern(zustand.NUTZER.get(), s.kuerzel, s.name, s.rolle))
+
+
+@app.post("/api/kanzlei/zugriff")
+def zugriff_setzen(z: Zugriff) -> dict[str, Any]:
+    return _kanzlei(lambda: kanzlei.zugriff_setzen(zustand.NUTZER.get(), z.kuerzel, z.mandant, z.wert))
 
 
 @app.get("/api/beleg")
@@ -91,8 +161,8 @@ def beleg_seiten(key: str) -> dict[str, int]:
 
 
 @app.get("/api/beleg/seite")
-def beleg_seite(key: str, i: int) -> Response:
-    seiten = seitenbilder(ansicht.pfad(_key(key)))
+def beleg_seite(key: str, i: int, dpi: int = 110) -> Response:
+    seiten = seitenbilder(ansicht.pfad(_key(key)), 200 if dpi > 110 else 110)
     if not 0 <= i < len(seiten):
         raise HTTPException(404, "Seite nicht gefunden")
     return Response(seiten[i], media_type="image/png")
@@ -170,7 +240,7 @@ class Sammel(BaseModel):
 
 
 @app.post("/api/sammelfreigabe")
-def sammelfreigabe(s: Sammel) -> dict[str, Any]:
+def sammelfreigabe(s: Sammel) -> dict[str, Any]:  # jeder Schlüssel einzeln auf Zugriff geprüft (_key)
     result = ansicht.sammelfreigabe([_key(k) for k in s.keys], _modell(s.modell))
     log.info("sammelfreigabe freigegeben=%d uebersprungen=%d", len(result["freigegeben"]), len(result["uebersprungen"]))
     return result
@@ -203,8 +273,7 @@ def demo_november() -> dict[str, int]:
 
 @app.post("/api/upload")
 async def upload(datei: UploadFile = File(...), mandant: str = Form("M1")) -> dict[str, str]:
-    if mandant not in mandanten():
-        raise HTTPException(400, "Unbekannter Mandant")
+    _mandant(mandant)
     inhalt = await datei.read()
     if len(inhalt) > MAX_UPLOAD:
         raise HTTPException(413, "Datei zu groß (höchstens 15 MB)")
@@ -218,6 +287,7 @@ async def upload(datei: UploadFile = File(...), mandant: str = Form("M1")) -> di
 @app.post("/api/demo/zuruecksetzen")
 def zuruecksetzen() -> dict[str, str]:
     zustand.zuruecksetzen()
+    kanzlei.zuruecksetzen()
     return {"status": "zurückgesetzt"}
 
 

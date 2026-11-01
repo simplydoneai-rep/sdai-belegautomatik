@@ -339,6 +339,10 @@ def build_synthetic(inv: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any]
     credit = inv.get("doc_type") == "credit_note"
     small = inv.get("kleinbetrag", False)
     sign = D(-1) if credit else D(1)
+    waehrung = inv.get("currency", "EUR")
+
+    def geld(v: Decimal) -> str:
+        return money(v) if waehrung == "EUR" else money(v).replace("€", waehrung)
 
     render_lines, gold_lines = [], []
     net_by_rate: dict[int, Decimal] = {}
@@ -353,8 +357,8 @@ def build_synthetic(inv: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any]
             net_line = amount
         net_line *= sign
         net_by_rate[rate] = net_by_rate.get(rate, D(0)) + net_line
-        render_lines.append({"pos": pos, "desc": desc, "qty": num(q), "unit": unit, "price": money(p),
-                             "rate": f"{rate} %", "amount": money(amount * sign)})
+        render_lines.append({"pos": pos, "desc": desc, "qty": num(q), "unit": unit, "price": geld(p),
+                             "rate": f"{rate} %", "amount": geld(amount * sign)})
         gold_lines.append({"description": desc, "quantity": str(q), "unit": unit,
                            "unit_price": str(q2(p * 100 / (100 + rate))) if small else str(p),
                            "net_amount": str(net_line), "tax_rate": str(rate), "account_skr03": account})
@@ -362,31 +366,31 @@ def build_synthetic(inv: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any]
     if small:
         tax = q2(gross_small * 19 / 119)
         gross, net = gross_small, gross_small - tax
-        totals = [("Summe", money(gross), True), ("darin enthalten 19 % MwSt.", money(tax), False)]
+        totals = [("Summe", geld(gross), True), ("darin enthalten 19 % MwSt.", geld(tax), False)]
         assert sum((D(g["net_amount"]) for g in gold_lines), D(0)) == net, "Kleinbetrag nicht glatt"
     else:
         net = sum(net_by_rate.values(), D(0))
         taxes = {r: q2(n * r / 100) for r, n in sorted(net_by_rate.items())}
         tax = sum(taxes.values(), D(0))
         gross = net + tax
-        totals = [("Nettobetrag", money(net), False)]
+        totals = [("Nettobetrag", geld(net), False)]
         for r, t in taxes.items():
             if r == 0:
-                totals.append(("Umsatzsteuer 0 %", money(t), False))
+                totals.append(("Umsatzsteuer 0 %", geld(t), False))
             else:
-                totals.append((f"Umsatzsteuer {r} % auf {money(net_by_rate[r])}", money(t), False))
-        totals.append(("Gutschriftsbetrag" if credit else "Rechnungsbetrag", money(gross), True))
+                totals.append((f"Umsatzsteuer {r} % auf {geld(net_by_rate[r])}", geld(t), False))
+        totals.append(("Gutschriftsbetrag" if credit else "Rechnungsbetrag", geld(gross), True))
 
     meta = []
     if inv["nr"]:
         meta.append(("Gutschrift-Nr." if credit else "Rechnungsnummer", inv["nr"]))
     meta.append(("Datum", de_date(inv["date"])))
     if not small:
-        meta.append(("Leistungsdatum", de_date(inv["date"])))
+        meta.append(inv.get("leistung", ("Leistungsdatum", de_date(inv["date"]))))
         meta.append(("Kundennummer", f"K-{inv['client']}-{inv['sup'][:3].upper()}"))
 
     contact = [f'Ansprechpartner: {sup["contact"]}', f'Tel. {sup["phone"]}', f'E-Mail: {sup["email"]}',
-               f'USt-IdNr.: {sup["vat_id"]}', f'Steuernummer: {sup["steuernr"]}']
+               f'{sup.get("id_label", "USt-IdNr.")}: {sup["vat_id"]}'] + ([f'Steuernummer: {sup["steuernr"]}'] if sup.get("steuernr") else [])
     footer = [f'{sup["name"]} · Geschäftsführer: {sup["gf"]} · Amtsgericht · {sup["hrb"]}',
               f'Bank: Testbank · IBAN {sup["iban"]} · BIC {sup["bic"]}']
     notes = list(inv.get("notes", []))
@@ -412,7 +416,7 @@ def build_synthetic(inv: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any]
         "supplier_name": sup["name"],
         "invoice_number": inv["nr"],
         "invoice_date": inv["date"],
-        "currency": "EUR",
+        "currency": waehrung,
         "net_total": str(net),
         "tax_total": str(tax),
         "gross_total": str(gross),

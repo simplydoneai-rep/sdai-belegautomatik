@@ -1,0 +1,26 @@
+{
+  "_meta": {
+    "zweck": "DATEV-Steuerschlüssel (BU-Schlüssel) für Eingangsrechnungen auf Konten ohne Vorsteuer-Automatik (CLAUDE.md Regel 16). Automatikkonten (Kennzeichen AV) bekommen keinen Schlüssel, die Steuer rechnet DATEV aus dem Konto.",
+    "quelle": [
+      "Lexware Support, FAQ 000002619 „DATEV-Steuerschlüssel hinterlegen“, Tabelle gültig ab 01.01.2021: https://www.lexware.de/support/faq/faq-beitrag/000002619-datev-steuerschluessel-hinterlegen/",
+      "DATEV-Community „Steuerschlüssel DATEV 19 oder 94 bei Reverse Charge“: 19 = steuerpflichtiger i. g. Erwerb § 1a UStG, 94 = Leistungen ausländischer Unternehmer § 13b UStG: https://www.datev-community.de/t5/Betriebliches-Rechnungswesen/Steuerschl%C3%BCssel-DATEV-19-oder-94-bei-reverse-charge/m-p/154820",
+      "DATEV-Kontenrahmen SKR 03 2026 (Art.-Nr. 11174): Kennzeichen AV = Automatikkonto Vorsteuer"
+    ],
+    "stand": "2026-11-01",
+    "offen": "Vor dem DATEV-Export (Phase 4) gegen die DATEV-Dokumentation der Steuerschlüssel im Developer Portal prüfen und die Datei dort ablegen (docs/datev/). Felder nie raten.",
+    "faelle": {
+      "inland": "Rechnung eines inländischen Unternehmers mit ausgewiesener Umsatzsteuer",
+      "ige": "Innergemeinschaftlicher Erwerb (Lieferung aus einem anderen EU-Land, § 1a UStG)",
+      "13b": "Steuerschuldnerschaft des Leistungsempfängers (§ 13b UStG), z. B. Leistung eines ausländischen Unternehmers"
+    }
+  },
+  "schluessel": {
+    "inland": {"19": {"bu": "9", "text": "Vorsteuer 19 %"}, "7": {"bu": "8", "text": "Vorsteuer 7 %"}},
+    "ige": {"19": {"bu": "19", "text": "i. g. Erwerb 19 % Vorsteuer und Umsatzsteuer"}, "7": {"bu": "18", "text": "i. g. Erwerb 7 % Vorsteuer und Umsatzsteuer"}},
+    "13b": {"19": {"bu": "94", "text": "§ 13b UStG 19 % Vorsteuer und Umsatzsteuer"}, "7": {"bu": "91", "text": "§ 13b UStG 7 % Vorsteuer und Umsatzsteuer"}}
+  },
+  "nicht_verwenden": {
+    "7": "Vorsteuer 16 % (nur Zeitraum 2020/2021), nicht 7 %",
+    "17": "i. g. Erwerb 16 % (Altfälle)"
+  }
+}

@@ -21,9 +21,11 @@ from app.erechnung.parser import parse_file, without_parties
 from app.kontierung.betraege import parse_amount
 from app.kontierung.konten import load_accounts, normalize_lines
 from app.kontierung.steuerlogik import pruefe_summen
+from app.kontierung.steuerschluessel import steuerfall
 from app.llm.base import LLMProvider
 from app.llm.placeholder import PlaceholderProvider
 from app.llm.replay import ReplayProvider
+from app.ocr import kopfangaben
 from app.ocr.text import read_document
 from app.pseudo.hilfen import client_profile, restore
 from app.pseudo.pseudonymizer import pseudonymize
@@ -47,6 +49,18 @@ PLACEHOLDER_KIND = re.compile(r"\[([A-Z_]+)_\d+\]")
 def mandanten() -> dict[str, dict[str, Any]]:
     data: dict[str, dict[str, Any]] = json.loads((TESTDATEN / "mandanten.json").read_text(encoding="utf-8"))["mandanten"]
     return data
+
+
+def mandant_profil(client_id: str) -> dict[str, Any]:
+    """Angaben des Mandanten für die Pseudonymisierung. Neu erfasste Mandanten (Kanzlei-Stammdaten) haben
+    nur Name und Ansprechpartner."""
+    if client_id in mandanten():
+        return mandanten()[client_id]
+    from app.demo import kanzlei
+
+    m = kanzlei.mandant(client_id)
+    return {"name": m["name"], "person": m.get("ansprechpartner") or m["name"], "street": "", "postcode": "",
+            "city": "", "vat_id": "", "industry_code": "", "branche": m.get("branche", "")}
 
 
 @lru_cache(maxsize=1)
@@ -120,7 +134,7 @@ def verarbeite(path: Path, client_id: str, modell: str, erwartet: dict[str, Any]
     digest = hashlib.sha256(raw).hexdigest()
     schritt("Eingang", t0, f"SHA-256 {digest[:16]}…, {len(raw) / 1024:.0f} KB")
 
-    client = mandanten()[client_id]
+    client = mandant_profil(client_id)
     accounts = load_accounts("SKR03")
     names, _ = _konten()
     ki: dict[str, Any] = {}
@@ -129,7 +143,13 @@ def verarbeite(path: Path, client_id: str, modell: str, erwartet: dict[str, Any]
 
     if path.suffix.lower() == ".xml":
         t0 = time.perf_counter()
-        data: dict[str, Any] | None = without_parties(parse_file(path))
+        voll = parse_file(path)
+        data: dict[str, Any] | None = without_parties(voll)
+        verkaeufer = (voll.get("parties") or {}).get("seller") or {}
+        roh = raw.decode("utf-8", errors="replace")
+        if re.search(r">K</(?:cbc:ID|ram:CategoryCode)>", roh):  # Steuerkategorie K: innergemeinschaftliche Lieferung
+            roh += " innergemeinschaftliche Lieferung"
+        lieferant_ustid, land, leistung = verkaeufer.get("vat_id"), verkaeufer.get("country"), voll.get("service_period")
         schritt("Auslesen", t0, "E-Rechnung (XML) direkt gelesen, keine KI nötig")
         quelle = "e-rechnung"
         ki = {"art": "keine", "text": "E-Rechnung: strukturierte Daten, kein KI-Aufruf"}
@@ -137,6 +157,8 @@ def verarbeite(path: Path, client_id: str, modell: str, erwartet: dict[str, Any]
         t0 = time.perf_counter()
         read = read_document(path)
         schritt("Auslesen", t0, "PDF-Textlayer" if read.method == "textlayer" else "Texterkennung (docTR, lokal)")
+        roh, land, leistung = read.text, None, None
+        lieferant_ustid = kopfangaben.lieferanten_ustid(read.text, (client["vat_id"],))
 
         t0 = time.perf_counter()
         pseudo = pseudonymize(read.text, client_profile(client), accounts, own_vat_ids=(client["vat_id"],))
@@ -180,6 +202,16 @@ def verarbeite(path: Path, client_id: str, modell: str, erwartet: dict[str, Any]
             if not p.get("account_skr03"):
                 p["ampel"], p["hinweise"] = "gelb", ["E-Rechnung: Kontierung folgt über Regeln (Phase 3)"]
 
+    # Kopfangaben lokal aus dem Belegtext (ohne KI): Leistungsdatum, Währung, Herkunft, Steuerfall
+    d = data or {}
+    if leistung is None:
+        leistung = kopfangaben.leistungsdatum(roh, d.get("invoice_date"))
+    herkunft = kopfangaben.herkunft(roh, lieferant_ustid, land)
+    saetze = [parse_amount(ln.get("tax_rate")) for ln in d.get("lines") or []]
+    kopf_lokal = {"currency": kopfangaben.waehrung(roh, d.get("currency")), "leistung": leistung,
+                  "herkunft": herkunft, "lieferant_ustid": lieferant_ustid,
+                  "steuerfall": steuerfall(bool(d.get("reverse_charge")), herkunft, roh, saetze)}
+
     gesamt = gesamtampel(check.ok if check else False, positionen, quelle)
     soll = None
     if erwartet:
@@ -191,14 +223,16 @@ def verarbeite(path: Path, client_id: str, modell: str, erwartet: dict[str, Any]
     return {
         "sha256": digest, "quelle": quelle, "ki": ki, "schritte": schritte,
         "kopf": {k: (data or {}).get(k) for k in ("supplier_name", "invoice_number", "invoice_date", "document_type",
-                                                    "net_total", "tax_total", "gross_total", "reverse_charge")},
+                                                    "net_total", "tax_total", "gross_total", "reverse_charge")}
+        | kopf_lokal,
         "positionen": positionen, "steuerlogik": {"ok": bool(check and check.ok), "hinweise": check.hinweise if check else []},
         "ampel": gesamt, "pseudonymisiert": pseudo_text, "platzhalter": platzhalter, "soll": soll,
     }
 
 
+@lru_cache(maxsize=64)
 def seitenbilder(path: Path, dpi: int = 110) -> list[bytes]:
-    """Belegseiten als PNG für die Vorschau (unabhängig vom PDF-Betrachter des Browsers)."""
+    """Belegseiten als PNG für die Vorschau (unabhängig vom PDF-Betrachter des Browsers). 200 dpi beim Vergrößern."""
     import pymupdf
 
     if path.suffix.lower() == ".xml":
