@@ -335,6 +335,7 @@ h2 { font-size: 25px; margin: 0; letter-spacing: -.01em; }
 .rechte-rechts { display: flex; flex-direction: column; min-height: 0; padding: 12px 14px; }
 .rechte-kopf { padding: 2px 4px 8px; }
 .rechte-kopf p { margin: 4px 0 0; }
+.rechte-suche { margin-bottom: 10px; background-color: #fff; }
 .rechte-liste { list-style: none; margin: 0; padding: 0; background: #fff; border-radius: 12px; overflow-y: auto; flex: 1; }
 .rechte-liste li { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 14px; border-top: 1px solid var(--trenn); }
 .rechte-liste li:first-child { border-top: 0; }

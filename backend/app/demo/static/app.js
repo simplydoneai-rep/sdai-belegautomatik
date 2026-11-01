@@ -126,6 +126,7 @@ async function init() {
     document.querySelectorAll("#f-kontenrahmen button").forEach((x) => x.classList.toggle("aktiv", x === b));
   }));
   $("sb-form").addEventListener("submit", sichereSachbearbeiter);
+  $("rechte-suche").addEventListener("input", zeigeRechte);
   bindeWerkzeuge();
   window.addEventListener("hashchange", route);
   route();
@@ -283,6 +284,7 @@ async function sichereMandant(e) {
 /* ---------- Sachbearbeiter und Rechte ---------- */
 function oeffneRechte() {
   zustand.sbGewaehlt = zustand.sbGewaehlt || zustand.stamm.sachbearbeiter.find((p) => p.rolle !== "leitung")?.kuerzel;
+  $("rechte-suche").value = "";
   zeigeRechte();
   $("rechte-blatt").hidden = false;
 }
@@ -304,7 +306,9 @@ function zeigeRechte() {
   $("rechte-kopf").innerHTML = `<div><b>${esc(p.name)}</b> <span class="klein">${esc(p.kuerzel)} · ${esc(s.rollen[p.rolle])}</span></div>
     <p class="klein">${p.rolle === "leitung" ? "Die Kanzleileitung sieht alle Mandanten. Die Einstellungen unten gelten, falls die Rolle geändert wird."
       : "Zugriff: sieht und bearbeitet den Mandanten. Gesperrt: darf diesem Mandanten nie zugeordnet werden (z. B. Interessenkonflikt)."}</p>`;
-  $("rechte-liste").innerHTML = s.alle_mandanten.map((m) => {
+  const q = $("rechte-suche").value.trim().toLowerCase();
+  const treffer = s.alle_mandanten.filter((m) => !q || m.name.toLowerCase().includes(q) || String(m.nummer).includes(q));
+  $("rechte-liste").innerHTML = treffer.map((m) => {
     const wert = p.zugriff[m.id] || "aus";
     const rolle = m.zustaendig === p.kuerzel ? "zuständig" : m.vertretung === p.kuerzel ? "Vertretung" : null;
     const knopf = (w, text) => `<button data-wert="${w}" class="${wert === w ? "aktiv " + w : ""}" ${rolle && w !== "an" ? "disabled" : ""}>${text}</button>`;
@@ -312,7 +316,7 @@ function zeigeRechte() {
       <span><b>${esc(m.name)}</b><small>${esc(m.nummer)} · ${esc(m.kontenrahmen)}${rolle ? ` · <span class="rolle-marke">${rolle}</span>` : ""}</small></span>
       <div class="segment klein-segment">${knopf("an", "Zugriff")}${knopf("aus", "Kein Zugriff")}${knopf("gesperrt", "Gesperrt")}</div>
     </li>`;
-  }).join("");
+  }).join("") || `<li><span class="klein">Kein Mandant zu „${esc(q)}“</span></li>`;
   $("rechte-liste").querySelectorAll("li").forEach((li) => li.querySelectorAll("button").forEach((b) => b.addEventListener("click", async () => {
     try {
       zustand.stamm = { ...zustand.stamm, ...(await post("/api/kanzlei/zugriff", { kuerzel: p.kuerzel, mandant: li.dataset.mandant, wert: b.dataset.wert })) };
