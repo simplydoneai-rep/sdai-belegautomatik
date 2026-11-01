@@ -310,6 +310,15 @@ Details: `docs/entscheidungen/2026-11-02_buchungssatz-rechnungspruefung.md`.
 - Richtigstellung: Eine Validierung der E-Rechnungen gegen die XRechnung-Prüfregeln (KoSIT-Validator) gibt es noch nicht; bisher werden sie strukturiert gelesen und rechnerisch sowie auf Pflichtangaben geprüft.
 - 138 Tests grün.
 
+## 02.11.2026 – XRechnung-Validierung mit den KoSIT-Prüfregeln
+
+Freigabe Paul Graß inklusive Downloads (KoSIT-Konfiguration 0,5 MB von GitHub, saxonche 37 MB von PyPI). Details: `docs/entscheidungen/2026-11-02_xrechnung-validierung.md`.
+- E-Rechnungen laufen gegen Schema, EN-16931- und XRechnung-Regeln (XRechnung 3.0.2, KoSIT-Konfiguration 2026-08-31), lokal und ohne Java.
+- Ergebnis im Abschnitt „Rechnungsprüfung“ mit Regelnummern; ungültige E-Rechnungen gehen zur Prüfung.
+- Alle 64 KoSIT-Testrechnungen gültig; neue fehlerhafte Testrechnung F21 erkennt BR-CO-15 und BR-DE-15.
+- Einrichtung: `backend/scripts/kosit_einrichten.py` (feste Version, Prüfsumme).
+- 141 Tests grün.
+
 ## Nächste Schritte
 
 Die aktuelle Aufgabenliste steht in `docs/projektplan.md`, Abschnitt 10. Die Liste unten ist der Stand vom 28.10.2026 vor dem Projektplan.

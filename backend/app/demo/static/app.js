@@ -618,15 +618,36 @@ function zeigePruefung(b) {
   }).join("");
   const fehlt = pf.punkte.filter((p) => p.status === "fehlt").length;
   const hinweis = pf.punkte.filter((p) => p.status === "hinweis").length;
+  const val = b.validierung;
   const quelle = pf.e_rechnung ? "E-Rechnung, strukturiert geprüft" : "aus dem Belegtext geprüft";
-  $("kurz-pruefung").innerHTML = fehlt ? `<span class="kurz-warn">${anzahl(fehlt, "Angabe fehlt", "Angaben fehlen")}</span> · ${esc(pf.grundlage)}`
+  zeigeValidierung(val);
+  $("pflicht-grundlage").textContent = pf.grundlage;
+  const valKurz = !val ? "" : val.gueltig ? `<span class="kurz-ok">✓ XRechnung gültig</span> · `
+    : val.gueltig === false ? `<span class="kurz-fehler">✗ E-Rechnung ungültig (${val.fehler.length} Fehler)</span> · ` : "";
+  $("kurz-pruefung").innerHTML = valKurz + (fehlt ? `<span class="kurz-warn">${anzahl(fehlt, "Angabe fehlt", "Angaben fehlen")}</span> · ${esc(pf.grundlage)}`
     : `<span class="kurz-ok">✓ ${pf.art === "kleinbetrag" ? "Kleinbetragsrechnung vollständig" : "Alle Pflichtangaben vorhanden"}</span>`
-      + (hinweis ? ` · ${anzahl(hinweis, "Hinweis", "Hinweise")}` : "") + ` · ${quelle}`;
+      + (hinweis ? ` · ${anzahl(hinweis, "Hinweis", "Hinweise")}` : "") + (val ? "" : ` · ${quelle}`));
   $("pflicht-hinweis").textContent = (pf.art === "kleinbetrag"
     ? "Kleinbetragsrechnung bis 250 € (§ 33 UStDV): weniger Pflichtangaben. " : "")
     + (b.steuerfall.id === "13b" ? "Bei § 13b hängt der Vorsteuerabzug nicht an einer ordnungsgemäßen Rechnung (§ 15 Abs. 1 Nr. 4 UStG); fehlende Angaben sind nur Hinweise. " : "")
     + "Geprüft wird lokal, ohne KI. Fehlende Pflichtangaben: beim Lieferanten eine berichtigte Rechnung anfordern, sonst ist der Vorsteuerabzug gefährdet.";
-  if (fehlt && b.status !== "freigegeben") setzeKlapp("pruefung", true);  // braucht Aufmerksamkeit: offen
+  if ((fehlt || (val && val.gueltig === false)) && b.status !== "freigegeben") setzeKlapp("pruefung", true);  // offen lassen
+}
+
+/* XRechnung-Validierung mit den offiziellen KoSIT-Prüfregeln (Schema, EN 16931, XRechnung) */
+function zeigeValidierung(val) {
+  const el = $("validierung");
+  el.hidden = !val;
+  if (!val) return;
+  if (!val.verfuegbar) { el.className = "validierung grau"; el.innerHTML = `<b>XRechnung-Validierung nicht eingerichtet</b><small>${esc(val.hinweis)}</small>`; return; }
+  const liste = (eintraege, art) => eintraege.map((e) => `<li class="${art}"><b>${esc(e.regel)}</b> ${esc(e.text.replace(/^\[[^\]]+\]\s*-?\s*/, ""))}
+    ${e.ort ? `<small>${esc(e.ort)}</small>` : ""}</li>`).join("");
+  el.className = `validierung ${val.gueltig ? "gut" : "schlecht"}`;
+  el.innerHTML = `<div class="val-kopf"><span class="val-zeichen">${val.gueltig ? "✓" : "✗"}</span>
+      <span><b>${val.gueltig ? "Gültige E-Rechnung" : "E-Rechnung ungültig"}</b>
+      <small>${esc(val.szenario || "kein passendes Prüfszenario")} · ${esc(val.regelwerk)}</small></span></div>
+    ${val.fehler.length || val.warnungen.length ? `<ul class="val-liste">${liste(val.fehler, "fehler")}${liste(val.warnungen, "warnung")}</ul>` : ""}
+    ${val.gueltig ? "" : `<p class="klein">Eine E-Rechnung, die die Prüfregeln verletzt, beim Lieferanten zurückweisen und eine korrigierte Rechnung anfordern.</p>`}`;
 }
 
 function zeigeKreditor(b, fertig) {

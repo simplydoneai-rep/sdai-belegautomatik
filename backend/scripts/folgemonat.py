@@ -128,7 +128,35 @@ def main() -> None:
         gold = {"id": inv["id"], "quelle": "folgemonat", "client_id": inv["client"], "merkmale": inv["tags"],
                 "dokumente": [{"pfad": f"folgemonat/{name}", "art": "pdf"}], "erwartet": expected}
         (gold_dir / f'{inv["id"]}.json').write_text(json.dumps(gold, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"{len(RECHNUNGEN)} Rechnungen für November erzeugt → {ORDNER}")
+    fehlerhafte_e_rechnung(gold_dir)
+    print(f"{len(RECHNUNGEN) + 1} Rechnungen für November erzeugt → {ORDNER}")
+
+
+def fehlerhafte_e_rechnung(gold_dir: Path) -> None:
+    """F21: XRechnung mit zwei absichtlichen Fehlern, Grundlage KoSIT-Testfall 01.01a (UBL).
+    - Leitweg-ID/Käuferreferenz (BT-10) fehlt → Regel BR-DE-15
+    - Gesamtbetrag brutto passt nicht zu Netto + Steuer (336,90 → 346,90) → Regel BR-CO-15
+    Zeigt in der Demo, dass E-Rechnungen gegen die offiziellen Prüfregeln laufen."""
+    from app.erechnung.parser import parse_file, without_parties
+
+    xml = (basis.ROOT / "kosit" / "01.01a-INVOICE_ubl.xml").read_text(encoding="utf-8")
+    ersetzungen = [("<cbc:ID>123456XX</cbc:ID>", "<cbc:ID>BK-2026-7781</cbc:ID>"),
+                   ("<cbc:IssueDate>2016-04-04</cbc:IssueDate>", "<cbc:IssueDate>2026-11-19</cbc:IssueDate>"),
+                   ("[Seller trading name]", "Büroversand Kranz"), ("[Seller name]", "Büroversand Kranz GmbH"),
+                   ("<cbc:TaxInclusiveAmount currencyID=\"EUR\">336.9</cbc:TaxInclusiveAmount>",
+                    "<cbc:TaxInclusiveAmount currencyID=\"EUR\">346.9</cbc:TaxInclusiveAmount>"),
+                   ("<cbc:PayableAmount currencyID=\"EUR\">336.9</cbc:PayableAmount>",
+                    "<cbc:PayableAmount currencyID=\"EUR\">346.9</cbc:PayableAmount>")]
+    for alt, neu in ersetzungen:
+        assert alt in xml, alt
+        xml = xml.replace(alt, neu)
+    xml = "\n".join(z for z in xml.splitlines() if "<cbc:BuyerReference>" not in z)
+    ziel = ORDNER / "F21_bueroversand.xml"
+    ziel.write_text(xml, encoding="utf-8")
+    gold = {"id": "F21", "quelle": "folgemonat", "client_id": "M6", "merkmale": ["E-Rechnung fehlerhaft"],
+            "dokumente": [{"pfad": "folgemonat/F21_bueroversand.xml", "art": "xml"}],
+            "erwartet": without_parties(parse_file(ziel))}
+    (gold_dir / "F21.json").write_text(json.dumps(gold, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
 if __name__ == "__main__":

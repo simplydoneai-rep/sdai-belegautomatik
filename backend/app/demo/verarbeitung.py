@@ -18,6 +18,7 @@ from pathlib import Path
 from typing import Any
 
 from app.erechnung.parser import parse_file, without_parties
+from app.erechnung.validierung import validiere
 from app.kontierung.betraege import parse_amount
 from app.kontierung.konten import load_accounts, normalize_lines
 from app.kontierung import pflichtangaben
@@ -153,6 +154,9 @@ def verarbeite(path: Path, client_id: str, modell: str, erwartet: dict[str, Any]
             roh += " innergemeinschaftliche Lieferung"
         lieferant_ustid, land, leistung = verkaeufer.get("vat_id"), verkaeufer.get("country"), voll.get("service_period")
         schritt("Auslesen", t0, "E-Rechnung (XML) direkt gelesen, keine KI nötig")
+        t0 = time.perf_counter()
+        validierung = validiere(path)
+        schritt("Validierung", t0, "XRechnung-Prüfregeln der KoSIT" + (" bestanden" if validierung["gueltig"] else " nicht bestanden"))
         quelle = "e-rechnung"
         ki = {"art": "keine", "text": "E-Rechnung: strukturierte Daten, kein KI-Aufruf"}
     else:
@@ -161,6 +165,7 @@ def verarbeite(path: Path, client_id: str, modell: str, erwartet: dict[str, Any]
         schritt("Auslesen", t0, "PDF-Textlayer" if read.method == "textlayer" else "Texterkennung (docTR, lokal)")
         roh, land, leistung = read.text, None, None
         verkaeufer, kaeufer = None, None
+        validierung = None
         lieferant_ustid = kopfangaben.lieferanten_ustid(read.text, (client["vat_id"],))
 
         t0 = time.perf_counter()
@@ -231,7 +236,7 @@ def verarbeite(path: Path, client_id: str, modell: str, erwartet: dict[str, Any]
 
     return {
         "sha256": digest, "quelle": quelle, "ki": ki, "schritte": schritte,
-        "kopf": kopf, "pflichtangaben": pflicht,
+        "kopf": kopf, "pflichtangaben": pflicht, "validierung": validierung,
         "positionen": positionen, "steuerlogik": {"ok": bool(check and check.ok), "hinweise": check.hinweise if check else []},
         "ampel": gesamt, "pseudonymisiert": pseudo_text, "platzhalter": platzhalter, "soll": soll,
     }

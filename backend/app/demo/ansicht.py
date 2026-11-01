@@ -282,6 +282,9 @@ def _ausnahmen(kopf: dict[str, Any], r: dict[str, Any], kreditor: dict[str, Any]
         aus.append("Ausländische Umsatzsteuer – keine deutsche Vorsteuer (ggf. Vorsteuer-Vergütungsverfahren)")
     if (kopf.get("currency") or "EUR") != "EUR":
         aus.append(f'Fremdwährung {kopf["currency"]} – Umrechnung in Euro nötig')
+    val = r.get("validierung")
+    if val and val.get("gueltig") is False:
+        aus.append(f'E-Rechnung ungültig: {len(val["fehler"])} Fehler nach den XRechnung-Prüfregeln')
     fehlt = [f for f in r["pflichtangaben"]["fehlt"] if not f.startswith("Rechnerisch")]  # Summen: eigene Ausnahme
     if fehlt:
         aus.append("Pflichtangaben fehlen (§ 14 UStG): " + ", ".join(fehlt))
@@ -433,7 +436,7 @@ def ansicht(key: str, modell: str = STANDARD_MODELL) -> dict[str, Any]:
         "positionen": positionen, "ampel": ampel, "ausnahmen": ausnahmen,
         "steuerfall": {"id": fall, "text": steuerschluessel.FALL_TEXT[fall]},
         "buchungen": _buchungssaetze(positionen, kopf, kreditor, fall),
-        "pflichtangaben": r["pflichtangaben"],
+        "pflichtangaben": r["pflichtangaben"], "validierung": r.get("validierung"),
         "sicherheit": round(sicherheit, 2), "gelernt": gelernt,
         "offen": offen, "freigabe_moeglich": not offen and status != "freigegeben",
         "protokoll": zustand.protokoll(key)[-30:],

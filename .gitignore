@@ -28,3 +28,6 @@ testdaten/demo/kanzlei.json
 testdaten/demo/kanzlei.tmp
 testdaten/demo/zustand.tmp
 testdaten/demo/uploads/
+
+# Prüfregeln der KoSIT (eingerichtet mit backend/scripts/kosit_einrichten.py)
+tools/kosit/
