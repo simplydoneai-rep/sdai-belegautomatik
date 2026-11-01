@@ -21,7 +21,7 @@ class Pruefergebnis:
     hinweise: list[str] = field(default_factory=list)
 
 
-def pruefe_summen(data: dict[str, Any]) -> Pruefergebnis:
+def pruefe_summen(data: dict[str, Any], auslaendisch: bool = False) -> Pruefergebnis:
     """Prüft: Netto + Steuer = Brutto, Steuer je Satz = Netto je Satz × Satz, Satz zulässig.
 
     Toleranz 0,01 € je Steuersatz. Gibt Hinweise ohne Belegdaten zurück (logbar).
@@ -44,7 +44,7 @@ def pruefe_summen(data: dict[str, Any]) -> Pruefergebnis:
         if rate is None or amount is None:
             hinweise.append("position_unvollstaendig")
             continue
-        if rate not in ZULAESSIGE_SAETZE:
+        if rate not in ZULAESSIGE_SAETZE and not (auslaendisch and 0 < rate <= 30):  # z. B. AT 20 %, HU 27 %
             hinweise.append("steuersatz_unzulaessig")
         net_by_rate[rate] = net_by_rate.get(rate, Decimal("0")) + amount
 

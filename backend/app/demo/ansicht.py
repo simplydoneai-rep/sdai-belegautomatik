@@ -278,14 +278,15 @@ def _ausnahmen(kopf: dict[str, Any], r: dict[str, Any], kreditor: dict[str, Any]
         aus.append("Reverse Charge (§ 13b UStG)")
     elif fall == "ige":
         aus.append("Innergemeinschaftlicher Erwerb")
+    elif fall == "ausland":
+        aus.append("Ausländische Umsatzsteuer – keine deutsche Vorsteuer (ggf. Vorsteuer-Vergütungsverfahren)")
     if (kopf.get("currency") or "EUR") != "EUR":
         aus.append(f'Fremdwährung {kopf["currency"]} – Umrechnung in Euro nötig')
-    if not kopf.get("leistung") and (brutto is None or abs(brutto) > KLEINBETRAG):
-        aus.append("Leistungsdatum fehlt (§ 14 Abs. 4 Nr. 6 UStG)")
+    fehlt = [f for f in r["pflichtangaben"]["fehlt"] if not f.startswith("Rechnerisch")]  # Summen: eigene Ausnahme
+    if fehlt:
+        aus.append("Pflichtangaben fehlen (§ 14 UStG): " + ", ".join(fehlt))
     if re.search(r"(?i)\b(abschlag|anzahlung|schlussrechnung)", r.get("pseudonymisiert") or ""):
         aus.append("Anzahlung oder Schlussrechnung")
-    if not kopf.get("invoice_number") and (brutto is None or abs(brutto) > KLEINBETRAG):
-        aus.append("Rechnungsnummer fehlt")
     if not r["steuerlogik"]["ok"]:
         aus.append("Summen widersprüchlich")
     bisher = [b for b in (parse_amount(h) for h in historie) if b]
@@ -295,31 +296,72 @@ def _ausnahmen(kopf: dict[str, Any], r: dict[str, Any], kreditor: dict[str, Any]
 
 
 def _buchungssaetze(positionen: list[dict[str, Any]], kopf: dict[str, Any], kreditor: dict[str, Any] | None,
-                    fall: str) -> list[dict[str, Any]]:
-    """Buchungsvorschau wie im DATEV-Buchungsstapel: eine Zeile je Sachkonto und Steuerschlüssel (CLAUDE.md
-    Abschnitt 6). Umsatz bei Inlandsrechnungen brutto (DATEV rechnet die Vorsteuer heraus), bei § 13b und
-    i. g. Erwerb netto. Gutschriften im Haben."""
+                    fall: str) -> dict[str, Any]:
+    """Buchungssatz eines Belegs in zwei Sichten (CLAUDE.md Abschnitt 6, 7):
+
+    - **stapel**: Zeilen wie im DATEV-Buchungsstapel, eine je Sachkonto und Steuerschlüssel. Konto = Kreditor,
+      Gegenkonto = Sachkonto, Soll/Haben-Kennzeichen bezogen auf das Konto: Rechnung „H“ (Kreditor im Haben),
+      Gutschrift „S“. Umsatz brutto im Inland und bei ausländischer USt, netto bei § 13b und i. g. Erwerb
+      (DATEV rechnet die Steuer aus Automatikkonto oder Steuerschlüssel).
+    - **satz**: der vollständige Buchungssatz, den DATEV daraus bucht: Aufwand und Vorsteuer im Soll, Kreditor
+      (und bei § 13b / i. g. Erwerb die Umsatzsteuer) im Haben.
+    """
     gruppen: dict[tuple[str, str], dict[str, Any]] = {}
     for p in positionen:
         if not p["konto"]:
             continue
         st = p["steuer"]
         g = gruppen.setdefault((p["konto"]["nr"], st["bu"]), {
-            "konto": p["konto"]["nr"], "konto_name": p["konto"]["name"], "bu": st["bu"], "steuer": st["text"],
-            "satz": st["satz"], "netto": Decimal(0), "positionen": 0})
-        g["netto"] += parse_amount(p["netto"]) or Decimal(0)
+            "sachkonto": p["konto"]["nr"], "sachkonto_name": p["konto"]["name"], "bu": st["bu"], "steuer": st["text"],
+            "satz": st["satz"], "netto": Decimal(0), "fremdsteuer": Decimal(0), "positionen": 0})
+        netto = parse_amount(p["netto"]) or Decimal(0)
+        g["netto"] += netto
+        if fall == "ausland":  # ausländische Steuer gehört zum Aufwand
+            g["fremdsteuer"] += q2(netto * (parse_amount(p["steuersatz"]) or Decimal(0)) / 100)
         g["positionen"] += 1
+
     leistung = kopf.get("leistung") or {}
-    saetze = []
+    gutschrift = sum((g["netto"] for g in gruppen.values()), Decimal(0)) < 0
+    stapel, soll, haben = [], {}, {}
+
+    def buche(seite: dict[str, dict[str, Any]], nr: str, name: str, betrag: Decimal, art: str) -> None:
+        e = seite.setdefault(nr, {"konto": nr, "name": name, "betrag": Decimal(0), "art": art})
+        e["betrag"] += betrag
+
     for g in gruppen.values():
-        netto = g.pop("netto")
-        satz = Decimal(g["satz"] or 0)
-        umsatz = netto + q2(netto * satz / 100) if fall == "inland" else netto
-        saetze.append({**g, "umsatz": str(abs(umsatz)), "soll_haben": "S" if umsatz >= 0 else "H",
-                       "gegenkonto": kreditor["nr"] if kreditor else None, "belegdatum": kopf.get("invoice_date"),
+        netto, satz = g["netto"], Decimal(g["satz"] or 0)
+        steuer = q2(netto * satz / 100)
+        if fall == "inland":
+            umsatz = netto + steuer
+        elif fall == "ausland":
+            umsatz, steuer = netto + g["fremdsteuer"], Decimal(0)
+        else:
+            umsatz = netto
+        stapel.append({"umsatz": str(abs(umsatz)), "soll_haben": "S" if gutschrift else "H",
+                       "konto": kreditor["nr"] if kreditor else None, "konto_name": kreditor["name"] if kreditor else None,
+                       "gegenkonto": g["sachkonto"], "gegenkonto_name": g["sachkonto_name"], "bu": g["bu"],
+                       "steuer": g["steuer"], "belegdatum": kopf.get("invoice_date"),
                        "leistungsdatum": leistung.get("von"), "belegfeld1": kopf.get("invoice_number"),
                        "buchungstext": (kopf.get("supplier_name") or "")[:60], "waehrung": kopf.get("currency") or "EUR"})
-    return saetze
+        aufwand = netto + g["fremdsteuer"]
+        buche(soll, g["sachkonto"], g["sachkonto_name"], aufwand, "aufwand")
+        vst_konto, ust_konto = steuerschluessel.steuerkonten(fall, satz) if fall != "ausland" else (None, None)
+        if vst_konto and steuer:
+            buche(soll, vst_konto, (konto(vst_konto) or {}).get("name", "Vorsteuer"), steuer, "vorsteuer")
+        if ust_konto and steuer:
+            buche(haben, ust_konto, (konto(ust_konto) or {}).get("name", "Umsatzsteuer"), steuer, "umsatzsteuer")
+        an_kreditor = umsatz if fall in ("inland", "ausland") else netto
+        buche(haben, kreditor["nr"] if kreditor else "—", kreditor["name"] if kreditor else "Kreditor fehlt",
+              an_kreditor, "kreditor")
+
+    if gutschrift:  # Gutschrift: Seiten tauschen, Beträge positiv
+        soll, haben = haben, soll
+    zeilen = [{**e, "seite": seite, "betrag": str(abs(e["betrag"]))}
+              for seite, teil in (("Soll", soll), ("Haben", haben)) for e in teil.values()]
+    summe_soll = sum((abs(e["betrag"]) for e in soll.values()), Decimal(0))
+    summe_haben = sum((abs(e["betrag"]) for e in haben.values()), Decimal(0))
+    return {"stapel": stapel, "satz": zeilen, "summe_soll": str(summe_soll), "summe_haben": str(summe_haben),
+            "ausgeglichen": summe_soll == summe_haben, "waehrung": kopf.get("currency") or "EUR"}
 
 
 def _mandant_kurz(mid: str) -> dict[str, Any]:
@@ -391,6 +433,7 @@ def ansicht(key: str, modell: str = STANDARD_MODELL) -> dict[str, Any]:
         "positionen": positionen, "ampel": ampel, "ausnahmen": ausnahmen,
         "steuerfall": {"id": fall, "text": steuerschluessel.FALL_TEXT[fall]},
         "buchungen": _buchungssaetze(positionen, kopf, kreditor, fall),
+        "pflichtangaben": r["pflichtangaben"],
         "sicherheit": round(sicherheit, 2), "gelernt": gelernt,
         "offen": offen, "freigabe_moeglich": not offen and status != "freigegeben",
         "protokoll": zustand.protokoll(key)[-30:],

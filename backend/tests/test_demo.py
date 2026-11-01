@@ -119,10 +119,23 @@ def test_folgemonat_ist_vorkontiert_und_bleibt_kontrollierbar(leerer_zustand) ->
 
     # Sammelfreigabe nur für sichere Belege; Wieder öffnen nimmt das Gelernte zurück
     # Steuerschlüssel: Reinigung ohne Automatik → BU 9; US-Software (Dollar) → § 13b, BU 94, netto
-    assert sicher["positionen"][0]["steuer"]["bu"] == "9" and sicher["buchungen"][0]["bu"] == "9"
+    assert sicher["positionen"][0]["steuer"]["bu"] == "9"
+    # DATEV-Stapel: Konto = Kreditor im Haben, Gegenkonto = Sachkonto mit BU; Buchungssatz mit Vorsteuer 1576
+    zeile = sicher["buchungen"]["stapel"][0]
+    assert (zeile["konto"], zeile["soll_haben"], zeile["gegenkonto"], zeile["bu"], zeile["umsatz"]) == \
+        (sicher["kreditor"]["nr"], "H", "4250", "9", "809.20")
+    satz = {(z["seite"], z["konto"]): z["betrag"] for z in sicher["buchungen"]["satz"]}
+    assert satz == {("Soll", "4250"): "680.00", ("Soll", "1576"): "129.20", ("Haben", sicher["kreditor"]["nr"]): "809.20"}
+    assert sicher["buchungen"]["ausgeglichen"] and not sicher["pflichtangaben"]["fehlt"]
     usa = ansicht.ansicht(eingang["F18"])
     assert usa["kopf"]["currency"] == "USD" and usa["steuerfall"]["id"] == "13b"
-    assert usa["positionen"][0]["steuer"]["bu"] == "94" and usa["buchungen"][0]["umsatz"] == "216.00"
+    assert usa["positionen"][0]["steuer"]["bu"] == "94" and usa["buchungen"]["stapel"][0]["umsatz"] == "216.00"
+    satz = {(z["seite"], z["konto"]): z["betrag"] for z in usa["buchungen"]["satz"]}
+    assert satz[("Soll", "1577")] == satz[("Haben", "1787")] == "41.04"  # § 13b: Vorsteuer und Umsatzsteuer
+    wien = ansicht.ansicht(eingang["F20"])  # ausländische USt (AT 20 %): brutto in den Aufwand, keine Vorsteuer
+    assert wien["steuerfall"]["id"] == "ausland" and wien["buchungen"]["stapel"][0]["umsatz"] == "936.00"
+    assert all(z["art"] != "vorsteuer" for z in wien["buchungen"]["satz"])
+    assert any("Ausländische Umsatzsteuer" in a for a in wien["ausnahmen"])
     assert any("Fremdwährung" in a for a in usa["ausnahmen"])
     assert usa["kopf"]["leistung"] == {"von": "2026-11-01", "bis": "2026-11-30", "art": "beleg"}
     assert ansicht.ansicht(eingang["F19"])["steuerfall"]["id"] == "ige"

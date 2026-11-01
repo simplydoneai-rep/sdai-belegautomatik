@@ -20,8 +20,10 @@ from pathlib import Path
 from typing import Any
 
 _DATEI = Path(__file__).parent / "tabellen" / "datev_steuerschluessel.json"
-FAELLE = ("inland", "ige", "13b")
+_KONTEN = Path(__file__).parent / "tabellen" / "skr03_steuerkonten.json"
+FAELLE = ("inland", "ige", "13b", "ausland")
 FALL_TEXT = {"inland": "Inland", "ige": "innergemeinschaftlicher Erwerb", "13b": "Reverse Charge (§ 13b UStG)",
+             "ausland": "ausländische Umsatzsteuer (keine deutsche Vorsteuer)",
              "sonder": "Sonderfall (Dreiecksgeschäft, Umsatzsteuerlager)"}
 EU_LAENDER = {"AT", "BE", "BG", "CY", "CZ", "DK", "EE", "EL", "GR", "ES", "FI", "FR", "HR", "HU", "IE", "IT", "LT",
               "LU", "LV", "MT", "NL", "PL", "PT", "RO", "SE", "SI", "SK", "XI"}
@@ -78,10 +80,16 @@ def automatik(konto: dict[str, Any]) -> Automatik | None:
 
 
 def steuerfall(reverse_charge: bool, herkunft: str | None, text: str, saetze: list[Decimal | None]) -> str:
-    """Inland, i. g. Erwerb oder § 13b. Eine Rechnung aus dem Ausland ohne deutsche Steuer gilt als Reverse Charge,
-    auch wenn der Hinweis auf dem Beleg fehlt (B2B-Leistungen aus dem Ausland: § 13b UStG)."""
+    """Inland, i. g. Erwerb, § 13b oder ausländische Umsatzsteuer.
+
+    - Rechnung aus dem Ausland ohne Steuer: § 13b, auch wenn der Hinweis fehlt (B2B-Leistung, Ort im Inland).
+    - Rechnung aus dem Ausland mit Steuer (z. B. österreichische 20 %): ausländische Umsatzsteuer, in Deutschland
+      nicht als Vorsteuer abziehbar; Erstattung nur über das Vorsteuer-Vergütungsverfahren."""
     ohne_steuer = bool(saetze) and all(s == 0 for s in saetze)
-    if not reverse_charge and not (herkunft in ("eu", "drittland") and ohne_steuer):
+    auslaendisch = herkunft in ("eu", "drittland")
+    if auslaendisch and not reverse_charge and not ohne_steuer:
+        return "ausland"
+    if not reverse_charge and not (auslaendisch and ohne_steuer):
         return "inland"
     if herkunft == "eu" and _IGE_HINWEIS.search(text or ""):
         return "ige"
@@ -112,6 +120,8 @@ def bestimmen(konto: dict[str, Any] | None, satz_beleg: Decimal | None, fall: st
             hinweis = f"Rechnung weist {_satz_text(satz_beleg)} % Steuer aus, Konto {nr} erwartet Reverse Charge"
         return Steuer("", f"Automatik · {auto.text}", auto.satz, True, hinweis)
 
+    if fall == "ausland":
+        return Steuer("", "ausländische USt, keine deutsche Vorsteuer", None, False, None)
     if fall == "inland":
         if satz_beleg is None:
             return Steuer("", "", None, False, "Steuersatz fehlt")
@@ -127,3 +137,18 @@ def bestimmen(konto: dict[str, Any] | None, satz_beleg: Decimal | None, fall: st
     eintrag = _tabelle()[fall][_satz_text(satz)]
     zusatz = "" if satz_beleg == satz else " (Regelsatz angenommen)"
     return Steuer(eintrag["bu"], eintrag["text"] + zusatz, satz, False, None)
+
+
+@lru_cache(maxsize=1)
+def _steuerkonten() -> dict[str, dict[str, dict[str, str]]]:
+    data: dict[str, dict[str, dict[str, str]]] = json.loads(_KONTEN.read_text(encoding="utf-8"))
+    return data
+
+
+def steuerkonten(fall: str, satz: Decimal | None) -> tuple[str | None, str | None]:
+    """(Vorsteuerkonto, Umsatzsteuerkonto) im SKR03, die DATEV zu diesem Fall bebucht. Ohne Vorsteuer: (None, None)."""
+    if satz is None or satz == 0:
+        return None, None
+    t = _steuerkonten()
+    s = _satz_text(satz)
+    return t["vorsteuer"].get(fall, {}).get(s), t["umsatzsteuer"].get(fall, {}).get(s)

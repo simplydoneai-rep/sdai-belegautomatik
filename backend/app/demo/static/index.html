@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Belegautomatik</title>
-  <link rel="stylesheet" href="style.css?v=12">
+  <link rel="stylesheet" href="style.css?v=16">
 </head>
 <body>
   <header class="topbar">
@@ -127,6 +127,15 @@
         <div id="b-ausnahmen" class="hinweis-karte" hidden></div>
 
         <!-- Aufklappbare Abschnitte: die Kopfzeile zeigt auch zugeklappt das Wichtigste -->
+        <details class="abschnitt" data-klapp="pruefung">
+          <summary class="abschnitt-kopf"><span class="ikon orange" data-ikon="haken"></span><span class="titel">Rechnungsprüfung</span>
+            <span class="kurz" id="kurz-pruefung"></span></summary>
+          <div class="abschnitt-inhalt">
+            <ul id="pflicht-liste" class="pflicht-liste"></ul>
+            <p id="pflicht-hinweis" class="klein pflicht-hinweis"></p>
+          </div>
+        </details>
+
         <details class="abschnitt" data-klapp="kreditor">
           <summary class="abschnitt-kopf"><span class="ikon lila" data-ikon="person"></span><span class="titel">Kreditor</span>
             <span class="kurz" id="kurz-kreditor"></span></summary>
@@ -143,6 +152,9 @@
           <summary class="abschnitt-kopf"><span class="ikon indigo" data-ikon="buchung"></span><span class="titel">Buchungssätze</span>
             <span class="kurz" id="kurz-buchungen"></span></summary>
           <div class="abschnitt-inhalt">
+            <div class="unter-titel">Buchungssatz <span class="klein">so bucht DATEV den Beleg</span></div>
+            <table id="buchungssatz" class="buchungssatz"></table>
+            <div class="unter-titel">DATEV-Buchungsstapel <span class="klein">Konto = Kreditor, Gegenkonto = Sachkonto</span></div>
             <div class="tabelle-rahmen"><table id="buchungen" class="buchungen"></table></div>
             <p id="buchungen-hinweis" class="klein buchungen-hinweis"></p>
           </div>
@@ -278,6 +290,6 @@
   </div>
 
   <div id="toast" class="toast" hidden></div>
-  <script src="app.js?v=10"></script>
+  <script src="app.js?v=14"></script>
 </body>
 </html>

@@ -32,6 +32,9 @@ basis.SUPPLIERS["pixelcloud"] = {**basis._supplier(41, "PixelCloud Software Inc.
 basis.SUPPLIERS["gereedschap"] = {**basis._supplier(42, "Gereedschap Groothandel B.V.", "Havenweg 12", "3011 Rotterdam",
                                                     "Sanne de Vries", "Pieter Bakker", country="NL", vat="NL999999042B01"),
                                   "steuernr": None}
+basis.SUPPLIERS["donaustadt"] = {**basis._supplier(43, "Kongresshaus Donaustadt GmbH", "Wagramer Straße 5", "1220 Wien",
+                                                   "Lena Huber", "Markus Steiner", country="AT", vat="ATU99916043"),
+                                 "steuernr": None}
 
 # Gleiche Schreibweise der Positionen wie im Oktober, damit die Lernregeln greifen.
 RECHNUNGEN: list[dict[str, Any]] = [
@@ -105,6 +108,11 @@ RECHNUNGEN: list[dict[str, Any]] = [
                "USt-IdNr. des Leistungsempfängers: DE999100002"],
      "lines": [("Drehmomentschlüssel 1/2 Zoll, 40–200 Nm", "2", "Stück", "129.00", 0, "4985"),
                ("Steckschlüsselsatz 94-teilig", "1", "Satz", "189.00", 0, "4985")]},
+    # Ausland mit eigener Umsatzsteuer: Kongress in Wien, Leistungsort Österreich (§ 3a Abs. 3 Nr. 5 UStG) → 20 % AT-USt
+    {"id": "F20", "sup": "donaustadt", "client": "M4", "nr": "KD-2026-3318", "date": "2026-11-16",
+     "tags": ["EU-Lieferant", "ausländische Umsatzsteuer"],
+     "leistung": ("Leistungszeitraum", "12.11.–13.11.2026"),
+     "lines": [("Teilnahme Designkongress Wien, 2 Tage", "2", "Person", "390.00", 20, "4945")]},
 ]
 
 

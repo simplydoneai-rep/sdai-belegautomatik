@@ -20,6 +20,7 @@ from typing import Any
 from app.erechnung.parser import parse_file, without_parties
 from app.kontierung.betraege import parse_amount
 from app.kontierung.konten import load_accounts, normalize_lines
+from app.kontierung import pflichtangaben
 from app.kontierung.steuerlogik import pruefe_summen
 from app.kontierung.steuerschluessel import steuerfall
 from app.llm.base import LLMProvider
@@ -146,6 +147,7 @@ def verarbeite(path: Path, client_id: str, modell: str, erwartet: dict[str, Any]
         voll = parse_file(path)
         data: dict[str, Any] | None = without_parties(voll)
         verkaeufer = (voll.get("parties") or {}).get("seller") or {}
+        kaeufer: dict[str, Any] | None = (voll.get("parties") or {}).get("buyer") or {}
         roh = raw.decode("utf-8", errors="replace")
         if re.search(r">K</(?:cbc:ID|ram:CategoryCode)>", roh):  # Steuerkategorie K: innergemeinschaftliche Lieferung
             roh += " innergemeinschaftliche Lieferung"
@@ -158,6 +160,7 @@ def verarbeite(path: Path, client_id: str, modell: str, erwartet: dict[str, Any]
         read = read_document(path)
         schritt("Auslesen", t0, "PDF-Textlayer" if read.method == "textlayer" else "Texterkennung (docTR, lokal)")
         roh, land, leistung = read.text, None, None
+        verkaeufer, kaeufer = None, None
         lieferant_ustid = kopfangaben.lieferanten_ustid(read.text, (client["vat_id"],))
 
         t0 = time.perf_counter()
@@ -189,7 +192,8 @@ def verarbeite(path: Path, client_id: str, modell: str, erwartet: dict[str, Any]
     t0 = time.perf_counter()
     if data:
         normalize_lines(data, {nr for nr, _ in accounts})
-    check = pruefe_summen(data) if data else None
+    herkunft = kopfangaben.herkunft(roh, lieferant_ustid, land)
+    check = pruefe_summen(data, auslaendisch=herkunft in ("eu", "drittland")) if data else None
     schritt("Steuerlogik", t0, "Summen schlüssig" if check and check.ok else "Widerspruch gefunden")
 
     positionen = []
@@ -206,11 +210,16 @@ def verarbeite(path: Path, client_id: str, modell: str, erwartet: dict[str, Any]
     d = data or {}
     if leistung is None:
         leistung = kopfangaben.leistungsdatum(roh, d.get("invoice_date"))
-    herkunft = kopfangaben.herkunft(roh, lieferant_ustid, land)
     saetze = [parse_amount(ln.get("tax_rate")) for ln in d.get("lines") or []]
     kopf_lokal = {"currency": kopfangaben.waehrung(roh, d.get("currency")), "leistung": leistung,
                   "herkunft": herkunft, "lieferant_ustid": lieferant_ustid,
                   "steuerfall": steuerfall(bool(d.get("reverse_charge")), herkunft, roh, saetze)}
+
+    kopf = {k: d.get(k) for k in ("supplier_name", "invoice_number", "invoice_date", "document_type",
+                                  "net_total", "tax_total", "gross_total", "reverse_charge")} | kopf_lokal
+    # Pflichtangaben nach § 14 UStG, §§ 31, 33 UStDV: lokal aus Belegtext bzw. E-Rechnung, nie über die KI
+    pflicht = pflichtangaben.pruefe(kopf, d.get("lines") or [], roh, client,
+                                    verkaeufer if quelle == "e-rechnung" else None, kaeufer, bool(check and check.ok))
 
     gesamt = gesamtampel(check.ok if check else False, positionen, quelle)
     soll = None
@@ -222,9 +231,7 @@ def verarbeite(path: Path, client_id: str, modell: str, erwartet: dict[str, Any]
 
     return {
         "sha256": digest, "quelle": quelle, "ki": ki, "schritte": schritte,
-        "kopf": {k: (data or {}).get(k) for k in ("supplier_name", "invoice_number", "invoice_date", "document_type",
-                                                    "net_total", "tax_total", "gross_total", "reverse_charge")}
-        | kopf_lokal,
+        "kopf": kopf, "pflichtangaben": pflicht,
         "positionen": positionen, "steuerlogik": {"ok": bool(check and check.ok), "hinweise": check.hinweise if check else []},
         "ampel": gesamt, "pseudonymisiert": pseudo_text, "platzhalter": platzhalter, "soll": soll,
     }

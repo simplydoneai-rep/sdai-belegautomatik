@@ -26,6 +26,7 @@ const PFADE = {
   plus: '<path d="M12 5v14M5 12h14"/>',
   minus: '<path d="M5 12h14"/>',
   passend: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
+  haken: '<path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/>',
 };
 const svg = (name) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${PFADE[name] || ""}</svg>`;
 const setzeSymbole = (wurzel = document) => wurzel.querySelectorAll("[data-ikon]").forEach((el) => { el.innerHTML = svg(el.dataset.ikon); });
@@ -357,7 +358,7 @@ async function sichereSachbearbeiter(e) {
 }
 
 /* ---------- Aufklappbare Abschnitte (Zustand je Abschnitt gemerkt) ---------- */
-const KLAPP_START = { kreditor: false, positionen: true, buchungen: false, daten: false };
+const KLAPP_START = { pruefung: false, kreditor: false, positionen: true, buchungen: false, daten: false };
 let klapp = { ...KLAPP_START };
 
 function bindeAbschnitte() {
@@ -517,6 +518,7 @@ function zeigeBeleg(b) {
   $("positionen").querySelectorAll("input[data-pos]").forEach(bindeKontoFeld);
 
   zeigeBuchungen(b);
+  zeigePruefung(b);
 
   const lief = `${HERKUNFT[k.herkunft] || "–"}${k.lieferant_ustid ? ` · USt-IdNr. ${k.lieferant_ustid}` : ""}`;
   $("kopf").innerHTML = [["Lieferant", esc(k.supplier_name)], ["Sitz des Lieferanten", esc(lief)],
@@ -556,27 +558,75 @@ function steuerChip(st) {
   return `<span class="bu-chip" title="DATEV-Steuerschlüssel ${esc(st.bu)}: ${esc(st.text)}">BU ${esc(st.bu)}</span>`;
 }
 
+const ART_MARKE = { vorsteuer: "Vorsteuer", umsatzsteuer: "Umsatzsteuer", kreditor: "Kreditor" };
+
 function zeigeBuchungen(b) {
-  const w = b.kopf.currency || "EUR";
-  const zeilen = b.buchungen.map((z) => `<tr>
-      <td class="zahl-sp">${geld(z.umsatz, z.waehrung)}</td><td>${z.soll_haben}</td>
-      <td><b>${esc(z.konto)}</b><small>${esc(z.konto_name)}</small></td>
-      <td>${z.gegenkonto ? `<b>${esc(z.gegenkonto)}</b><small>Kreditor</small>` : `<span class="fehlt">fehlt</span>`}</td>
+  const bu = b.buchungen;
+  const w = bu.waehrung;
+  // 1. Vollständiger Buchungssatz: Soll an Haben, mit Vorsteuer (und Umsatzsteuer bei § 13b / i. g. Erwerb)
+  const zeile = (z, ersteHaben) => `<tr class="${z.seite === "Haben" ? "haben" : ""} ${ersteHaben ? "an" : ""}">
+      <td class="bs-seite">${z.seite === "Soll" ? "Soll" : ersteHaben ? "an Haben" : "Haben"}</td>
+      <td><b>${esc(z.konto)}</b></td>
+      <td>${esc(z.name)}${ART_MARKE[z.art] ? ` <span class="bs-marke ${z.art}">${ART_MARKE[z.art]}</span>` : ""}</td>
+      <td class="zahl-sp">${z.seite === "Soll" ? geld(z.betrag, w) : ""}</td>
+      <td class="zahl-sp">${z.seite === "Haben" ? geld(z.betrag, w) : ""}</td></tr>`;
+  let erstesHaben = true;
+  const zeilen = bu.satz.map((z) => { const an = z.seite === "Haben" && erstesHaben; if (an) erstesHaben = false; return zeile(z, an); }).join("");
+  $("buchungssatz").innerHTML = `<thead><tr><th></th><th>Konto</th><th>Bezeichnung</th><th class="zahl-sp">Soll</th><th class="zahl-sp">Haben</th></tr></thead>
+    <tbody>${zeilen || `<tr><td colspan="5" class="klein">Noch keine Konten gewählt</td></tr>`}</tbody>
+    <tfoot><tr><td colspan="3">${bu.ausgeglichen ? "✓ Soll = Haben" : "⚠ Soll und Haben weichen ab"}</td>
+      <td class="zahl-sp">${geld(bu.summe_soll, w)}</td><td class="zahl-sp">${geld(bu.summe_haben, w)}</td></tr></tfoot>`;
+
+  // 2. Zeilen im DATEV-Buchungsstapel: Konto = Kreditor, Gegenkonto = Sachkonto, S/H bezogen auf das Konto
+  const stapel = bu.stapel.map((z) => `<tr>
+      <td class="zahl-sp">${geld(z.umsatz, z.waehrung)}</td>
+      <td title="${z.soll_haben === "H" ? "Kreditor im Haben (Rechnung)" : "Kreditor im Soll (Gutschrift)"}">${z.soll_haben}</td>
+      <td>${z.konto ? `<b>${esc(z.konto)}</b><small>${esc(z.konto_name)}</small>` : `<span class="fehlt">Kreditor fehlt</span>`}</td>
+      <td><b>${esc(z.gegenkonto)}</b><small>${esc(z.gegenkonto_name)}</small></td>
       <td>${z.bu ? `<b>${esc(z.bu)}</b>` : "–"}<small>${esc(z.steuer)}</small></td>
       <td>${datum(z.belegdatum)}<small>Leistung ${z.leistungsdatum ? datum(z.leistungsdatum) : "fehlt"}</small></td>
       <td>${esc(z.belegfeld1 || "–")}</td>
     </tr>`).join("");
   $("buchungen").innerHTML = `<thead><tr><th class="zahl-sp">Umsatz</th><th>S/H</th><th>Konto</th><th>Gegenkonto</th><th>BU</th><th>Belegdatum</th><th>Belegfeld 1</th></tr></thead>
-    <tbody>${zeilen || `<tr><td colspan="7" class="klein">Noch keine Konten gewählt</td></tr>`}</tbody>`;
-  const hinweise = [];
-  if (b.steuerfall.id === "inland") hinweise.push("Umsatz brutto: DATEV rechnet die Vorsteuer aus Konto oder Steuerschlüssel heraus.");
-  else hinweise.push("Umsatz netto: Vorsteuer und Umsatzsteuer bucht DATEV über Konto oder Steuerschlüssel.");
-  if (w !== "EUR") hinweise.push(`Beträge in ${w}: Vor dem Export in Euro umrechnen (Kurs zum Leistungsdatum).`);
-  $("buchungen-hinweis").textContent = hinweise.join(" ");
-  const bus = [...new Set(b.buchungen.map((z) => z.bu ? `BU ${z.bu}` : "Automatik"))];
-  $("kurz-buchungen").innerHTML = b.buchungen.length
-    ? `${anzahl(b.buchungen.length, "Zeile", "Zeilen")} · ${esc(bus.join(", "))} · Gegenkonto ${b.kreditor ? esc(b.kreditor.nr) : `<span class="kurz-warn">fehlt</span>`}`
+    <tbody>${stapel || `<tr><td colspan="7" class="klein">Noch keine Konten gewählt</td></tr>`}</tbody>`;
+
+  const hinweise = {
+    inland: "Umsatz brutto: DATEV bucht die Vorsteuer aus Automatikkonto oder Steuerschlüssel auf das Vorsteuerkonto.",
+    "13b": "Umsatz netto: DATEV bucht Vorsteuer und Umsatzsteuer nach § 13b gleichzeitig; im Saldo keine Zahllast.",
+    ige: "Umsatz netto: DATEV bucht Vorsteuer und Umsatzsteuer aus dem innergemeinschaftlichen Erwerb gleichzeitig.",
+    ausland: "Ausländische Umsatzsteuer ist in Deutschland keine Vorsteuer: Brutto in den Aufwand. Erstattung nur über das Vorsteuer-Vergütungsverfahren (BZSt).",
+  };
+  $("buchungen-hinweis").textContent = (hinweise[b.steuerfall.id] || "")
+    + (w !== "EUR" ? ` Beträge in ${w}: vor dem Export in Euro umrechnen (Kurs zum Leistungsdatum).` : "");
+  const bus = [...new Set(bu.stapel.map((z) => z.bu ? `BU ${z.bu}` : "ohne BU"))];
+  $("kurz-buchungen").innerHTML = bu.stapel.length
+    ? `Soll ${geld(bu.summe_soll, w)} = Haben ${geld(bu.summe_haben, w)} · ${esc(bus.join(", "))}`
+      + (b.kreditor ? "" : ` · <span class="kurz-warn">Kreditor fehlt</span>`)
     : `<span class="kurz-warn">noch keine Konten</span>`;
+}
+
+/* Rechnungsprüfung: Pflichtangaben nach § 14 UStG, §§ 31, 33 UStDV, § 14a UStG */
+const PFLICHT_STATUS = { ok: ["✓", "ok"], fehlt: ["!", "fehlt"], hinweis: ["i", "hinweis"], entfaellt: ["–", "entfaellt"] };
+
+function zeigePruefung(b) {
+  const pf = b.pflichtangaben;
+  $("pflicht-liste").innerHTML = pf.punkte.map((p) => {
+    const [zeichen, klasse] = PFLICHT_STATUS[p.status];
+    const zusatz = p.status === "entfaellt" ? "bei Kleinbetragsrechnung nicht nötig" : p.key === "datum" ? datum(p.detail) : p.detail;
+    return `<li class="${klasse}"><span class="pf-zeichen">${zeichen}</span>
+      <span>${esc(p.text)}${zusatz ? `<small>${esc(zusatz)}</small>` : ""}</span><span class="pf-grundlage">${esc(p.grundlage)}</span></li>`;
+  }).join("");
+  const fehlt = pf.punkte.filter((p) => p.status === "fehlt").length;
+  const hinweis = pf.punkte.filter((p) => p.status === "hinweis").length;
+  const quelle = pf.e_rechnung ? "E-Rechnung, strukturiert geprüft" : "aus dem Belegtext geprüft";
+  $("kurz-pruefung").innerHTML = fehlt ? `<span class="kurz-warn">${anzahl(fehlt, "Angabe fehlt", "Angaben fehlen")}</span> · ${esc(pf.grundlage)}`
+    : `<span class="kurz-ok">✓ ${pf.art === "kleinbetrag" ? "Kleinbetragsrechnung vollständig" : "Alle Pflichtangaben vorhanden"}</span>`
+      + (hinweis ? ` · ${anzahl(hinweis, "Hinweis", "Hinweise")}` : "") + ` · ${quelle}`;
+  $("pflicht-hinweis").textContent = (pf.art === "kleinbetrag"
+    ? "Kleinbetragsrechnung bis 250 € (§ 33 UStDV): weniger Pflichtangaben. " : "")
+    + (b.steuerfall.id === "13b" ? "Bei § 13b hängt der Vorsteuerabzug nicht an einer ordnungsgemäßen Rechnung (§ 15 Abs. 1 Nr. 4 UStG); fehlende Angaben sind nur Hinweise. " : "")
+    + "Geprüft wird lokal, ohne KI. Fehlende Pflichtangaben: beim Lieferanten eine berichtigte Rechnung anfordern, sonst ist der Vorsteuerabzug gefährdet.";
+  if (fehlt && b.status !== "freigegeben") setzeKlapp("pruefung", true);  // braucht Aufmerksamkeit: offen
 }
 
 function zeigeKreditor(b, fertig) {

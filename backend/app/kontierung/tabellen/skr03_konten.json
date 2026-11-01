@@ -3,7 +3,8 @@
     "kontenrahmen": "SKR03",
     "zweck": "Erlaubte Kontenliste für den Machbarkeitstest (Auswahl typischer Aufwandskonten)",
     "quelle": "Auswahl aus DATEV SKR03 (Art.-Nr. 11174, gültig 2026), abgeglichen am 31.10.2026; vollständige Liste: skr03_vollstaendig.json",
-    "stand": "2026-10-28"
+    "stand": "2026-11-02",
+    "ergaenzt": "4945 Fortbildungskosten (02.11.2026, Testrechnung F20)"
   },
   "konten": [
     [
@@ -89,6 +90,10 @@
     [
       "4940",
       "Zeitschriften, Bücher (Fachliteratur)"
+    ],
+    [
+      "4945",
+      "Fortbildungskosten"
     ],
     [
       "4950",

@@ -299,6 +299,17 @@ Vorgaben Paul Graß:
 - **Dashboard-Kacheln** zeigen keine Belegzahlen mehr (die stehen je Mandant in der Liste), sondern: Meine Mandanten (zuständig/Vertretung; bei der Kanzleileitung alle Mandanten und Teamgröße), Mandanten mit offenen Belegen, ältester offener Monat (mit Mandant, für die Fristen der Voranmeldung) und fertig gebuchte Mandanten.
 - **Belegverarbeitung kompakter:** Kreditor, Positionen und Konten, Buchungssätze und Rechnungsdaten sind aufklappbar; die Kopfzeile zeigt auch zugeklappt das Wichtigste (z. B. „70000 · Frischgut · 7 Regeln“, „4 Positionen · 4 sicher“, „1 Zeile · Automatik · Gegenkonto 70000“). Standard: nur Positionen offen; der Zustand wird je Person gemerkt. Ein neuer Lieferant öffnet den Kreditor-Abschnitt von selbst, weil dort eine Aktion nötig ist. Prüfgründe als Marken in einer Zeile, Positionen einzeilig, geringere Abstände: eine Rechnung passt meist auf einen Bildschirm.
 
+## 02.11.2026 – Vollständiger Buchungssatz, Rechnungsprüfung, ausländische Umsatzsteuer
+
+Details: `docs/entscheidungen/2026-11-02_buchungssatz-rechnungspruefung.md`.
+
+- **Buchungssatz** mit Vorsteuer (und bei § 13b / i. g. Erwerb Umsatzsteuer) als Soll an Haben, Summenprüfung Soll = Haben. **DATEV-Stapel** mit Konto = Kreditor, Gegenkonto = Sachkonto, Soll/Haben-Kennzeichen „H“ bei Rechnungen.
+- **Rechnungsprüfung** für alle Rechnungen nach § 14 Abs. 4 UStG, § 14a UStG, §§ 31, 33 UStDV, lokal ohne KI. Fehlende Angaben schicken den Beleg zur Prüfung. Bei den Testbelegen fehlt das Leistungsdatum bei vier KoSIT-E-Rechnungen und drei PDFs (echte Lücken der Testdaten).
+- **Ausländische Umsatzsteuer** als eigener Steuerfall (keine deutsche Vorsteuer, brutto in den Aufwand, Hinweis auf Vorsteuer-Vergütungsverfahren). Testrechnung F20 (Wien, 20 % AT).
+- Der Regel-Leser ohne KI liest jetzt Menge und Einheit je Position; Konto 4945 Fortbildungskosten in die Vorschlagsliste aufgenommen.
+- Richtigstellung: Eine Validierung der E-Rechnungen gegen die XRechnung-Prüfregeln (KoSIT-Validator) gibt es noch nicht; bisher werden sie strukturiert gelesen und rechnerisch sowie auf Pflichtangaben geprüft.
+- 138 Tests grün.
+
 ## Nächste Schritte
 
 Die aktuelle Aufgabenliste steht in `docs/projektplan.md`, Abschnitt 10. Die Liste unten ist der Stand vom 28.10.2026 vor dem Projektplan.

@@ -1,0 +1,17 @@
+{
+  "_meta": {
+    "zweck": "Steuerkonten im SKR03 für die Anzeige des vollständigen Buchungssatzes (Vorsteuer im Soll, bei § 13b und i. g. Erwerb zusätzlich Umsatzsteuer im Haben). DATEV bucht diese Konten automatisch aus Automatikkonto oder Steuerschlüssel; im Buchungsstapel stehen sie nicht.",
+    "quelle": "DATEV-Kontenrahmen nach BilRUG, SKR 03, Art.-Nr. 11174, gültig für 2026 (Kontenbezeichnungen in skr03_vollstaendig.json)",
+    "stand": "2026-11-02",
+    "offen": "Vor Phase 4 gegen die Steuerschlüssel-Einstellungen in DATEV Kanzlei-Rechnungswesen prüfen (welches Steuerkonto DATEV je Schlüssel tatsächlich bebucht)."
+  },
+  "vorsteuer": {
+    "inland": {"19": "1576", "7": "1571"},
+    "ige": {"19": "1574", "7": "1572"},
+    "13b": {"19": "1577", "7": "1578"}
+  },
+  "umsatzsteuer": {
+    "ige": {"19": "1774", "7": "1772"},
+    "13b": {"19": "1787", "7": "1785"}
+  }
+}

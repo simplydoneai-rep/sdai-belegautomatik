@@ -33,6 +33,7 @@ KEYWORDS: list[tuple[str, str]] = [
     (r"papier a4|kopierpapier|toner|kugelschreiber|ordner", "4930"),
     (r"fachbuch|zeitschrift|datenbank|abo", "4940"),
     (r"sp[üu]lmittel|backpapier|karton|reinigungsmittel", "4980"),
+    (r"kongress|seminar|schulung|fortbildung", "4945"),
     (r"miete", "4210"),
     (r"versicherung", "4360"),
 ]
@@ -82,13 +83,16 @@ def extract_rule_based(text: str) -> dict[str, Any]:
             amount = _last_money(body)
             rates = _RATE.findall(body)
             rate = Decimal(rates[-1])
-            desc = re.split(r"\s{2,}", body)[0]
+            teile = re.split(r"\s{2,}", body.strip())
+            desc = teile[0]
+            menge = parse_amount(teile[1]) if len(teile) > 2 and re.fullmatch(r"-?\d[\d.,]*", teile[1]) else None
+            einheit = teile[2] if menge is not None and not _MONEY.search(teile[2]) else None
             if amount is not None and gross_prices:
                 amount = q2(amount * 100 / (100 + rate))
             if amount is not None and credit and amount > 0:
                 amount = -amount
             positions.append(
-                {"description": desc, "quantity": None, "unit": None, "unit_price": None,
+                {"description": desc, "quantity": None if menge is None else str(menge), "unit": einheit, "unit_price": None,
                  "net_amount": None if amount is None else str(amount), "tax_rate": str(rate),
                  "account_skr03": _account(desc, rate, text)}
             )

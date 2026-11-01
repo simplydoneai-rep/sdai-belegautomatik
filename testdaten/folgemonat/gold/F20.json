@@ -1,0 +1,37 @@
+{
+  "id": "F20",
+  "quelle": "folgemonat",
+  "client_id": "M4",
+  "merkmale": [
+    "EU-Lieferant",
+    "ausländische Umsatzsteuer"
+  ],
+  "dokumente": [
+    {
+      "pfad": "folgemonat/F20_kongresshaus.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Kongresshaus Donaustadt GmbH",
+    "invoice_number": "KD-2026-3318",
+    "invoice_date": "2026-11-16",
+    "currency": "EUR",
+    "net_total": "780.00",
+    "tax_total": "156.00",
+    "gross_total": "936.00",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Teilnahme Designkongress Wien, 2 Tage",
+        "quantity": "2",
+        "unit": "Person",
+        "unit_price": "390.00",
+        "net_amount": "780.00",
+        "tax_rate": "20",
+        "account_skr03": "4945"
+      }
+    ]
+  }
+}

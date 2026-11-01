@@ -3,7 +3,7 @@
 from decimal import Decimal
 
 from app.kontierung.kontensuche import konto
-from app.kontierung.steuerschluessel import automatik, bestimmen, herkunft_aus_ustid, steuerfall
+from app.kontierung.steuerschluessel import automatik, bestimmen, herkunft_aus_ustid, steuerfall, steuerkonten
 from app.ocr.kopfangaben import herkunft, leistungsdatum, lieferanten_ustid, waehrung
 
 D = Decimal
@@ -41,6 +41,16 @@ def test_steuerfall() -> None:
     assert steuerfall(True, "eu", "Steuerfreie innergemeinschaftliche Lieferung", [D(0)]) == "ige"
     assert steuerfall(False, "drittland", "", [D(0)]) == "13b"  # Hinweis fehlt, Ausland ohne Steuer
     assert herkunft_aus_ustid("ATU99916016") == "eu" and herkunft_aus_ustid("DE999200001") == "inland"
+    assert steuerfall(False, "eu", "", [D(20)]) == "ausland"  # österreichische USt, kein Reverse Charge
+
+
+def test_auslaendische_steuer_und_steuerkonten() -> None:
+    st = bestimmen(konto("4945"), D(20), "ausland")
+    assert st.bu == "" and st.hinweis is None
+    assert bestimmen(konto("3400"), D(20), "ausland").hinweis  # Automatikkonto Inland passt nicht
+    assert steuerkonten("inland", D(19)) == ("1576", None) and steuerkonten("inland", D(7)) == ("1571", None)
+    assert steuerkonten("13b", D(19)) == ("1577", "1787") and steuerkonten("ige", D(19)) == ("1574", "1774")
+    assert steuerkonten("inland", D(0)) == (None, None)
 
 
 def test_leistungsdatum_in_allen_schreibweisen() -> None:
