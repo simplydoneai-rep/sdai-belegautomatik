@@ -415,3 +415,11 @@ details[open] > .abschnitt-kopf::after { transform: rotate(90deg); }
 .val-liste b { font-variant-numeric: tabular-nums; margin-right: 4px; }
 .validierung p { margin: 6px 0 0; }
 .kurz-fehler { color: #b3261e; font-weight: 600; }
+.val-liste li { border-top: 0; }
+.val-hinweise { margin-top: 8px; font-size: 12px; color: var(--text2); }
+.val-tun { margin: 8px 0 0; }
+.val-technik { margin-top: 8px; font-size: 12px; }
+.val-technik summary { cursor: pointer; color: var(--text2); }
+.val-technik ul { list-style: none; padding: 0; margin: 6px 0 0; }
+.val-technik li { padding: 5px 0; border-top: 1px solid rgba(0,0,0,.06); }
+.val-technik small { display: block; color: var(--text3); }

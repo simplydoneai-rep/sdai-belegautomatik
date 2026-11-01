@@ -318,6 +318,7 @@ Freigabe Paul Graß inklusive Downloads (KoSIT-Konfiguration 0,5 MB von GitHub, 
 - Alle 64 KoSIT-Testrechnungen gültig; neue fehlerhafte Testrechnung F21 erkennt BR-CO-15 und BR-DE-15.
 - Einrichtung: `backend/scripts/kosit_einrichten.py` (feste Version, Prüfsumme).
 - 141 Tests grün.
+- Nachtrag: Fehlermeldungen für Sachbearbeiter auf Deutsch und einfach („E-Rechnung ist ungültig. Das ist fehlerhaft: …“, „Was tun?“), Regelnummern unter „Technische Details“; Übersetzungstabelle deckt alle 1.646 Regeln ab. Datenschutz geprüft (alles lokal, Regeln laden nichts nach), zusätzlich Schutz gegen DTD/Entitäten. 143 Tests grün.
 
 ## Nächste Schritte
 

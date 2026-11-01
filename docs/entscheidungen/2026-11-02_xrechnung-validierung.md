@@ -21,6 +21,18 @@ E-Rechnungen (XRechnung, UBL und CII) wurden bisher strukturiert gelesen und rec
 - Alle 64 KoSIT-Testrechnungen (UBL und CII) gültig, einige mit Warnung BR-DE-TMP-32.
 - Neue Testrechnung F21 (aus KoSIT 01.01a, Käuferreferenz entfernt und Bruttobetrag verändert): ungültig mit BR-CO-15 und BR-DE-15.
 
+## Datenschutz (DSGVO) der Prüfwerkzeuge
+Geprüft am 02.11.2026:
+- **Keine Übermittlung an Dritte:** saxonche (Saxon HE, Open-Source-Ausgabe von Saxonica, Betrieb mit `license=False`, ohne Lizenzprüfung), lxml und die KoSIT-Regeln laufen im eigenen Prozess. Kein Auftragsverarbeiter, keine AVV nötig.
+- **Regeln laden nichts nach:** In den XSLT-Dateien gibt es nur `document(...)` auf die geprüfte Rechnung selbst; die enthaltenen Internetadressen sind ausschließlich Namensraum-Kennungen. Die XML-Schemas liegen lokal.
+- **Schutz vor manipulierten Dateien (Art. 32 DSGVO):** XML wird ohne externe Entitäten und ohne Netzzugriff gelesen; Dateien mit DTD/ENTITY werden vor der Prüfung abgewiesen (Schutz vor XXE).
+- **Logs:** nur Status und Laufzeiten, keine Rechnungsinhalte (CLAUDE.md Regel 7).
+- Netzverkehr gab es nur bei der einmaligen Einrichtung (Download von GitHub und PyPI, ohne Rechnungsdaten).
+- Lizenzen: KoSIT-Konfiguration Apache-2.0, lxml BSD, Saxon HE Open Source (Mozilla Public License 2.0 laut Saxonica). Vor dem Verkauf in der Lizenzprüfung aller Bibliotheken mit abhaken.
+
+## Verständliche Meldungen
+Sachbearbeiter sehen nicht die englischen Regeltexte, sondern kurze deutsche Sätze (`backend/app/erechnung/tabellen/xrechnung_klartext.json`): feste Übersetzung für die häufigen Regeln (z. B. BR-CO-15 „Rechenfehler: Der Bruttobetrag ist nicht Netto + Umsatzsteuer.“, BR-DE-15 „Die Käuferreferenz (Leitweg-ID) fehlt.“), Regelfamilien (Nachkommastellen, Steuerkategorien, Codelisten, technischer Aufbau) und für alle übrigen eine Ableitung aus den genannten Feldern (BT-Nummern → deutsche Feldnamen). Gleiche Sätze erscheinen nur einmal, Hinweise getrennt von Fehlern, darunter „Was tun?“. Regelnummer, Originaltext und Fundstelle stehen aufklappbar unter „Technische Details für Rückfragen beim Lieferanten“.
+
 ## Später
 - ZUGFeRD/Factur-X: eingebettete XML aus dem PDF lesen und je nach Profil prüfen (die XRechnung-Konfiguration deckt nur das XRechnung-Profil ab).
 - Neue KoSIT-Versionen: URL und Prüfsumme im Einrichtungsskript anpassen.

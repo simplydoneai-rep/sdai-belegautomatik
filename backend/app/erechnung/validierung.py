@@ -15,6 +15,7 @@ der Ordner ist über ``KOSIT_KONFIG`` änderbar. Läuft vollständig lokal; kein
 
 from __future__ import annotations
 
+import json
 import os
 import re
 import threading
@@ -31,6 +32,9 @@ _SZ = "{http://www.xoev.de/de/validator/framework/1/scenarios}"
 _SVRL = "{http://purl.oclc.org/dsdl/svrl}"
 _FEHLER_FLAGS = {"fatal", "error"}
 _LOCK = threading.Lock()  # Saxon-Prozessor wird von mehreren Threads genutzt
+_KLARTEXT = Path(__file__).parent / "tabellen" / "xrechnung_klartext.json"
+# Rechnungen von außen: keine externen Entitäten, kein Netzzugriff (Schutz vor XXE, DSGVO Art. 32)
+_SICHER = etree.XMLParser(resolve_entities=False, no_network=True, huge_tree=False)
 
 
 @dataclass
@@ -93,6 +97,34 @@ def _ort(xpath: str | None) -> str:
     return re.sub(r"\[1\]", "", kurz)
 
 
+@lru_cache(maxsize=1)
+def _tabelle() -> dict[str, dict[str, str]]:
+    data: dict[str, dict[str, str]] = json.loads(_KLARTEXT.read_text(encoding="utf-8"))
+    return data
+
+
+def klartext(regel: str, text: str) -> str:
+    """Verständliche deutsche Meldung für Sachbearbeiter. Reihenfolge: feste Übersetzung der Regel,
+    Regelfamilie (z. B. Nachkommastellen, Steuerkategorie), sonst aus den genannten Feldern (BT/BG) abgeleitet."""
+    t = _tabelle()
+    if regel in t["regeln"]:
+        return t["regeln"][regel]
+    kennungen = re.findall(r"\b(B[TG]-\d+)\b", text)
+    felder = [k for k in kennungen if k.startswith("BT")] or kennungen  # Felder vor Gruppen nennen
+    begriffe = list(dict.fromkeys(t["begriffe"][k] for k in felder if k in t["begriffe"]))[:3]
+    liste = ", ".join(begriffe) or "mehrere Angaben"
+    for familie in sorted(t["familien"], key=len, reverse=True):
+        if regel == familie or regel.startswith(familie + "-"):
+            return t["familien"][familie].format(begriffe=liste)
+    if not begriffe:
+        return "Formfehler in der E-Rechnung."
+    if "=" in text or re.search(r"(?i)\bsum\b|summe", text):
+        return f"Rechenfehler bei: {liste}."
+    if re.search(r"(?i)shall (have|contain|be provided|specify)|must be|muss .*übermittelt|muss .*enthalten", text):
+        return f"Angabe fehlt oder ist unvollständig: {liste}."
+    return f"Angabe fehlerhaft: {liste}."
+
+
 def _szenario_fuer(pfad: Path) -> Szenario | None:
     sx = _saxon()
     knoten = sx.parse_xml(xml_file_name=str(pfad))
@@ -113,6 +145,10 @@ def validiere(pfad: Path) -> dict[str, Any]:
                 "fehler": [], "warnungen": [], "hinweis": "Prüfregeln der KoSIT nicht eingerichtet (scripts/kosit_einrichten.py)"}
     pfad = pfad.resolve()
     titel = _szenarien()[0]
+    if re.search(rb"<!DOCTYPE|<!ENTITY", pfad.read_bytes()[:4096]):  # E-Rechnungen haben nie eine DTD
+        return {"verfuegbar": True, "gueltig": False, "regelwerk": titel, "szenario": None, "warnungen": [],
+                "fehler": [{"regel": "XML-Schema", "text": "DTD bzw. Entitäten sind in E-Rechnungen nicht zulässig.",
+                            "ort": "", "klartext": "Die Datei enthält unzulässige Steueranweisungen und wird nicht geöffnet."}]}
     with _LOCK:
         sz = _szenario_fuer(pfad)
         if sz is None:
@@ -122,12 +158,12 @@ def validiere(pfad: Path) -> dict[str, Any]:
             return {"verfuegbar": True, "gueltig": False, "regelwerk": titel, "szenario": None, "warnungen": [],
                     "fehler": [{"regel": "Szenario", "text": f"Keine XRechnung 3.0 (Kennung: {text}). Es gibt kein passendes "
                                 "Prüfszenario; die Rechnung ist keine gültige XRechnung im Sinne der aktuellen Version.",
-                                "ort": "CustomizationID"}]}
+                                "ort": "CustomizationID", "klartext": klartext("Szenario", "")}]}
         fehler: list[dict[str, str]] = []
         warnungen: list[dict[str, str]] = []
         if sz.schema:
             schema = _xsd(sz.schema)
-            if not schema.validate(etree.parse(str(pfad))):
+            if not schema.validate(etree.parse(str(pfad), _SICHER)):
                 fehler += [{"regel": "XML-Schema", "text": e.message, "ort": f"Zeile {e.line}"}
                            for e in list(schema.error_log)[:20]]
         for xsl in sz.schematron:
@@ -136,5 +172,7 @@ def validiere(pfad: Path) -> dict[str, Any]:
                 eintrag = {"regel": fa.get("id") or "", "text": " ".join((fa.findtext(f"{_SVRL}text") or "").split()),
                            "ort": _ort(fa.get("location"))}
                 (fehler if (fa.get("flag") or "fatal").lower() in _FEHLER_FLAGS else warnungen).append(eintrag)
+    for e in fehler + warnungen:
+        e["klartext"] = klartext(e["regel"], e["text"])
     return {"verfuegbar": True, "gueltig": not fehler, "regelwerk": titel, "szenario": sz.name,
             "fehler": fehler, "warnungen": warnungen}

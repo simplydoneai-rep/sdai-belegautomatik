@@ -623,7 +623,7 @@ function zeigePruefung(b) {
   zeigeValidierung(val);
   $("pflicht-grundlage").textContent = pf.grundlage;
   const valKurz = !val ? "" : val.gueltig ? `<span class="kurz-ok">✓ XRechnung gültig</span> · `
-    : val.gueltig === false ? `<span class="kurz-fehler">✗ E-Rechnung ungültig (${val.fehler.length} Fehler)</span> · ` : "";
+    : val.gueltig === false ? `<span class="kurz-fehler">✗ E-Rechnung ungültig</span> · ` : "";
   $("kurz-pruefung").innerHTML = valKurz + (fehlt ? `<span class="kurz-warn">${anzahl(fehlt, "Angabe fehlt", "Angaben fehlen")}</span> · ${esc(pf.grundlage)}`
     : `<span class="kurz-ok">✓ ${pf.art === "kleinbetrag" ? "Kleinbetragsrechnung vollständig" : "Alle Pflichtangaben vorhanden"}</span>`
       + (hinweis ? ` · ${anzahl(hinweis, "Hinweis", "Hinweise")}` : "") + (val ? "" : ` · ${quelle}`));
@@ -640,14 +640,20 @@ function zeigeValidierung(val) {
   el.hidden = !val;
   if (!val) return;
   if (!val.verfuegbar) { el.className = "validierung grau"; el.innerHTML = `<b>XRechnung-Validierung nicht eingerichtet</b><small>${esc(val.hinweis)}</small>`; return; }
-  const liste = (eintraege, art) => eintraege.map((e) => `<li class="${art}"><b>${esc(e.regel)}</b> ${esc(e.text.replace(/^\[[^\]]+\]\s*-?\s*/, ""))}
-    ${e.ort ? `<small>${esc(e.ort)}</small>` : ""}</li>`).join("");
+  // Für Sachbearbeiter: kurze deutsche Sätze, jeder nur einmal. Regelnummern und Originaltext unter „Technische Details“.
+  const saetze = (eintraege) => [...new Set(eintraege.map((e) => e.klartext || e.text))];
+  const punkte = (eintraege, art) => saetze(eintraege).map((s) => `<li class="${art}">${esc(s)}</li>`).join("");
+  const technik = [...val.fehler.map((e) => ["Fehler", e]), ...val.warnungen.map((e) => ["Hinweis", e])]
+    .map(([art, e]) => `<li><b>${esc(e.regel)}</b> <span class="klein">${art}</span><br>${esc(e.text)}${e.ort ? `<small>${esc(e.ort)}</small>` : ""}</li>`).join("");
   el.className = `validierung ${val.gueltig ? "gut" : "schlecht"}`;
   el.innerHTML = `<div class="val-kopf"><span class="val-zeichen">${val.gueltig ? "✓" : "✗"}</span>
-      <span><b>${val.gueltig ? "Gültige E-Rechnung" : "E-Rechnung ungültig"}</b>
-      <small>${esc(val.szenario || "kein passendes Prüfszenario")} · ${esc(val.regelwerk)}</small></span></div>
-    ${val.fehler.length || val.warnungen.length ? `<ul class="val-liste">${liste(val.fehler, "fehler")}${liste(val.warnungen, "warnung")}</ul>` : ""}
-    ${val.gueltig ? "" : `<p class="klein">Eine E-Rechnung, die die Prüfregeln verletzt, beim Lieferanten zurückweisen und eine korrigierte Rechnung anfordern.</p>`}`;
+      <span><b>${val.gueltig ? "E-Rechnung ist gültig" : "E-Rechnung ist ungültig"}</b>
+      <small>${val.gueltig ? "Geprüft nach den offiziellen Regeln für XRechnung 3.0" : "Das ist fehlerhaft:"}</small></span></div>
+    ${val.fehler.length ? `<ul class="val-liste">${punkte(val.fehler, "fehler")}</ul>` : ""}
+    ${val.warnungen.length ? `<div class="val-hinweise">Hinweise (kein Fehler):</div><ul class="val-liste">${punkte(val.warnungen, "warnung")}</ul>` : ""}
+    ${val.gueltig ? "" : `<p class="val-tun"><b>Was tun?</b> Beim Lieferanten eine korrigierte E-Rechnung anfordern.</p>`}
+    ${technik ? `<details class="val-technik"><summary>Technische Details für Rückfragen beim Lieferanten</summary>
+      <p class="klein">${esc(val.szenario || "kein passendes Prüfszenario")} · ${esc(val.regelwerk)}</p><ul>${technik}</ul></details>` : ""}`;
 }
 
 function zeigeKreditor(b, fertig) {

@@ -284,7 +284,7 @@ def _ausnahmen(kopf: dict[str, Any], r: dict[str, Any], kreditor: dict[str, Any]
         aus.append(f'Fremdwährung {kopf["currency"]} – Umrechnung in Euro nötig')
     val = r.get("validierung")
     if val and val.get("gueltig") is False:
-        aus.append(f'E-Rechnung ungültig: {len(val["fehler"])} Fehler nach den XRechnung-Prüfregeln')
+        aus.append("E-Rechnung ungültig")
     fehlt = [f for f in r["pflichtangaben"]["fehlt"] if not f.startswith("Rechnerisch")]  # Summen: eigene Ausnahme
     if fehlt:
         aus.append("Pflichtangaben fehlen (§ 14 UStG): " + ", ".join(fehlt))
