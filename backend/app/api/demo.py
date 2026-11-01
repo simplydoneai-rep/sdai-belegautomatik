@@ -11,7 +11,7 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Any, AsyncIterator
 
-from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.responses import FileResponse, PlainTextResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
@@ -38,6 +38,14 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
 
 
 app = FastAPI(title="Simply Done AI – Belegautomatik (Demo)", lifespan=lifespan)
+
+
+@app.middleware("http")
+async def kein_zwischenspeicher(request: Request, call_next: Any) -> Any:
+    """Oberfläche nie aus dem Browser-Zwischenspeicher: nach einem Update sieht jeder sofort den neuen Stand."""
+    antwort = await call_next(request)
+    antwort.headers["Cache-Control"] = "no-store"
+    return antwort
 
 
 def _fehler(exc: Exception) -> HTTPException:
@@ -151,10 +159,46 @@ def freigeben(a: BelegAktion) -> dict[str, Any]:
 @app.post("/api/beleg/wiedereroeffnen")
 def wiedereroeffnen(a: BelegAktion) -> dict[str, Any]:
     try:
-        zustand.wiedereroeffnen(_key(a.key))
+        return ansicht.wiedereroeffnen(_key(a.key), _modell(a.modell))
     except ValueError as exc:
         raise _fehler(exc) from exc
-    return ansicht.ansicht(a.key, _modell(a.modell))
+
+
+class Sammel(BaseModel):
+    keys: list[str]
+    modell: str = ansicht.STANDARD_MODELL
+
+
+@app.post("/api/sammelfreigabe")
+def sammelfreigabe(s: Sammel) -> dict[str, Any]:
+    result = ansicht.sammelfreigabe([_key(k) for k in s.keys], _modell(s.modell))
+    log.info("sammelfreigabe freigegeben=%d uebersprungen=%d", len(result["freigegeben"]), len(result["uebersprungen"]))
+    return result
+
+
+class RegelSchalter(BaseModel):
+    key: str
+    regel: str
+    aktiv: bool
+    modell: str = ansicht.STANDARD_MODELL
+
+
+@app.post("/api/regel/aktiv")
+def regel_aktiv(r: RegelSchalter) -> dict[str, Any]:
+    try:
+        return ansicht.regel_aktiv(_key(r.key), r.regel, r.aktiv, _modell(r.modell))
+    except ValueError as exc:
+        raise _fehler(exc) from exc
+
+
+@app.post("/api/demo/oktober")
+def demo_oktober() -> dict[str, int]:
+    return ansicht.demo_oktober()
+
+
+@app.post("/api/demo/november")
+def demo_november() -> dict[str, int]:
+    return {"eingespielt": ansicht.demo_november()}
 
 
 @app.post("/api/upload")

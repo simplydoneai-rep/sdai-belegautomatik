@@ -266,6 +266,18 @@ Vorgaben Paul Graß umgesetzt, Details: `docs/entscheidungen/2026-10-31_rechnung
 - Beim Test gefunden und behoben: manuelle Kontowahl wurde ohne Steuersatzprüfung grün; Hinweismeldung lag über dem Freigabe-Knopf und fing Klicks ab; KoSIT-Platzhalter „[Seller name]“ als Lieferant angezeigt.
 - 116 Tests grün.
 
+## 01.11.2026 – Demo: Lernen, Bereich „Sicher“ und Sammelfreigabe
+
+Wunsch Paul Graß: Rechnungen bekannter Lieferanten im Folgemonat schon vorkontiert, bei voller Kontrolle. Details: `docs/entscheidungen/2026-11-01_lernen-sammelfreigabe.md`.
+
+- **Lernregeln je Position**, je Mandant und Kreditor: Bezeichnung + Steuersatz → Konto. Sicher nach einer Freigabe ohne Korrektur, nach einer Korrektur erst nach 3 Bestätigungen.
+- **Eingangsliste mit drei Bereichen:** Sicher, Prüfen, Erledigt. Feste Ausnahmen gehen immer zur Prüfung (neuer Lieferant, Gutschrift, Reverse Charge, ungewöhnlich hoher Betrag u. a.).
+- **Sammelfreigabe** der sicheren Rechnungen mit Liste zum Abwählen; kein Buchen ohne Klick.
+- **Kontrolle:** gelernte Regeln je Kreditor sichtbar und abschaltbar, „Wieder öffnen“ nimmt auch das Gelernte zurück, alles im Protokoll.
+- **Demo-Szenario:** Oktober als gebucht übernehmen, 17 Novemberbelege einspielen → 12 sicher, 5 zur Prüfung.
+- Beim Test gefunden und behoben: Monatsnamen in der Positionsbezeichnung („Oktober“ → „November“) lagen genau an der Ähnlichkeitsschwelle und werden jetzt ignoriert; bei abgeschalteter Regel stand fälschlich „noch nicht gelernt“; Datum im deutschen Format.
+- 123 Tests grün.
+
 ## Nächste Schritte
 
 Die aktuelle Aufgabenliste steht in `docs/projektplan.md`, Abschnitt 10. Die Liste unten ist der Stand vom 28.10.2026 vor dem Projektplan.

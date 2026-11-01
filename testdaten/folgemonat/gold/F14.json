@@ -1,0 +1,36 @@
+{
+  "id": "F14",
+  "quelle": "folgemonat",
+  "client_id": "M5",
+  "merkmale": [
+    "Gutschrift"
+  ],
+  "dokumente": [
+    {
+      "pfad": "folgemonat/F14_muehle.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "credit_note",
+    "supplier_name": "Mühle Hollerbach GmbH & Co. KG",
+    "invoice_number": "GS-26-0057",
+    "invoice_date": "2026-11-14",
+    "currency": "EUR",
+    "net_total": "-35.50",
+    "tax_total": "-2.49",
+    "gross_total": "-37.99",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Rücknahme Roggenmehl Type 1150, Fehlmenge",
+        "quantity": "50",
+        "unit": "kg",
+        "unit_price": "0.71",
+        "net_amount": "-35.50",
+        "tax_rate": "7",
+        "account_skr03": "3300"
+      }
+    ]
+  }
+}

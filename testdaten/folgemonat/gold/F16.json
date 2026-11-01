@@ -1,0 +1,37 @@
+{
+  "id": "F16",
+  "quelle": "folgemonat",
+  "client_id": "M1",
+  "merkmale": [
+    "neuer Lieferant",
+    "7 %"
+  ],
+  "dokumente": [
+    {
+      "pfad": "folgemonat/F16_kaffeeroesterei.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Kaffeerösterei Bohnenglück GmbH",
+    "invoice_number": "BG-2026-0071",
+    "invoice_date": "2026-11-11",
+    "currency": "EUR",
+    "net_total": "321.00",
+    "tax_total": "22.47",
+    "gross_total": "343.47",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Kaffeebohnen Hausmischung",
+        "quantity": "15",
+        "unit": "kg",
+        "unit_price": "21.40",
+        "net_amount": "321.00",
+        "tax_rate": "7",
+        "account_skr03": "3300"
+      }
+    ]
+  }
+}

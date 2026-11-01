@@ -1,0 +1,46 @@
+{
+  "id": "F06",
+  "quelle": "folgemonat",
+  "client_id": "M4",
+  "merkmale": [
+    "wiederkehrend",
+    "19 %"
+  ],
+  "dokumente": [
+    {
+      "pfad": "folgemonat/F06_druckerei.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Druckerei Feinschnitt GmbH",
+    "invoice_number": "DF-2026-1044",
+    "invoice_date": "2026-11-13",
+    "currency": "EUR",
+    "net_total": "127.50",
+    "tax_total": "24.23",
+    "gross_total": "151.73",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Flyer DIN A5, 4/4-farbig, 135 g",
+        "quantity": "2500",
+        "unit": "Stück",
+        "unit_price": "0.042",
+        "net_amount": "105.00",
+        "tax_rate": "19",
+        "account_skr03": "4600"
+      },
+      {
+        "description": "Visitenkarten 85 x 55 mm",
+        "quantity": "250",
+        "unit": "Stück",
+        "unit_price": "0.09",
+        "net_amount": "22.50",
+        "tax_rate": "19",
+        "account_skr03": "4600"
+      }
+    ]
+  }
+}

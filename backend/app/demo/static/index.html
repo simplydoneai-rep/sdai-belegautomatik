@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Belegautomatik – Rechnungseingang</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=4">
 </head>
 <body>
   <header class="topbar">
@@ -23,9 +23,10 @@
     <aside class="eingang">
       <div class="eingang-kopf">
         <h1>Rechnungen</h1>
-        <div class="segment" role="tablist">
-          <button class="aktiv" data-filter="offen" role="tab">Zu verbuchen <span id="z-offen" class="zahl">–</span></button>
-          <button data-filter="freigegeben" role="tab">Erledigt <span id="z-erledigt" class="zahl">–</span></button>
+        <div class="segment drei" role="tablist">
+          <button class="aktiv" data-filter="sicher" role="tab">Sicher <span id="z-sicher" class="zahl">–</span></button>
+          <button data-filter="pruefen" role="tab">Prüfen <span id="z-pruefen" class="zahl">–</span></button>
+          <button data-filter="erledigt" role="tab">Erledigt <span id="z-erledigt" class="zahl">–</span></button>
         </div>
         <div class="filterzeile">
           <select id="mandant" class="feld"><option value="">Alle Mandanten</option></select>
@@ -33,6 +34,10 @@
         <input id="suche" class="feld suchfeld" type="search" placeholder="Lieferant suchen">
       </div>
       <div id="summe" class="summe"></div>
+      <div id="sammel" class="sammel" hidden>
+        <div><b id="sammel-zahl"></b><div class="klein" id="sammel-text"></div></div>
+        <button id="sammel-knopf" class="knopf blau">Ansehen und freigeben</button>
+      </div>
       <ul id="liste" class="liste"></ul>
       <details id="nach-konto" class="karte nach-konto">
         <summary>Offene Positionen nach Sachkonto</summary>
@@ -42,7 +47,14 @@
         <label class="knopf hell">＋ Rechnung hinzufügen
           <input id="datei" type="file" accept=".pdf,.xml,.jpg,.jpeg,.png,.tif,.tiff" hidden>
         </label>
-        <button id="reset" class="link">Demo zurücksetzen</button>
+        <div class="demo-menue">
+          <button id="demo-knopf" class="link">Demo ▾</button>
+          <div id="demo-liste" class="menue" hidden>
+            <button data-demo="oktober">Oktober als gebucht übernehmen<small>Kreditoren anlegen, Konten buchen, freigeben – wie nach einem Monat Arbeit</small></button>
+            <button data-demo="november">Belege November einspielen<small>17 neue Rechnungen derselben Lieferanten</small></button>
+            <button data-demo="reset" class="gefahr">Demo zurücksetzen<small>Kreditoren, Regeln und Freigaben löschen</small></button>
+          </div>
+        </div>
       </div>
     </aside>
 
@@ -66,6 +78,7 @@
           </div>
         </div>
 
+        <div id="b-ausnahmen" class="hinweis-karte" hidden></div>
         <section class="karte" id="kreditor-karte"></section>
 
         <section class="karte">
@@ -115,7 +128,24 @@
   </div>
 
   <div id="dropdown" class="dropdown" hidden></div>
+  <div id="blatt-hintergrund" class="blatt-hintergrund" hidden>
+    <div class="blatt" role="dialog" aria-modal="true">
+      <div class="blatt-kopf">
+        <button id="blatt-abbrechen" class="link blau-link">Abbrechen</button>
+        <b>Sichere Rechnungen freigeben</b>
+        <span></span>
+      </div>
+      <p class="klein blatt-info">Alle Rechnungen sind vollständig vorkontiert: Kreditor bekannt, jedes Konto sicher, Summen geprüft,
+        keine Ausnahme. Prüfen Sie die Liste; abgewählte Rechnungen bleiben offen. Jede Rechnung lässt sich auch nach der
+        Freigabe wieder öffnen und ändern.</p>
+      <ul id="blatt-liste" class="blatt-liste"></ul>
+      <div class="blatt-fuss">
+        <span id="blatt-summe" class="klein"></span>
+        <button id="blatt-ok" class="knopf blau gross">Freigeben</button>
+      </div>
+    </div>
+  </div>
   <div id="toast" class="toast" hidden></div>
-  <script src="app.js"></script>
+  <script src="app.js?v=4"></script>
 </body>
 </html>

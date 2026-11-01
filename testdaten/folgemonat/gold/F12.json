@@ -1,0 +1,37 @@
+{
+  "id": "F12",
+  "quelle": "folgemonat",
+  "client_id": "M2",
+  "merkmale": [
+    "Dauerbeleg",
+    "19 %"
+  ],
+  "dokumente": [
+    {
+      "pfad": "folgemonat/F12_funknetz.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Funknetz Mitte GmbH",
+    "invoice_number": "FM-9930-1126",
+    "invoice_date": "2026-11-06",
+    "currency": "EUR",
+    "net_total": "89.97",
+    "tax_total": "17.09",
+    "gross_total": "107.06",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Mobilfunk Business Tarif, Grundgebühr November",
+        "quantity": "3",
+        "unit": "Vertrag",
+        "unit_price": "29.99",
+        "net_amount": "89.97",
+        "tax_rate": "19",
+        "account_skr03": "4920"
+      }
+    ]
+  }
+}

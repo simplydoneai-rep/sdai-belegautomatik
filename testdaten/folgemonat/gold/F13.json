@@ -1,0 +1,37 @@
+{
+  "id": "F13",
+  "quelle": "folgemonat",
+  "client_id": "M4",
+  "merkmale": [
+    "wiederkehrend",
+    "19 %"
+  ],
+  "dokumente": [
+    {
+      "pfad": "folgemonat/F13_blitzkurier.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Blitzkurier Mainfranken GmbH",
+    "invoice_number": "BK-26-3561",
+    "invoice_date": "2026-11-18",
+    "currency": "EUR",
+    "net_total": "62.50",
+    "tax_total": "11.88",
+    "gross_total": "74.38",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Kurierfahrt Stadtgebiet",
+        "quantity": "5",
+        "unit": "Fahrt",
+        "unit_price": "12.50",
+        "net_amount": "62.50",
+        "tax_rate": "19",
+        "account_skr03": "4910"
+      }
+    ]
+  }
+}

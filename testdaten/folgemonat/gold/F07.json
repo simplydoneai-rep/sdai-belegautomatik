@@ -1,0 +1,37 @@
+{
+  "id": "F07",
+  "quelle": "folgemonat",
+  "client_id": "M4",
+  "merkmale": [
+    "wiederkehrend",
+    "19 %"
+  ],
+  "dokumente": [
+    {
+      "pfad": "folgemonat/F07_cloudkontor.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "CloudKontor Software GmbH",
+    "invoice_number": "CK-INV-78110",
+    "invoice_date": "2026-11-01",
+    "currency": "EUR",
+    "net_total": "240.00",
+    "tax_total": "45.60",
+    "gross_total": "285.60",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Support- und Wartungspaket, 12 Monate",
+        "quantity": "1",
+        "unit": "Jahr",
+        "unit_price": "240.00",
+        "net_amount": "240.00",
+        "tax_rate": "19",
+        "account_skr03": "4806"
+      }
+    ]
+  }
+}

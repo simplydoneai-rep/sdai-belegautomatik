@@ -1,0 +1,63 @@
+{
+  "id": "F17",
+  "quelle": "folgemonat",
+  "client_id": "M1",
+  "merkmale": [
+    "Betrag ungewöhnlich hoch"
+  ],
+  "dokumente": [
+    {
+      "pfad": "folgemonat/F17_frischgut.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Frischgut Großhandel GmbH",
+    "invoice_number": "FG-2026-11455",
+    "invoice_date": "2026-11-20",
+    "currency": "EUR",
+    "net_total": "1482.40",
+    "tax_total": "103.77",
+    "gross_total": "1586.17",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Kaffeebohnen Espresso Röstung",
+        "quantity": "10",
+        "unit": "kg",
+        "unit_price": "18.90",
+        "net_amount": "189.00",
+        "tax_rate": "7",
+        "account_skr03": "3300"
+      },
+      {
+        "description": "Vollmilch 3,5 %",
+        "quantity": "60",
+        "unit": "l",
+        "unit_price": "1.09",
+        "net_amount": "65.40",
+        "tax_rate": "7",
+        "account_skr03": "3300"
+      },
+      {
+        "description": "Weizenmehl Type 405",
+        "quantity": "400",
+        "unit": "kg",
+        "unit_price": "0.85",
+        "net_amount": "340.00",
+        "tax_rate": "7",
+        "account_skr03": "3300"
+      },
+      {
+        "description": "Süßrahmbutter",
+        "quantity": "120",
+        "unit": "kg",
+        "unit_price": "7.40",
+        "net_amount": "888.00",
+        "tax_rate": "7",
+        "account_skr03": "3300"
+      }
+    ]
+  }
+}

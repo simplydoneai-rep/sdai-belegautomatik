@@ -1,0 +1,46 @@
+{
+  "id": "F08",
+  "quelle": "folgemonat",
+  "client_id": "M5",
+  "merkmale": [
+    "wiederkehrend",
+    "7 %"
+  ],
+  "dokumente": [
+    {
+      "pfad": "folgemonat/F08_muehle.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Mühle Hollerbach GmbH & Co. KG",
+    "invoice_number": "MH-26-1302",
+    "invoice_date": "2026-11-03",
+    "currency": "EUR",
+    "net_total": "957.00",
+    "tax_total": "66.99",
+    "gross_total": "1023.99",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Weizenmehl Type 550, 25-kg-Sack",
+        "quantity": "1200",
+        "unit": "kg",
+        "unit_price": "0.62",
+        "net_amount": "744.00",
+        "tax_rate": "7",
+        "account_skr03": "3300"
+      },
+      {
+        "description": "Roggenmehl Type 1150",
+        "quantity": "300",
+        "unit": "kg",
+        "unit_price": "0.71",
+        "net_amount": "213.00",
+        "tax_rate": "7",
+        "account_skr03": "3300"
+      }
+    ]
+  }
+}

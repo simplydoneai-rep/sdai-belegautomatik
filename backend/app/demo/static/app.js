@@ -4,10 +4,16 @@ const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const eur = (v) => v == null || v === "" ? "–" : Number(v).toLocaleString("de-DE", { style: "currency", currency: "EUR" });
 const datum = (iso) => iso && /^\d{4}-\d{2}-\d{2}$/.test(iso) ? iso.split("-").reverse().join(".") : (iso || "–");
+const prozent = (x) => `${Math.round((x || 0) * 100)} %`;
 const AMPEL = { gruen: "Sicher", gelb: "Unsicher", rot: "Frei" };
-const STATUS = { gruen: "Bereit zur Freigabe", gelb: "Bitte prüfen", rot: "Unvollständig" };
+const anzahl = (n, eins, mehr) => `${n} ${n === 1 ? eins : mehr}`;
+const BEREICH_TEXT = {
+  sicher: (n, s) => `<b>${anzahl(n, "Rechnung", "Rechnungen")}</b> sicher vorkontiert · ${eur(s)}`,
+  pruefen: (n, s) => `<b>${anzahl(n, "Rechnung", "Rechnungen")}</b> zur Prüfung · ${eur(s)}`,
+  erledigt: (n) => `<b>${anzahl(n, "Rechnung", "Rechnungen")}</b> freigegeben`,
+};
 
-const zustand = { filter: "offen", mandant: "", suche: "", modell: "", key: null, beleg: null, liste: null, stamm: null };
+const zustand = { filter: "sicher", mandant: "", suche: "", modell: "", key: null, beleg: null, liste: null, stamm: null, erstesLaden: true };
 
 async function api(url, opts = {}) {
   const r = await fetch(url, opts);
@@ -23,7 +29,7 @@ function toast(text, fehler = false) {
   t.className = "toast" + (fehler ? " fehler" : "");
   t.hidden = false;
   clearTimeout(toast.timer);
-  toast.timer = setTimeout(() => { t.hidden = true; }, 2600);
+  toast.timer = setTimeout(() => { t.hidden = true; }, 2800);
 }
 
 /* ---------- Start ---------- */
@@ -33,11 +39,7 @@ async function init() {
   for (const m of zustand.stamm.modelle) $("modell").add(new Option(m.kurz, m.id, false, m.id === zustand.modell));
   for (const m of zustand.stamm.mandanten) $("mandant").add(new Option(`${m.name} · ${m.branche}`, m.id));
 
-  document.querySelectorAll(".segment button").forEach((b) => b.addEventListener("click", () => {
-    document.querySelectorAll(".segment button").forEach((x) => x.classList.toggle("aktiv", x === b));
-    zustand.filter = b.dataset.filter;
-    zeigeListe();
-  }));
+  document.querySelectorAll(".segment button").forEach((b) => b.addEventListener("click", () => setzeFilter(b.dataset.filter)));
   $("mandant").addEventListener("change", (e) => { zustand.mandant = e.target.value; ladeListe(); });
   $("suche").addEventListener("input", (e) => { zustand.suche = e.target.value.toLowerCase(); zeigeListe(); });
   $("modell").addEventListener("change", async (e) => {
@@ -46,16 +48,23 @@ async function init() {
     if (zustand.key) oeffne(zustand.key, false);
   });
   $("datei").addEventListener("change", hochladen);
-  $("reset").addEventListener("click", async () => {
-    if (!confirm("Alle Kreditoren, Kontoänderungen und Freigaben der Demo löschen?")) return;
-    await post("/api/demo/zuruecksetzen", {});
-    zustand.key = null; $("beleg").hidden = true; $("aktionsleiste").hidden = true; $("leer").hidden = false;
-    await ladeListe();
-    toast("Demo zurückgesetzt");
-  });
   $("a-knopf").addEventListener("click", aktion);
-  document.addEventListener("click", (e) => { if (!e.target.closest(".konto-feld, .dropdown")) schliesseDropdown(); });
+  $("sammel-knopf").addEventListener("click", oeffneSammelfreigabe);
+  $("blatt-abbrechen").addEventListener("click", () => { $("blatt-hintergrund").hidden = true; });
+  $("blatt-ok").addEventListener("click", sammelfreigabe);
+  $("demo-knopf").addEventListener("click", (e) => { e.stopPropagation(); $("demo-liste").hidden = !$("demo-liste").hidden; });
+  document.querySelectorAll("#demo-liste button").forEach((b) => b.addEventListener("click", () => demoAktion(b.dataset.demo)));
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest(".konto-feld, .dropdown")) schliesseDropdown();
+    if (!e.target.closest(".demo-menue")) $("demo-liste").hidden = true;
+  });
   await ladeListe();
+}
+
+function setzeFilter(f) {
+  zustand.filter = f;
+  document.querySelectorAll(".segment button").forEach((x) => x.classList.toggle("aktiv", x.dataset.filter === f));
+  zeigeListe();
 }
 
 /* ---------- Liste ---------- */
@@ -63,33 +72,50 @@ async function ladeListe() {
   const q = new URLSearchParams({ modell: zustand.modell });
   if (zustand.mandant) q.set("mandant", zustand.mandant);
   zustand.liste = await api("/api/eingang?" + q);
+  if (zustand.erstesLaden && zustand.liste.bereit) {
+    zustand.erstesLaden = false;
+    if (!zustand.liste.anzahl.sicher) setzeFilter("pruefen");
+  }
   zeigeListe();
   if (!zustand.liste.bereit) setTimeout(ladeListe, 2000);
+}
+
+function zelle(e) {
+  if (!e.bereit) return `<li class="zelle"><span class="punkt grau"></span><span class="z1">${esc(e.id)} wird gelesen …</span><span></span>
+    <span class="z2">${esc(e.mandant)}</span></li>`;
+  const art = { xml: "E-Rechnung", scan: "Scan", foto: "Foto", pdf: "PDF" }[e.art] || e.art;
+  const marken = [];
+  if (e.bereich === "sicher") marken.push(`<span class="marke gruen">Sicher ${prozent(e.sicherheit)}</span>`);
+  for (const a of e.ausnahmen || []) marken.push(`<span class="marke orange">${esc(a.split(" (")[0])}</span>`);
+  if (e.gelernt) marken.push(`<span class="marke blau">${e.gelernt}/${e.positionen} gelernt</span>`);
+  if (e.frei) marken.push(`<span class="marke orange">${e.frei} ohne Konto</span>`);
+  if (e.kreditor) marken.push(`<span class="marke">Kreditor ${esc(e.kreditor)}</span>`);
+  marken.push(`<span class="marke">${art}</span>`);
+  return `<li class="zelle ${e.key === zustand.key ? "gewaehlt" : ""}" data-key="${esc(e.key)}">
+    <span class="punkt ${e.bereich === "erledigt" ? "grau" : e.ampel}"></span>
+    <span class="z1">${esc(e.lieferant || e.id)}</span>
+    <span class="z-betrag">${eur(e.brutto)}</span>
+    <span class="z2"><span>${esc(e.mandant)} · ${datum(e.datum)}</span>${marken.join("")}</span>
+  </li>`;
 }
 
 function zeigeListe() {
   const l = zustand.liste;
   if (!l) return;
-  $("z-offen").textContent = l.anzahl_offen;
-  $("z-erledigt").textContent = l.anzahl_erledigt;
-  $("summe").innerHTML = zustand.filter === "offen"
-    ? `<b>${l.anzahl_offen}</b> Rechnungen zu verbuchen · ${eur(l.summe_offen)}` + (l.bereit ? "" : " · <i>werden gelesen …</i>")
-    : `<b>${l.anzahl_erledigt}</b> Rechnungen freigegeben`;
-  const eintraege = l.eintraege.filter((e) => e.status === zustand.filter)
+  $("z-sicher").textContent = l.anzahl.sicher;
+  $("z-pruefen").textContent = l.anzahl.pruefen;
+  $("z-erledigt").textContent = l.anzahl.erledigt;
+  const f = zustand.filter;
+  $("summe").innerHTML = BEREICH_TEXT[f](l.anzahl[f], l.summe[f]) + (l.bereit ? "" : " · <i>werden gelesen …</i>");
+  const sammel = $("sammel");
+  sammel.hidden = !(f === "sicher" && l.anzahl.sicher > 0);
+  $("sammel-zahl").textContent = `${l.anzahl.sicher} sicher vorkontiert`;
+  $("sammel-text").textContent = "Nur ansehen und freigeben";
+
+  const eintraege = l.eintraege.filter((e) => e.bereich === f)
     .filter((e) => !zustand.suche || (e.lieferant || "").toLowerCase().includes(zustand.suche));
-  $("liste").innerHTML = eintraege.map((e) => {
-    if (!e.bereit) return `<li class="zelle"><span class="punkt grau"></span><span class="z1">${esc(e.id)} wird gelesen …</span><span></span>
-      <span class="z2">${esc(e.mandant)}</span></li>`;
-    const art = { xml: "E-Rechnung", scan: "Scan", foto: "Foto", pdf: "PDF" }[e.art] || e.art;
-    return `<li class="zelle ${e.key === zustand.key ? "gewaehlt" : ""}" data-key="${esc(e.key)}">
-      <span class="punkt ${e.status === "freigegeben" ? "grau" : e.ampel}"></span>
-      <span class="z1">${esc(e.lieferant || e.id)}</span>
-      <span class="z-betrag">${eur(e.brutto)}</span>
-      <span class="z2"><span>${esc(e.mandant)}</span><span>· ${datum(e.datum)}</span>
-        ${e.kreditor ? `<span class="marke">Kreditor ${esc(e.kreditor)}</span>` : `<span class="marke neu">Neuer Lieferant</span>`}
-        <span class="marke">${art}</span>${e.frei ? `<span class="marke neu">${e.frei} ohne Konto</span>` : ""}</span>
-    </li>`;
-  }).join("") || `<li class="klein mitte">Keine Rechnungen</li>`;
+  const leer = { sicher: "Keine sicher vorkontierten Rechnungen.", pruefen: "Nichts zu prüfen.", erledigt: "Noch nichts freigegeben." }[f];
+  $("liste").innerHTML = eintraege.map(zelle).join("") || `<li class="klein mitte">${leer}</li>`;
   $("liste").querySelectorAll(".zelle[data-key]").forEach((z) => z.addEventListener("click", () => oeffne(z.dataset.key)));
   $("konto-liste").innerHTML = l.nach_konto.map((g) => `<li><b>${esc(g.nr)}</b><span>${esc(g.name)}</span>
     <span class="klein">${g.anzahl}× · ${eur(g.summe)}</span></li>`).join("") || `<li class="klein">Alles verbucht</li>`;
@@ -114,8 +140,10 @@ function zeigeBeleg(b) {
   $("aktionsleiste").hidden = false;
   const fertig = b.status === "freigegeben";
   const chip = $("b-status");
-  chip.className = "status-chip " + (fertig ? "fertig" : b.ampel);
-  chip.innerHTML = fertig ? "✓ Freigegeben" : `<span class="punkt ${b.ampel}"></span>${STATUS[b.ampel]}`;
+  if (fertig) { chip.className = "status-chip fertig"; chip.innerHTML = "✓ Freigegeben"; }
+  else if (b.bereich === "sicher") { chip.className = "status-chip gruen"; chip.innerHTML = `<span class="punkt gruen"></span>Sicher vorkontiert · ${prozent(b.sicherheit)}`; }
+  else { chip.className = `status-chip ${b.ampel === "rot" ? "rot" : "gelb"}`; chip.innerHTML = `<span class="punkt ${b.ampel === "rot" ? "rot" : "gelb"}"></span>Bitte prüfen`; }
+
   const k = b.kopf;
   $("b-lieferant").textContent = k.supplier_name || "Unbekannter Lieferant";
   $("b-meta").textContent = [b.mandant.name, k.invoice_number ? `Rechnung ${k.invoice_number}` : "ohne Rechnungsnummer",
@@ -124,10 +152,14 @@ function zeigeBeleg(b) {
   $("b-brutto").textContent = eur(k.gross_total);
   $("b-steuer").textContent = `Netto ${eur(k.net_total)} · USt ${eur(k.tax_total)}`;
 
+  const aus = $("b-ausnahmen");
+  aus.hidden = fertig || !b.ausnahmen.length;
+  aus.innerHTML = `<b>Zur Prüfung, weil:</b><ul>${b.ausnahmen.map((a) => `<li>${esc(a)}</li>`).join("")}</ul>`;
+
   zeigeKreditor(b, fertig);
 
   const sicher = b.positionen.filter((p) => p.ampel === "gruen").length;
-  $("b-pos-info").textContent = `${b.positionen.length} Positionen · ${sicher} sicher`;
+  $("b-pos-info").textContent = `${anzahl(b.positionen.length, "Position", "Positionen")} · ${sicher} sicher` + (b.gelernt ? ` · ${b.gelernt} gelernt` : "");
   $("positionen").innerHTML = b.positionen.map((p) => `
     <li class="position">
       <div class="p-text">${esc(p.bezeichnung || "Position " + (p.pos + 1))}
@@ -149,42 +181,59 @@ function zeigeBeleg(b) {
     ["Rechnungsdatum", datum(k.invoice_date)], ["Netto", eur(k.net_total)], ["Umsatzsteuer", eur(k.tax_total)],
     ["Brutto", eur(k.gross_total)], ["Reverse Charge / i. g. Erwerb", k.reverse_charge ? "ja" : "nein"],
     ["Steuerlogik", b.steuerlogik.ok ? "Netto + Steuer = Brutto ✓" : "Widerspruch: " + esc(b.steuerlogik.hinweise.join(", "))],
+    ["Sicherheit des Belegs", prozent(b.sicherheit)],
     ["Mandant", esc(b.mandant.name + " · " + b.mandant.branche)]].map(([a, c]) => `<tr><td>${a}</td><td>${c}</td></tr>`).join("");
   $("schritte").innerHTML = b.schritte.map((s) => `<li title="${esc(s.detail)}">${esc(s.name)} · ${s.dauer_s.toLocaleString("de-DE")} s</li>`).join("");
   $("ki").innerHTML = b.ki.art === "aufzeichnung"
     ? `${esc(b.ki.modell)}: Antwort aus dem Messlauf (damals ${Number(b.ki.laufzeit_s).toLocaleString("de-DE", { maximumFractionDigits: 1 })} s,
        ${(b.ki.kosten_eur * 100).toLocaleString("de-DE", { maximumFractionDigits: 2 })} Cent), heute ohne Kosten abgespielt.`
-    : esc(b.ki.text);
-  $("soll").innerHTML = b.soll ? `Abgleich mit dem Sollwert: Pflichtfelder ${b.soll.pflichtfelder.join("/")} · Positionen ${b.soll.positionen.join("/")}`
-    + (b.soll.konten[1] ? ` · Sachkonten der KI ${b.soll.konten.join("/")}` : "") : "";
+    : esc(b.ki.text) + (b.gelernt ? " Die Konten kommen aus den gelernten Regeln." : "");
+  $("soll").innerHTML = b.soll ? `Abgleich mit dem Sollwert: Pflichtfelder ${b.soll.pflichtfelder.join("/")} · Positionen ${b.soll.positionen.join("/")}` : "";
   $("pseudo").hidden = !b.pseudonymisiert;
   const n = Object.values(b.platzhalter).reduce((a, c) => a + c, 0);
   $("pseudo-zahl").textContent = n ? `${n} Angaben ersetzt` : "";
   $("pseudo-text").innerHTML = esc(b.pseudonymisiert).replace(/\[[A-Z_]+_\d+\]/g, (m) => `<mark>${m}</mark>`);
   $("verlauf").innerHTML = b.protokoll.slice().reverse().map((e) => `<li><b>${esc(e.feld)}</b>: ${esc(e.alt ?? "–")} → ${esc(e.neu ?? "–")}
-    <br>${new Date(e.zeit).toLocaleString("de-DE")} · ${esc(e.nutzer)}</li>`).join("") || `<li>Noch keine Änderungen</li>`;
+    <br>${new Date(e.zeit).toLocaleString("de-DE")} · ${esc(e.quelle || e.nutzer)}</li>`).join("") || `<li>Noch keine Änderungen</li>`;
 
   const knopf = $("a-knopf");
   if (fertig) {
     knopf.textContent = "Wieder öffnen";
     knopf.className = "knopf grau gross";
     knopf.disabled = false;
-    $("a-hinweis").innerHTML = `Freigegeben am ${new Date(b.freigegeben_am).toLocaleString("de-DE")} · Kreditor ${esc(b.kreditor?.nr)}`;
+    $("a-hinweis").innerHTML = `Freigegeben am ${new Date(b.freigegeben_am).toLocaleString("de-DE")} · Kreditor ${esc(b.kreditor?.nr)}.
+      Wieder öffnen nimmt auch das dabei Gelernte zurück.`;
   } else {
     knopf.textContent = "Freigeben";
     knopf.className = "knopf blau gross";
     knopf.disabled = !b.freigabe_moeglich;
-    $("a-hinweis").innerHTML = b.freigabe_moeglich
-      ? (b.ampel === "gruen" ? "Alles sicher erkannt." : "Freigabe möglich – gelbe Positionen bitte kurz prüfen.")
-      : "Noch offen: " + b.offen.map(esc).join(" · ");
+    $("a-hinweis").innerHTML = !b.freigabe_moeglich ? "Noch offen: " + b.offen.map(esc).join(" · ")
+      : b.bereich === "sicher" ? "Alles sicher erkannt – ansehen und freigeben."
+      : "Freigabe möglich – gelbe Punkte bitte kurz prüfen.";
   }
 }
 
 function zeigeKreditor(b, fertig) {
   const el = $("kreditor-karte");
   if (b.kreditor) {
+    const regeln = b.regeln.map((r) => `
+      <div class="regel ${r.aktiv ? "" : "aus"}">
+        <span><b>${esc(r.beispiel)}</b> · ${esc(r.satz)} % → ${esc(r.konto)} ${esc(r.konto_name)}</span>
+        <small>${r.bestaetigungen}× bestätigt${r.korrekturen ? `, ${r.korrekturen}× korrigiert` : ""} · ${r.sicher ? "sicher" : "noch unsicher"}
+          · zuletzt ${datum((r.zuletzt || "").slice(0, 10))}</small>
+        <label class="schalter" title="${r.aktiv ? "Regel abschalten" : "Regel einschalten"}">
+          <input type="checkbox" data-regel="${esc(r.id)}" ${r.aktiv ? "checked" : ""}><span></span></label>
+      </div>`).join("");
     el.innerHTML = `<div class="kreditor"><div><div class="klein">Kreditor</div><div class="nr">${esc(b.kreditor.nr)}</div></div>
-      <div><div>${esc(b.kreditor.name)}</div><div class="klein">fest zugeordnet für ${esc(b.mandant.name)}</div></div></div>`;
+      <div><div>${esc(b.kreditor.name)}</div><div class="klein">fest zugeordnet für ${esc(b.mandant.name)}</div></div></div>
+      <details class="regeln" ${b.regeln.length ? "" : "hidden"}><summary>Gelernte Regeln für diesen Lieferanten (${b.regeln.length})</summary>${regeln}</details>`;
+    el.querySelectorAll("input[data-regel]").forEach((i) => i.addEventListener("change", async () => {
+      try {
+        const neu = await post("/api/regel/aktiv", { key: b.key, regel: i.dataset.regel, aktiv: i.checked, modell: zustand.modell });
+        zeigeBeleg(neu); el.querySelector(".regeln").open = true; ladeListe();
+        toast(i.checked ? "Regel eingeschaltet" : "Regel abgeschaltet – Konto kommt wieder von der KI");
+      } catch (e) { toast(e.message, true); }
+    }));
     return;
   }
   const v = b.kreditor_vorschlag;
@@ -274,11 +323,69 @@ async function aktion() {
       toast("Beleg wieder geöffnet");
       return ladeListe();
     }
+    const bereich = b.bereich;
     await post("/api/beleg/freigeben", { key: b.key, modell: zustand.modell });
     toast(`${b.kopf.supplier_name}: freigegeben`);
-    const offen = zustand.liste.eintraege.filter((e) => e.status === "offen" && e.bereit && e.key !== b.key);
     await ladeListe();
-    if (offen.length) oeffne(offen[0].key); else oeffne(b.key);
+    const naechste = zustand.liste.eintraege.find((e) => e.bereich === bereich && e.bereit && e.key !== b.key);
+    oeffne(naechste ? naechste.key : b.key);
+  } catch (e) { toast(e.message, true); }
+}
+
+function oeffneSammelfreigabe() {
+  const sichere = zustand.liste.eintraege.filter((e) => e.bereich === "sicher");
+  $("blatt-liste").innerHTML = sichere.map((e) => `
+    <li><input type="checkbox" checked data-key="${esc(e.key)}" data-brutto="${esc(e.brutto)}">
+      <span><b>${esc(e.lieferant)}</b><small>${esc(e.mandant)} · Kreditor ${esc(e.kreditor)} · ${datum(e.datum)} · ${e.gelernt}/${e.positionen} gelernt</small></span>
+      <span class="z-betrag">${eur(e.brutto)}</span>
+      <button class="link blau-link" data-oeffnen="${esc(e.key)}">Ansehen</button></li>`).join("");
+  $("blatt-liste").querySelectorAll("input").forEach((i) => i.addEventListener("change", sammelSumme));
+  $("blatt-liste").querySelectorAll("[data-oeffnen]").forEach((b) => b.addEventListener("click", () => {
+    $("blatt-hintergrund").hidden = true; oeffne(b.dataset.oeffnen);
+  }));
+  sammelSumme();
+  $("blatt-hintergrund").hidden = false;
+}
+
+function sammelSumme() {
+  const gewaehlt = [...$("blatt-liste").querySelectorAll("input:checked")];
+  const summe = gewaehlt.reduce((a, i) => a + Number(i.dataset.brutto || 0), 0);
+  $("blatt-summe").textContent = `${gewaehlt.length} ausgewählt · ${eur(summe)}`;
+  $("blatt-ok").textContent = `${gewaehlt.length} freigeben`;
+  $("blatt-ok").disabled = !gewaehlt.length;
+}
+
+async function sammelfreigabe() {
+  const keys = [...$("blatt-liste").querySelectorAll("input:checked")].map((i) => i.dataset.key);
+  try {
+    const r = await post("/api/sammelfreigabe", { keys, modell: zustand.modell });
+    $("blatt-hintergrund").hidden = true;
+    toast(`${anzahl(r.freigegeben.length, "Rechnung", "Rechnungen")} freigegeben` + (r.uebersprungen.length ? `, ${r.uebersprungen.length} übersprungen` : ""));
+    await ladeListe();
+    if (zustand.key) oeffne(zustand.key, false);
+  } catch (e) { toast(e.message, true); }
+}
+
+/* ---------- Demo ---------- */
+async function demoAktion(was) {
+  $("demo-liste").hidden = true;
+  try {
+    if (was === "oktober") {
+      toast("Oktober wird gebucht …");
+      const r = await post("/api/demo/oktober", {});
+      toast(`Oktober gebucht: ${r.freigegeben} Rechnungen, ${r.kreditoren} Kreditoren angelegt`);
+      await ladeListe(); setzeFilter("erledigt");
+    } else if (was === "november") {
+      const r = await post("/api/demo/november", {});
+      toast(`${r.eingespielt} Rechnungen für November eingespielt`);
+      await ladeListe(); setzeFilter("sicher");
+    } else if (was === "reset") {
+      if (!confirm("Alle Kreditoren, Lernregeln, Kontoänderungen und Freigaben der Demo löschen?")) return;
+      await post("/api/demo/zuruecksetzen", {});
+      zustand.key = null; $("beleg").hidden = true; $("aktionsleiste").hidden = true; $("leer").hidden = false;
+      await ladeListe(); setzeFilter("pruefen");
+      toast("Demo zurückgesetzt");
+    }
   } catch (e) { toast(e.message, true); }
 }
 

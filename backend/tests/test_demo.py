@@ -95,3 +95,30 @@ def test_skr03_2026_ohne_4610() -> None:
 
     assert konto("4610") is None and konto("4600")["name"] == "Werbekosten"
     assert umschluesseln("4610") == "4600"
+
+
+@pytest.mark.skipif(not (TESTDATEN / "folgemonat" / "gold").exists(), reason="Belege November fehlen")
+def test_folgemonat_ist_vorkontiert_und_bleibt_kontrollierbar(leerer_zustand) -> None:  # type: ignore[no-untyped-def]
+    from app.demo import ansicht
+
+    ansicht.demo_oktober()
+    ansicht.demo_november()
+    eingang = {b["id"]: b["key"] for b in ansicht.eingang()}
+
+    sicher = ansicht.ansicht(eingang["F10"])  # Reinigung: im Oktober gebucht
+    assert sicher["bereich"] == "sicher" and all(p["quelle"] == "regel" for p in sicher["positionen"])
+    for fall in ("F04", "F14", "F15", "F16", "F17"):  # neue Position, Gutschrift, § 13b, neuer Lieferant, hoher Betrag
+        assert ansicht.ansicht(eingang[fall])["bereich"] == "pruefen", fall
+
+    # Regel abschalten: Beleg geht zur Prüfung, Grund wird genannt
+    regel = sicher["positionen"][0]["regel"]["id"]
+    a = ansicht.regel_aktiv(eingang["F10"], regel, False)
+    assert a["bereich"] == "pruefen" and "abgeschaltet" in a["positionen"][0]["grund"]
+    assert ansicht.regel_aktiv(eingang["F10"], regel, True)["bereich"] == "sicher"
+
+    # Sammelfreigabe nur für sichere Belege; Wieder öffnen nimmt das Gelernte zurück
+    r = ansicht.sammelfreigabe([eingang["F10"], eingang["F16"]])
+    assert r["freigegeben"] == [eingang["F10"]] and [u["key"] for u in r["uebersprungen"]] == [eingang["F16"]]
+    assert ansicht.ansicht(eingang["F10"])["positionen"][0]["regel"]["bestaetigungen"] == 2
+    a = ansicht.wiedereroeffnen(eingang["F10"])
+    assert a["bereich"] == "sicher" and a["positionen"][0]["regel"]["bestaetigungen"] == 1

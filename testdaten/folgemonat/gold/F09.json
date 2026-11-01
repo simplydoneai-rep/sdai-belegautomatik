@@ -1,0 +1,46 @@
+{
+  "id": "F09",
+  "quelle": "folgemonat",
+  "client_id": "M1",
+  "merkmale": [
+    "Dauerbeleg",
+    "Energie"
+  ],
+  "dokumente": [
+    {
+      "pfad": "folgemonat/F09_energieversorgung.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Energieversorgung Talgrund GmbH",
+    "invoice_number": "ET-2026-501288",
+    "invoice_date": "2026-11-03",
+    "currency": "EUR",
+    "net_total": "491.35",
+    "tax_total": "93.36",
+    "gross_total": "584.71",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Strom Arbeitspreis 01.10.–31.10.2026",
+        "quantity": "1650",
+        "unit": "kWh",
+        "unit_price": "0.289",
+        "net_amount": "476.85",
+        "tax_rate": "19",
+        "account_skr03": "4240"
+      },
+      {
+        "description": "Grundpreis",
+        "quantity": "1",
+        "unit": "Monat",
+        "unit_price": "14.50",
+        "net_amount": "14.50",
+        "tax_rate": "19",
+        "account_skr03": "4240"
+      }
+    ]
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "id": "F04",
+  "quelle": "folgemonat",
+  "client_id": "M2",
+  "merkmale": [
+    "neue Positionsart",
+    "19 %"
+  ],
+  "dokumente": [
+    {
+      "pfad": "folgemonat/F04_lackwerk.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Lackwerk Südpark GmbH",
+    "invoice_number": "LS/2026/3512",
+    "invoice_date": "2026-11-10",
+    "currency": "EUR",
+    "net_total": "621.00",
+    "tax_total": "117.99",
+    "gross_total": "738.99",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Basislack Farbton nach Muster",
+        "quantity": "3",
+        "unit": "l",
+        "unit_price": "58.00",
+        "net_amount": "174.00",
+        "tax_rate": "19",
+        "account_skr03": "3400"
+      },
+      {
+        "description": "Klarlack 2K HS",
+        "quantity": "4",
+        "unit": "l",
+        "unit_price": "39.50",
+        "net_amount": "158.00",
+        "tax_rate": "19",
+        "account_skr03": "3400"
+      },
+      {
+        "description": "Akku-Poliermaschine 18 V",
+        "quantity": "1",
+        "unit": "Stück",
+        "unit_price": "289.00",
+        "net_amount": "289.00",
+        "tax_rate": "19",
+        "account_skr03": "4985"
+      }
+    ]
+  }
+}

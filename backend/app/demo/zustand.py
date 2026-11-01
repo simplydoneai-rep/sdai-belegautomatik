@@ -9,11 +9,14 @@ from __future__ import annotations
 import json
 import re
 import threading
+import time
 from datetime import datetime
 from pathlib import Path
 from typing import Any
 
 from rapidfuzz import fuzz
+
+from app.lernen import regeln as lernregeln
 
 ZUSTAND = Path(__file__).resolve().parents[3] / "testdaten" / "demo" / "zustand.json"
 _LOCK = threading.Lock()
@@ -25,7 +28,7 @@ def kreditor_bereich(sachkontenlaenge: int = 4) -> tuple[int, int]:
 
 
 def _leer() -> dict[str, Any]:
-    return {"kreditoren": {}, "belege": {}, "uploads": {}, "protokoll": []}
+    return {"kreditoren": {}, "belege": {}, "uploads": {}, "regeln": {}, "folgemonat": False, "protokoll": []}
 
 
 def laden() -> dict[str, Any]:
@@ -39,7 +42,14 @@ def _speichern(z: dict[str, Any]) -> None:
     ZUSTAND.parent.mkdir(parents=True, exist_ok=True)
     tmp = ZUSTAND.with_suffix(".tmp")
     tmp.write_text(json.dumps(z, ensure_ascii=False, indent=1), encoding="utf-8")
-    tmp.replace(ZUSTAND)
+    for versuch in range(20):  # Windows sperrt die Datei kurz, z. B. während der Virenscanner sie liest
+        try:
+            tmp.replace(ZUSTAND)
+            return
+        except PermissionError:
+            if versuch == 19:
+                raise
+            time.sleep(0.05)
 
 
 def zuruecksetzen() -> None:
@@ -127,33 +137,87 @@ def konto_setzen(key: str, pos: int, konto: str | None, vorher: str | None) -> N
         _speichern(z)
 
 
-def freigeben(key: str, mandant: str, kreditor: str, buchungen: list[dict[str, Any]]) -> None:
-    """Freigabe: Status setzen und je Kreditor merken, welche Konten bestätigt wurden (einfache Lernregel)."""
+def freigeben(key: str, mandant: str, kreditor: str, buchungen: list[dict[str, Any]], brutto: str | None,
+              quelle: str = "Sachbearbeiter") -> None:
+    """Freigabe: Status setzen und je Position lernen (Lernregel je Mandant und Kreditor).
+    Die Änderungen an den Regeln werden am Beleg gemerkt, damit „Wieder öffnen“ sie zurücknehmen kann."""
+    jetzt = datetime.now().isoformat(timespec="seconds")
     with _LOCK:
         z = laden()
         b = z["belege"].setdefault(key, {"status": "offen", "konten": {}})
         if b.get("status") == "freigegeben":
             raise ValueError("Beleg ist schon freigegeben")
-        b.update({"status": "freigegeben", "kreditor": kreditor, "freigegeben_am": datetime.now().isoformat(timespec="seconds"),
-                  "buchungen": buchungen})
-        for k in z["kreditoren"].get(mandant, []):
-            if k["nr"] == kreditor:
-                for bu in buchungen:
-                    zaehler = k.setdefault("konten", {})
-                    zaehler[bu["konto"]] = zaehler.get(bu["konto"], 0) + 1
-        _protokoll(z, key, "Status", "offen", "freigegeben", "Sachbearbeiter")
+        regeln = z.setdefault("regeln", {}).setdefault(mandant, {}).setdefault(kreditor, [])
+        gelernt = [lernregeln.lernen(regeln, bu["bezeichnung"], bu["steuersatz"], bu["konto"], bu["korrektur"], jetzt)
+                   for bu in buchungen]
+        b.update({"status": "freigegeben", "mandant": mandant, "kreditor": kreditor, "freigegeben_am": jetzt,
+                  "buchungen": buchungen, "gelernt": gelernt, "brutto": brutto})
+        _protokoll(z, key, "Status", "offen", "freigegeben", quelle)
+        for bu, g in zip(buchungen, gelernt):
+            art = "neu gelernt" if g["vorher"] is None else ("korrigiert" if bu["korrektur"] else "bestätigt")
+            _protokoll(z, key, f"Lernregel {kreditor}", None, f'{bu["bezeichnung"]} → {bu["konto"]} ({art})', quelle)
         _speichern(z)
 
 
-def wiedereroeffnen(key: str) -> None:
+def wiedereroeffnen(key: str, mandant: str) -> None:
+    """Freigabe zurücknehmen; was diese Freigabe gelernt hat, wird ebenfalls zurückgenommen."""
     with _LOCK:
         z = laden()
         b = z["belege"].get(key)
         if not b or b.get("status") != "freigegeben":
             raise ValueError("Beleg ist nicht freigegeben")
-        b["status"] = "offen"
-        _protokoll(z, key, "Status", "freigegeben", "offen", "Sachbearbeiter")
+        regeln = z.get("regeln", {}).get(mandant, {}).get(b.get("kreditor", ""), [])
+        for g in reversed(b.get("gelernt", [])):
+            lernregeln.rueckgaengig(regeln, g)
+        b.update({"status": "offen", "gelernt": []})
+        _protokoll(z, key, "Status", "freigegeben", "offen (Gelerntes zurückgenommen)", "Sachbearbeiter")
         _speichern(z)
+
+
+def regeln(mandant: str, kreditor: str | None) -> list[dict[str, Any]]:
+    if not kreditor:
+        return []
+    r: list[dict[str, Any]] = laden().get("regeln", {}).get(mandant, {}).get(kreditor, [])
+    return r
+
+
+def regel_aktiv_setzen(mandant: str, kreditor: str, regel_id: str, aktiv: bool) -> None:
+    with _LOCK:
+        z = laden()
+        for r in z.get("regeln", {}).get(mandant, {}).get(kreditor, []):
+            if r["id"] == regel_id:
+                vorher = r.get("aktiv", True)
+                r["aktiv"] = aktiv
+                _protokoll(z, None, f"Lernregel {kreditor} „{r['beispiel']}“", "aktiv" if vorher else "aus",
+                           "aktiv" if aktiv else "aus", "Sachbearbeiter")
+                _speichern(z)
+                return
+    raise ValueError("Regel nicht gefunden")
+
+
+def bruttohistorie(mandant: str, kreditor: str | None, ohne: str | None = None) -> list[str]:
+    """Bruttobeträge freigegebener Belege dieses Kreditors (für die Prüfung ungewöhnlicher Beträge)."""
+    if not kreditor:
+        return []
+    z = laden()
+    return [str(b["brutto"]) for k, b in z["belege"].items()
+            if k != ohne and b.get("status") == "freigegeben" and b.get("kreditor") == kreditor and b.get("brutto")
+            and k in _belege_des_mandanten(z, mandant)]
+
+
+def _belege_des_mandanten(z: dict[str, Any], mandant: str) -> set[str]:
+    return {k for k, b in z["belege"].items() if b.get("mandant") == mandant}
+
+
+def folgemonat_einspielen() -> bool:
+    with _LOCK:
+        z = laden()
+        if z.get("folgemonat"):
+            return False
+        z["folgemonat"] = True
+        _protokoll(z, None, "Eingang", None, "Belege November 2026 eingespielt", "Demo")
+        _speichern(z)
+        return True
 
 
 def protokoll(key: str | None = None) -> list[dict[str, Any]]:

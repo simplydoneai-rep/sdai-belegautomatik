@@ -1,0 +1,55 @@
+{
+  "id": "F02",
+  "quelle": "folgemonat",
+  "client_id": "M1",
+  "merkmale": [
+    "wiederkehrend",
+    "7 % und 19 %"
+  ],
+  "dokumente": [
+    {
+      "pfad": "folgemonat/F02_getraenke.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Getränke Hanse Vertrieb GmbH",
+    "invoice_number": "GH-88977",
+    "invoice_date": "2026-11-06",
+    "currency": "EUR",
+    "net_total": "245.20",
+    "tax_total": "40.87",
+    "gross_total": "286.07",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Mineralwasser medium 12 x 0,75 l",
+        "quantity": "10",
+        "unit": "Kiste",
+        "unit_price": "8.40",
+        "net_amount": "84.00",
+        "tax_rate": "19",
+        "account_skr03": "3400"
+      },
+      {
+        "description": "Apfelsaft naturtrüb 6 x 1,0 l",
+        "quantity": "8",
+        "unit": "Kiste",
+        "unit_price": "14.20",
+        "net_amount": "113.60",
+        "tax_rate": "19",
+        "account_skr03": "3400"
+      },
+      {
+        "description": "Vollmilch 3,8 % Barista",
+        "quantity": "40",
+        "unit": "l",
+        "unit_price": "1.19",
+        "net_amount": "47.60",
+        "tax_rate": "7",
+        "account_skr03": "3300"
+      }
+    ]
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "id": "F05",
+  "quelle": "folgemonat",
+  "client_id": "M3",
+  "merkmale": [
+    "wiederkehrend",
+    "19 %"
+  ],
+  "dokumente": [
+    {
+      "pfad": "folgemonat/F05_holzhandel.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Holzhandel Waldmark GmbH",
+    "invoice_number": "WM-55488",
+    "invoice_date": "2026-11-12",
+    "currency": "EUR",
+    "net_total": "3060.00",
+    "tax_total": "581.40",
+    "gross_total": "3641.40",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Konstruktionsvollholz Fichte 80 x 160 mm",
+        "quantity": "6",
+        "unit": "m³",
+        "unit_price": "465.00",
+        "net_amount": "2790.00",
+        "tax_rate": "19",
+        "account_skr03": "3400"
+      },
+      {
+        "description": "Dachlatten 30 x 50 mm imprägniert",
+        "quantity": "200",
+        "unit": "m",
+        "unit_price": "1.35",
+        "net_amount": "270.00",
+        "tax_rate": "19",
+        "account_skr03": "3400"
+      }
+    ]
+  }
+}

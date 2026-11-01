@@ -1,0 +1,36 @@
+{
+  "id": "F15",
+  "quelle": "folgemonat",
+  "client_id": "M3",
+  "merkmale": [
+    "Reverse Charge § 13b"
+  ],
+  "dokumente": [
+    {
+      "pfad": "folgemonat/F15_geruest.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Gerüst & Ausbau Kessler GmbH",
+    "invoice_number": "K-2026-131",
+    "invoice_date": "2026-11-16",
+    "currency": "EUR",
+    "net_total": "2450.00",
+    "tax_total": "0.00",
+    "gross_total": "2450.00",
+    "reverse_charge": true,
+    "lines": [
+      {
+        "description": "Gerüststellung Bauvorhaben Ahornweg, Standzeit 4 Wochen",
+        "quantity": "1",
+        "unit": "pauschal",
+        "unit_price": "2450.00",
+        "net_amount": "2450.00",
+        "tax_rate": "0",
+        "account_skr03": "3120"
+      }
+    ]
+  }
+}

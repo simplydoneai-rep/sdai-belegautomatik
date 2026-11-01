@@ -1,0 +1,55 @@
+{
+  "id": "F03",
+  "quelle": "folgemonat",
+  "client_id": "M2",
+  "merkmale": [
+    "wiederkehrend",
+    "19 %"
+  ],
+  "dokumente": [
+    {
+      "pfad": "folgemonat/F03_teilezentrum.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Teilezentrum Nordring GmbH",
+    "invoice_number": "TZN-261105-03",
+    "invoice_date": "2026-11-05",
+    "currency": "EUR",
+    "net_total": "471.50",
+    "tax_total": "89.59",
+    "gross_total": "561.09",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Bremsscheibe vorne belüftet",
+        "quantity": "4",
+        "unit": "Stück",
+        "unit_price": "64.50",
+        "net_amount": "258.00",
+        "tax_rate": "19",
+        "account_skr03": "3400"
+      },
+      {
+        "description": "Motoröl 5W-30 Longlife",
+        "quantity": "25",
+        "unit": "l",
+        "unit_price": "6.80",
+        "net_amount": "170.00",
+        "tax_rate": "19",
+        "account_skr03": "3400"
+      },
+      {
+        "description": "Ölfilter",
+        "quantity": "6",
+        "unit": "Stück",
+        "unit_price": "7.25",
+        "net_amount": "43.50",
+        "tax_rate": "19",
+        "account_skr03": "3400"
+      }
+    ]
+  }
+}
