@@ -292,6 +292,13 @@ Vorgaben Paul Graß umgesetzt, Details: `docs/entscheidungen/2026-11-01_dashboar
 - `docs/verfahrensdokumentation.md` gibt es noch nicht (Phase 5); die Änderungen an der Verarbeitung stehen bis dahin in den Entscheidungen.
 - 132 Tests grün.
 
+## 01.11.2026 – Dashboard-Kacheln, aufklappbare Abschnitte, kompaktere Belegverarbeitung
+
+Vorgaben Paul Graß:
+- **Sachbearbeiter und Rechte:** Suchfeld nach Mandantenname oder -nummer.
+- **Dashboard-Kacheln** zeigen keine Belegzahlen mehr (die stehen je Mandant in der Liste), sondern: Meine Mandanten (zuständig/Vertretung; bei der Kanzleileitung alle Mandanten und Teamgröße), Mandanten mit offenen Belegen, ältester offener Monat (mit Mandant, für die Fristen der Voranmeldung) und fertig gebuchte Mandanten.
+- **Belegverarbeitung kompakter:** Kreditor, Positionen und Konten, Buchungssätze und Rechnungsdaten sind aufklappbar; die Kopfzeile zeigt auch zugeklappt das Wichtigste (z. B. „70000 · Frischgut · 7 Regeln“, „4 Positionen · 4 sicher“, „1 Zeile · Automatik · Gegenkonto 70000“). Standard: nur Positionen offen; der Zustand wird je Person gemerkt. Ein neuer Lieferant öffnet den Kreditor-Abschnitt von selbst, weil dort eine Aktion nötig ist. Prüfgründe als Marken in einer Zeile, Positionen einzeilig, geringere Abstände: eine Rechnung passt meist auf einen Bildschirm.
+
 ## Nächste Schritte
 
 Die aktuelle Aufgabenliste steht in `docs/projektplan.md`, Abschnitt 10. Die Liste unten ist der Stand vom 28.10.2026 vor dem Projektplan.

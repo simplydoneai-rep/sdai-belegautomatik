@@ -128,6 +128,7 @@ async function init() {
   $("sb-form").addEventListener("submit", sichereSachbearbeiter);
   $("rechte-suche").addEventListener("input", zeigeRechte);
   bindeWerkzeuge();
+  bindeAbschnitte();
   window.addEventListener("hashchange", route);
   route();
 }
@@ -193,6 +194,27 @@ function team(personen) {
     data-name="${esc(p.name)} · ${esc(p.rolle)}">${esc(p.kuerzel)}</span>`).join("") || `<span class="klein">–</span>`;
 }
 
+/* Kacheln: Mandanten im Blick (Belegzahlen stehen je Mandant in der Liste) */
+function zeigeKacheln(u, s) {
+  const ms = u.mandanten;
+  const ich = s.nutzer.kuerzel;
+  const zustaendig = ms.filter((m) => m.zustaendig === ich).length;
+  const vertretung = ms.filter((m) => m.vertretung === ich).length;
+  $("k1-titel").textContent = s.leitung ? "Mandanten der Kanzlei" : "Meine Mandanten";
+  $("k1").textContent = ms.length;
+  $("k1-text").textContent = s.leitung ? `${anzahl(s.sachbearbeiter.length, "Person", "Personen")} im Team`
+    : `${zustaendig} zuständig · ${vertretung} Vertretung` + (ms.length > zustaendig + vertretung ? ` · ${ms.length - zustaendig - vertretung} weitere` : "");
+  const offen = ms.filter((m) => m.offen);
+  $("k2").textContent = offen.length;
+  $("k2-text").textContent = offen.length ? `davon ${offen.filter((m) => m.pruefen).length} mit Belegen zur Prüfung` : "nichts offen";
+  const aeltester = offen.flatMap((m) => m.monate.map((mo) => ({ mo, name: m.name }))).sort((a, b) => a.mo.localeCompare(b.mo))[0];
+  $("k3").textContent = aeltester ? monatText(aeltester.mo) : "–";
+  $("k3-text").textContent = aeltester ? aeltester.name : "keine offenen Belege";
+  const fertig = ms.filter((m) => !m.offen && !m.lesen);
+  $("k4").textContent = fertig.length;
+  $("k4-text").textContent = fertig.length ? "ohne offene Belege, bereit für DATEV" : "noch bei keinem Mandanten";
+}
+
 function zeigeUebersicht() {
   const u = zustand.uebersicht;
   if (!u) return;
@@ -200,11 +222,7 @@ function zeigeUebersicht() {
   const stunde = new Date().getHours();
   $("ue-gruss").textContent = `${stunde < 11 ? "Guten Morgen" : stunde < 18 ? "Guten Tag" : "Guten Abend"}, ${s.nutzer.name} · `
     + (s.leitung ? "Kanzleileitung: Sie sehen alle Mandanten" : `${anzahl(u.mandanten.length, "Mandant", "Mandanten")} zugeordnet`);
-  $("k-offen").textContent = u.summe.offen;
-  $("k-sicher").textContent = u.summe.sicher;
-  $("k-pruefen").textContent = u.summe.pruefen;
-  $("k-mandanten").textContent = u.mandanten.length;
-  $("k-mandanten-text").textContent = s.leitung ? "Mandanten" : "Meine Mandanten";
+  zeigeKacheln(u, s);
   $("ue-titel").textContent = s.leitung ? "Alle Mandanten" : "Meine Mandanten";
   const q = $("ue-suche").value.trim().toLowerCase();
   const zeilen = u.mandanten.filter((m) => !q || `${m.name} ${m.nummer} ${m.ansprechpartner}`.toLowerCase().includes(q));
@@ -338,6 +356,24 @@ async function sichereSachbearbeiter(e) {
   } catch (err) { toast(err.message, true); }
 }
 
+/* ---------- Aufklappbare Abschnitte (Zustand je Abschnitt gemerkt) ---------- */
+const KLAPP_START = { kreditor: false, positionen: true, buchungen: false, daten: false };
+let klapp = { ...KLAPP_START };
+
+function bindeAbschnitte() {
+  try { klapp = { ...KLAPP_START, ...JSON.parse(lies("klapp") || "{}") }; } catch { klapp = { ...KLAPP_START }; }
+  document.querySelectorAll("details[data-klapp]").forEach((d) => {
+    d.open = klapp[d.dataset.klapp];
+    d.querySelector("summary").addEventListener("click", () => setTimeout(() => {
+      klapp[d.dataset.klapp] = d.open; merke("klapp", JSON.stringify(klapp));
+    }, 0));
+  });
+}
+
+function setzeKlapp(name, offen) {
+  document.querySelector(`details[data-klapp="${name}"]`).open = offen;
+}
+
 /* ---------- Belegverarbeitung: Liste ---------- */
 function zeigeMandantKopf() {
   const m = zustand.stamm.mandanten.find((x) => x.id === zustand.mandant);
@@ -454,17 +490,19 @@ function zeigeBeleg(b) {
 
   const aus = $("b-ausnahmen");
   aus.hidden = fertig || !b.ausnahmen.length;
-  aus.innerHTML = `<b>Zur Prüfung, weil:</b><ul>${b.ausnahmen.map((a) => `<li>${esc(a)}</li>`).join("")}</ul>`;
+  aus.innerHTML = `<b>Zur Prüfung:</b>${b.ausnahmen.map((a) => `<span class="grund">${esc(a)}</span>`).join("")}`;
 
   zeigeKreditor(b, fertig);
 
   const sicher = b.positionen.filter((p) => p.ampel === "gruen").length;
-  $("b-pos-info").textContent = `${anzahl(b.positionen.length, "Position", "Positionen")} · ${sicher} sicher` + (b.gelernt ? ` · ${b.gelernt} gelernt` : "");
+  const unsicher = b.positionen.length - sicher;
+  $("b-pos-info").innerHTML = `${anzahl(b.positionen.length, "Position", "Positionen")} · ${sicher} sicher`
+    + (unsicher ? ` · <span class="kurz-warn">${unsicher} prüfen</span>` : "") + (b.gelernt ? ` · ${b.gelernt} gelernt` : "");
   $("positionen").innerHTML = b.positionen.map((p) => `
     <li class="position">
       <div class="p-text">${esc(p.bezeichnung || "Position " + (p.pos + 1))}
-        <small>${p.menge ? esc(Number(p.menge).toLocaleString("de-DE")) + " " + esc(p.einheit || "") : ""}</small></div>
-      <div class="p-betrag">${geld(p.netto, w)}<small>${p.steuersatz ?? "–"} % USt</small></div>
+        ${p.menge ? `<small>${esc(Number(p.menge).toLocaleString("de-DE"))} ${esc(p.einheit || "")}</small>` : ""}</div>
+      <div class="p-betrag">${geld(p.netto, w)} <small>· ${p.steuersatz ?? "–"} %</small></div>
       <div class="p-konto">
         <div class="konto-feld ${p.ampel}">
           <input data-pos="${p.pos}" ${fertig ? "disabled" : ""} autocomplete="off"
@@ -473,7 +511,7 @@ function zeigeBeleg(b) {
         </div>
         ${steuerChip(p.steuer)}
         <div class="ampel ${p.ampel}" title="${esc(p.grund)}"><span class="punkt ${p.ampel}"></span>
-          <span><b>${AMPEL[p.ampel]}</b><br>${esc(p.grund)}</span></div>
+          <span class="ampel-text"><b>${AMPEL[p.ampel]}</b><small>${esc(p.grund)}</small></span></div>
       </div>
     </li>`).join("");
   $("positionen").querySelectorAll("input[data-pos]").forEach(bindeKontoFeld);
@@ -488,6 +526,8 @@ function zeigeBeleg(b) {
     ["Steuerfall", esc(b.steuerfall.text)],
     ["Mandant", esc(`${b.mandant.name} · ${b.mandant.nummer} · ${b.mandant.kontenrahmen}`)]]
     .map(([a, c]) => `<tr><td>${a}</td><td>${c}</td></tr>`).join("");
+  $("kurz-daten").textContent = [k.invoice_number && `Nr. ${k.invoice_number}`, HERKUNFT[k.herkunft],
+    k.lieferant_ustid && `USt-IdNr. ${k.lieferant_ustid}`].filter(Boolean).join(" · ");
   $("verlauf").innerHTML = b.protokoll.slice().reverse().map((e) => `<li><span><b>${esc(e.feld)}</b>: ${esc(e.alt ?? "–")} → ${esc(e.neu ?? "–")}
     <small>${new Date(e.zeit).toLocaleString("de-DE")} · ${esc(e.nutzer)} · ${esc(e.quelle)}</small></span></li>`).join("")
     || `<li><span class="klein">Noch keine Änderungen</span></li>`;
@@ -533,6 +573,10 @@ function zeigeBuchungen(b) {
   else hinweise.push("Umsatz netto: Vorsteuer und Umsatzsteuer bucht DATEV über Konto oder Steuerschlüssel.");
   if (w !== "EUR") hinweise.push(`Beträge in ${w}: Vor dem Export in Euro umrechnen (Kurs zum Leistungsdatum).`);
   $("buchungen-hinweis").textContent = hinweise.join(" ");
+  const bus = [...new Set(b.buchungen.map((z) => z.bu ? `BU ${z.bu}` : "Automatik"))];
+  $("kurz-buchungen").innerHTML = b.buchungen.length
+    ? `${anzahl(b.buchungen.length, "Zeile", "Zeilen")} · ${esc(bus.join(", "))} · Gegenkonto ${b.kreditor ? esc(b.kreditor.nr) : `<span class="kurz-warn">fehlt</span>`}`
+    : `<span class="kurz-warn">noch keine Konten</span>`;
 }
 
 function zeigeKreditor(b, fertig) {
@@ -546,19 +590,22 @@ function zeigeKreditor(b, fertig) {
         <label class="schalter" title="${r.aktiv ? "Regel abschalten" : "Regel einschalten"}">
           <input type="checkbox" data-regel="${esc(r.id)}" ${r.aktiv ? "checked" : ""}><span></span></label>
       </div>`).join("");
-    el.innerHTML = `<div class="kreditor"><div><div class="klein">Kreditor</div><div class="nr">${esc(b.kreditor.nr)}</div></div>
-      <div><div>${esc(b.kreditor.name)}</div><div class="klein">fest zugeordnet für ${esc(b.mandant.name)}</div></div></div>
-      <details class="regeln" ${b.regeln.length ? "" : "hidden"}><summary>Gelernte Regeln für diesen Lieferanten (${b.regeln.length})</summary>${regeln}</details>`;
+    $("kurz-kreditor").innerHTML = `<b>${esc(b.kreditor.nr)}</b> · ${esc(b.kreditor.name)}` + (b.regeln.length ? ` · ${anzahl(b.regeln.length, "Regel", "Regeln")}` : "");
+    el.innerHTML = `<p class="klein kreditor-info">Kreditor ${esc(b.kreditor.nr)} ist fest zugeordnet für ${esc(b.mandant.name)}.
+      ${b.regeln.length ? "Gelernte Regeln für diesen Lieferanten, einzeln abschaltbar:" : "Noch keine gelernten Regeln."}</p>
+      <div class="regeln">${regeln}</div>`;
     el.querySelectorAll("input[data-regel]").forEach((i) => i.addEventListener("change", async () => {
       try {
         const neu = await post("/api/regel/aktiv", { key: b.key, regel: i.dataset.regel, aktiv: i.checked, modell: zustand.modell });
-        zeigeBeleg(neu); el.querySelector(".regeln").open = true; ladeListe();
+        zeigeBeleg(neu); setzeKlapp("kreditor", true); ladeListe();
         toast(i.checked ? "Regel eingeschaltet" : "Regel abgeschaltet – Konto kommt wieder von der KI");
       } catch (e) { toast(e.message, true); }
     }));
     return;
   }
   const v = b.kreditor_vorschlag;
+  $("kurz-kreditor").innerHTML = `<span class="kurz-warn">Neuer Lieferant – Kreditor anlegen</span>`;
+  if (!fertig) setzeKlapp("kreditor", true);  // braucht eine Aktion: immer offen
   el.innerHTML = `<div class="hinweis-zeile"><span class="punkt gelb"></span>Neuer Lieferant – bitte zuerst eine Kreditorennummer vergeben</div>
     <div class="kreditor-neu">
       <label>Kreditorennummer<input id="k-nr" class="feld" inputmode="numeric" value="${v.nr}" ${fertig ? "disabled" : ""}></label>
