@@ -348,6 +348,10 @@ Lücke geschlossen (Freigabe Paul Graß), Details: `docs/entscheidungen/2026-11-
 - Offen: Namenserkennung für Freitext ohne Anrede (NER); Zusatz in `CLAUDE.md` Regel 4 vorgeschlagen.
 - 159 Tests grün.
 
+## 02.11.2026 – Steuersatz nur als Anzeige
+
+- Steuersatz je Position nur noch als Anzeige; geändert wird über den Steuerschlüssel. Passt ein von Hand gewählter Schlüssel nicht zum Satz der Rechnung, bietet der Hinweis „Rechnung falsch gelesen? Steuersatz auf X % korrigieren“ an; die Korrektur lässt sich mit „zurück auf … %“ aufheben.
+
 ## Nächste Schritte
 
 Die aktuelle Aufgabenliste steht in `docs/projektplan.md`, Abschnitt 10. Die Liste unten ist der Stand vom 28.10.2026 vor dem Projektplan.
@@ -362,4 +366,3 @@ Die aktuelle Aufgabenliste steht in `docs/projektplan.md`, Abschnitt 10. Die Lis
 | 6 | ~~Bei cisbox schriftlich anfordern: KI-Modell, Vietnam-Zugriff, Liste der Unterauftragsverarbeiter, AVV, Testat zur Revisionssicherheit~~ – entfällt, Entscheidung 28.10.2026 | – |
 | 7 | Messgrößen für jeden Test festlegen (Übernahmequote, Minuten pro Beleg, Fehlerquote) | Kanzlei und Simply Done AI |
 | 8 | Vereinbarung Kanzlei ↔ Simply Done AI (AVV + § 62a StBerG) entwerfen lassen | Simply Done AI |
-- Nachtrag: Steuersatz je Position nur noch als Anzeige; geändert wird über den Steuerschlüssel. Passt ein von Hand gewählter Schlüssel nicht zum Satz der Rechnung, bietet der Hinweis „Rechnung falsch gelesen? Steuersatz auf X % korrigieren“ an; die Korrektur lässt sich mit „zurück auf … %“ aufheben.
