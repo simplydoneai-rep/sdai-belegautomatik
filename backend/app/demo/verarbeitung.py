@@ -56,13 +56,13 @@ def mandanten() -> dict[str, dict[str, Any]]:
 def mandant_profil(client_id: str) -> dict[str, Any]:
     """Angaben des Mandanten für die Pseudonymisierung. Neu erfasste Mandanten (Kanzlei-Stammdaten) haben
     nur Name und Ansprechpartner."""
-    if client_id in mandanten():
-        return mandanten()[client_id]
     from app.demo import kanzlei
 
     m = kanzlei.mandant(client_id)
+    if client_id in mandanten():
+        return {**mandanten()[client_id], "vat_id": m.get("ustid") or mandanten()[client_id]["vat_id"]}
     return {"name": m["name"], "person": m.get("ansprechpartner") or m["name"], "street": "", "postcode": "",
-            "city": "", "vat_id": "", "industry_code": "", "branche": m.get("branche", "")}
+            "city": "", "vat_id": m.get("ustid") or "", "industry_code": "", "branche": m.get("branche", "")}
 
 
 @lru_cache(maxsize=1)
@@ -240,6 +240,38 @@ def verarbeite(path: Path, client_id: str, modell: str, erwartet: dict[str, Any]
         "positionen": positionen, "steuerlogik": {"ok": bool(check and check.ok), "hinweise": check.hinweise if check else []},
         "ampel": gesamt, "pseudonymisiert": pseudo_text, "platzhalter": platzhalter, "soll": soll,
     }
+
+
+@lru_cache(maxsize=128)
+def positionsrahmen(path: Path, beschreibungen: tuple[str, ...]) -> list[list[dict[str, float]]]:
+    """Wo steht welche Position auf dem Beleg? Sucht die ersten Wörter jeder Bezeichnung im PDF-Textlayer und gibt
+    die Zeile als Rechteck relativ zur Seite zurück (0–1). Scans, Fotos und E-Rechnungen: keine Markierung."""
+    import pymupdf
+
+    leer: list[list[dict[str, float]]] = [[] for _ in beschreibungen]
+    if path.suffix.lower() != ".pdf":
+        return leer
+    out: list[list[dict[str, float]]] = []
+    belegt: set[tuple[int, int]] = set()
+    with pymupdf.open(path) as doc:
+        if not any(page.get_text().strip() for page in doc):
+            return leer
+        for text in beschreibungen:
+            suche = " ".join((text or "").split()[:4])[:40]
+            treffer: list[dict[str, float]] = []
+            for nr, page in enumerate(doc):
+                if not suche or treffer:
+                    break
+                for r in page.search_for(suche):
+                    if (nr, round(r.y0)) in belegt:  # gleiche Bezeichnung zweimal: nächste Fundstelle
+                        continue
+                    belegt.add((nr, round(r.y0)))
+                    h = page.rect.height
+                    treffer.append({"seite": nr, "x0": 0.04, "x1": 0.96, "y0": max(0.0, (r.y0 - 2) / h),
+                                    "y1": min(1.0, (r.y1 + 2) / h)})
+                    break
+            out.append(treffer)
+    return out
 
 
 @lru_cache(maxsize=64)

@@ -17,7 +17,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from app.demo import ansicht, kanzlei, zustand
-from app.demo.verarbeitung import MODELLE, aufzeichnungen, seitenbilder
+from app.demo.verarbeitung import MODELLE, aufzeichnungen, positionsrahmen, seitenbilder
 from app.kontierung.kontensuche import alle_konten, suchen
 
 STATIC = Path(__file__).resolve().parents[1] / "demo" / "static"
@@ -109,6 +109,7 @@ class MandantDaten(BaseModel):
     nummer: int | str
     kontenrahmen: str
     ansprechpartner: str = ""
+    ustid: str | None = None
     zustaendig: str | None = None
     vertretung: str | None = None
 
@@ -168,6 +169,13 @@ def beleg_seite(key: str, i: int, dpi: int = 110) -> Response:
     return Response(seiten[i], media_type="image/png")
 
 
+@app.get("/api/beleg/markierungen")
+def beleg_markierungen(key: str, modell: str = ansicht.STANDARD_MODELL) -> list[list[dict[str, float]]]:
+    """Fundstellen der Positionen im Beleg für die Hervorhebung beim Überfahren."""
+    a = ansicht.ansicht(_key(key), _modell(modell))
+    return positionsrahmen(ansicht.pfad(key), tuple(p["bezeichnung"] or "" for p in a["positionen"]))
+
+
 @app.get("/api/beleg/datei", response_model=None)
 def beleg_datei(key: str) -> FileResponse | PlainTextResponse:
     path = ansicht.pfad(_key(key))
@@ -204,6 +212,66 @@ class BelegAktion(BaseModel):
 def konto_waehlen(w: KontoWahl) -> dict[str, Any]:
     try:
         return ansicht.konto_waehlen(_key(w.key), w.pos, w.nr, _modell(w.modell))
+    except ValueError as exc:
+        raise _fehler(exc) from exc
+
+
+class KreditorDaten(BaseModel):
+    key: str
+    ustid: str | None = None
+    land: str | None = None
+    modell: str = ansicht.STANDARD_MODELL
+
+
+class PositionWert(BaseModel):
+    key: str
+    pos: int
+    wert: str | None = None  # None = zurück zum Vorschlag
+    modell: str = ansicht.STANDARD_MODELL
+
+
+class Aufteilung(BaseModel):
+    key: str
+    pos: int
+    teile: list[dict[str, str]] | None = None  # [] = keine Aufteilung, None = Vorschlag
+    modell: str = ansicht.STANDARD_MODELL
+
+
+@app.get("/api/steuerschluessel")
+def steuerschluessel_liste() -> list[dict[str, Any]]:
+    from app.kontierung.steuerschluessel import auswahl
+
+    return auswahl()
+
+
+@app.post("/api/beleg/steuerschluessel")
+def steuerschluessel_waehlen(w: PositionWert) -> dict[str, Any]:
+    try:
+        return ansicht.steuerschluessel_waehlen(_key(w.key), w.pos, w.wert, _modell(w.modell))
+    except ValueError as exc:
+        raise _fehler(exc) from exc
+
+
+@app.post("/api/beleg/steuersatz")
+def steuersatz_waehlen(w: PositionWert) -> dict[str, Any]:
+    try:
+        return ansicht.steuersatz_waehlen(_key(w.key), w.pos, w.wert, _modell(w.modell))
+    except ValueError as exc:
+        raise _fehler(exc) from exc
+
+
+@app.post("/api/beleg/aufteilung")
+def aufteilen(a: Aufteilung) -> dict[str, Any]:
+    try:
+        return ansicht.aufteilen(_key(a.key), a.pos, a.teile, _modell(a.modell))
+    except ValueError as exc:
+        raise _fehler(exc) from exc
+
+
+@app.post("/api/beleg/kreditor/daten")
+def kreditor_daten(k: KreditorDaten) -> dict[str, Any]:
+    try:
+        return ansicht.kreditor_daten(_key(k.key), k.ustid, k.land, _modell(k.modell))
     except ValueError as exc:
         raise _fehler(exc) from exc
 

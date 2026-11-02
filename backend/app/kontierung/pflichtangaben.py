@@ -35,13 +35,13 @@ _SKONTO = re.compile(r"(?i)skonto")
 PUNKTE = [
     ("leistender", "Name und Anschrift des Lieferanten", "§ 14 Abs. 4 Nr. 1 UStG"),
     ("empfaenger", "Name und Anschrift des Mandanten", "§ 14 Abs. 4 Nr. 1 UStG"),
-    ("steuernummer", "Steuernummer oder USt-IdNr. des Lieferanten", "§ 14 Abs. 4 Nr. 2 UStG"),
-    ("datum", "Ausstellungsdatum", "§ 14 Abs. 4 Nr. 3 UStG"),
+    ("steuernummer", "Steuernummer / USt-IdNr. des Lieferanten", "§ 14 Abs. 4 Nr. 2 UStG"),
+    ("datum", "Rechnungsdatum", "§ 14 Abs. 4 Nr. 3 UStG"),
     ("nummer", "Fortlaufende Rechnungsnummer", "§ 14 Abs. 4 Nr. 4 UStG"),
     ("menge_art", "Menge und Art der Leistung", "§ 14 Abs. 4 Nr. 5 UStG"),
-    ("leistungszeit", "Zeitpunkt der Leistung (Monat genügt)", "§ 14 Abs. 4 Nr. 6 UStG, § 31 Abs. 4 UStDV"),
-    ("entgelt", "Entgelt nach Steuersätzen aufgeschlüsselt", "§ 14 Abs. 4 Nr. 7 UStG"),
-    ("steuer", "Steuersatz und Steuerbetrag oder Hinweis auf Befreiung", "§ 14 Abs. 4 Nr. 8 UStG"),
+    ("leistungszeit", "Zeitpunkt der Leistung", "§ 14 Abs. 4 Nr. 6 UStG, § 31 Abs. 4 UStDV"),
+    ("entgelt", "Entgelt je Steuersatz", "§ 14 Abs. 4 Nr. 7 UStG"),
+    ("steuer", "Steuersatz und Steuerbetrag", "§ 14 Abs. 4 Nr. 8 UStG"),
 ]
 KLEIN_PFLICHT = {"leistender", "datum", "menge_art", "steuer"}  # § 33 UStDV
 
@@ -95,14 +95,14 @@ def pruefe(kopf: dict[str, Any], positionen: list[dict[str, Any]], text: str, ma
 
     if fall == "13b":
         ok = bool(_RC_HINWEIS.search(text))
-        punkte.append({"key": "hinweis_13b", "text": "Hinweis „Steuerschuldnerschaft des Leistungsempfängers“",
+        punkte.append({"key": "hinweis_13b", "text": "Hinweis auf Reverse Charge",
                        "grundlage": "§ 14a Abs. 5 UStG", "status": "ok" if ok else "hinweis",
                        "detail": "" if ok else "fehlt; Steuer schuldet der Mandant trotzdem"})
     if fall == "ige":
         ok = bool(kopf.get("lieferant_ustid")) and bool(mandant.get("vat_id")) and mandant["vat_id"] in text.replace(" ", "")
         punkte.append({"key": "ustid_beide", "text": "USt-IdNr. von Lieferant und Mandant",
                        "grundlage": "§ 14a Abs. 3 UStG", "status": "ok" if ok else "fehlt", "detail": ""})
-    punkte.append({"key": "rechnerisch", "text": "Rechnerisch richtig (Netto + Steuer = Brutto)",
+    punkte.append({"key": "rechnerisch", "text": "Rechnerisch richtig",
                    "grundlage": "Prüfung", "status": "ok" if summen_ok else "fehlt", "detail": ""})
 
     fehlt = [p["text"] for p in punkte if p["status"] == "fehlt"]

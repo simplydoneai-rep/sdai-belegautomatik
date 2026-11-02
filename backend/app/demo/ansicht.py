@@ -36,6 +36,14 @@ MIN_STIMMEN = 3
 SACHKONTENLAENGE = 4  # je Mandant konfigurierbar, Demo: alle Mandanten 4-stellig
 STANDARD_JE_SATZ = {"19": "3400", "7": "3300"}
 STANDARD_JE_FALL = {"ige": ("3425",), "13b": ("3125", "3123")}  # Automatikkonten für i. g. Erwerb und § 13b
+# Bewirtung (§ 4 Abs. 5 Nr. 2 EStG): 70 % abziehbare Betriebsausgabe, 30 % nicht abziehbar; Vorsteuer voll abziehbar
+# (§ 15 Abs. 1a Satz 2 UStG). Konten aus dem SKR03 2026: 4650 Bewirtungskosten, 4654 Nicht abzugsfähige Bewirtungskosten.
+BEWIRTUNG_KONTO, BEWIRTUNG_NICHT_ABZIEHBAR = "4650", "4654"
+BEWIRTUNG_AUFTEILUNG = [{"konto": "4650", "prozent": "70"}, {"konto": "4654", "prozent": "30"}]
+_BEWIRTUNG = re.compile(r"(?i)\bbewirtung")
+_GASTRONOMIE = re.compile(r"(?i)\b(restaurant|gasthaus|gaststätte|gasthof|wirtshaus|ristorante|trattoria|brauhaus|bistro|"
+                          r"pizzeria|steakhouse|weinstube)\b")
+_BEWIRTUNG_NACHWEIS = re.compile(r"(?is)anlass.{0,400}(teilnehmer|bewirtete\s+person)|(teilnehmer|bewirtete\s+person).{0,400}anlass")
 MIN_SICHERHEIT = Decimal("0.80")
 KLEINBETRAG = Decimal("250")
 BETRAG_FAKTOR = Decimal("2")  # mehr als doppelt so hoch wie bisher → prüfen
@@ -179,15 +187,47 @@ def _konto_ok(nr: str | None) -> str | None:
     return nr if konto(nr) else None
 
 
+def _dez(wert: Decimal) -> str:
+    """Dezimalzahl ohne Exponent: Decimal("20").normalize() wäre „2E+1“."""
+    return format(wert.normalize(), "f")
+
+
 def _datum(iso: str) -> str:
     j, m, t = iso[:10].split("-")
     return f"{t}.{m}.{j}"
 
 
+def _ist_bewirtung(kopf: dict[str, Any], r: dict[str, Any]) -> bool:
+    """Bewirtungsbeleg: Wort „Bewirtung“ auf dem Beleg oder Lieferant ist ein Gastronomiebetrieb."""
+    return bool(_BEWIRTUNG.search(r.get("pseudonymisiert") or "") or _GASTRONOMIE.search(kopf.get("supplier_name") or ""))
+
+
+def _teile(nr: str | None, netto: Decimal | None, aufteilung: list[dict[str, str]] | None, satz: Decimal | None,
+           fall: str, bu: str | None) -> list[dict[str, Any]]:
+    """Buchungsteile einer Position: ohne Aufteilung ein Teil, sonst je Konto der Anteil (Rest auf den letzten Teil)."""
+    if not nr:
+        return []
+    anteile = aufteilung or [{"konto": nr, "prozent": "100"}]
+    gesamt = netto or Decimal(0)
+    teile, rest = [], gesamt
+    for j, t in enumerate(anteile):
+        betrag = rest if j == len(anteile) - 1 else q2(gesamt * Decimal(t["prozent"]) / 100)
+        rest -= betrag
+        k = konto(t["konto"])
+        teile.append({"konto": oeffentlich(k) if k else {"nr": t["konto"], "name": "unbekannt", "kennzeichen": ""},
+                      "prozent": t["prozent"], "netto": str(betrag),
+                      "steuer": steuerschluessel.bestimmen(k, satz, fall, bu).oeffentlich()})
+    return teile
+
+
 def _position(i: int, pos: dict[str, Any], modell: str, je_modell: dict[str, list[dict[str, Any]]],
-              gewaehlt: dict[str, Any], regeln: list[dict[str, Any]], fall: str) -> dict[str, Any]:
+              st: dict[str, Any], regeln: list[dict[str, Any]], fall: str, bewirtung: bool = False) -> dict[str, Any]:
+    gewaehlt = st.get("konten", {})
     betrag = parse_amount(pos.get("net_amount"))
-    satz = parse_amount(pos.get("tax_rate"))
+    satz_beleg = parse_amount(pos.get("tax_rate"))
+    satz_manuell = st.get("satz", {}).get(str(i))
+    satz = parse_amount(satz_manuell) if satz_manuell is not None else satz_beleg
+    bu_manuell = st.get("bu", {}).get(str(i))
     stimmen: dict[str, list[str]] = {}
     for m, lines in je_modell.items():
         line = _passend(lines, betrag, i)
@@ -202,7 +242,7 @@ def _position(i: int, pos: dict[str, Any], modell: str, je_modell: dict[str, lis
     regel = lernregeln.regel_finden(regeln, pos.get("description"), pos.get("tax_rate"))
     abgeschaltet = regel is None and lernregeln.regel_finden(regeln, pos.get("description"), pos.get("tax_rate"),
                                                              nur_aktive=False) is not None
-    vorschlag_nr = regel["konto"] if regel else ki_konto  # automatischer Vorschlag ohne Eingriff
+    vorschlag_nr = regel["konto"] if regel else (BEWIRTUNG_KONTO if bewirtung else ki_konto)  # Vorschlag ohne Eingriff
     bestaetigt = str(i) in gewaehlt
     nr = gewaehlt.get(str(i)) if bestaetigt else vorschlag_nr
 
@@ -215,25 +255,40 @@ def _position(i: int, pos: dict[str, Any], modell: str, je_modell: dict[str, lis
 
     if regel:
         add(regel["konto"], f'Gelernt · {regel["bestaetigungen"]}× bestätigt')
+    if bewirtung:
+        add(BEWIRTUNG_KONTO, "Bewirtung erkannt · 70 % abziehbar")
+        add(BEWIRTUNG_NICHT_ABZIEHBAR, "Bewirtung · 30 % nicht abziehbar")
     add(ki_konto, f'KI · {MODELLE[modell]["kurz"]}')
     for kto, ms in sorted(stimmen.items(), key=lambda kv: -len(kv[1])):
         add(kto, f"KI · {len(ms)} von {len(je_modell)} Modellen")
     for r in regeln:
         if r.get("aktiv", True):
             add(r["konto"], "Bisher für diesen Kreditor")
-    if fall == "inland" and satz is not None and str(satz.normalize()) in STANDARD_JE_SATZ:
-        add(STANDARD_JE_SATZ[str(satz.normalize())], f"Standard bei {satz.normalize()} %")
+    if fall == "inland" and satz is not None and _dez(satz) in STANDARD_JE_SATZ:
+        add(STANDARD_JE_SATZ[_dez(satz)], f"Standard bei {_dez(satz)} %")
     for kto in STANDARD_JE_FALL.get(fall, ()):
         add(kto, f"Standard bei {steuerschluessel.FALL_TEXT[fall]}")
 
     k = konto(nr) if nr else None
-    steuer = steuerschluessel.bestimmen(k, satz, fall)
+    aufteilung_manuell = st.get("aufteilung", {}).get(str(i))
+    if aufteilung_manuell is not None:
+        aufteilung = aufteilung_manuell or None  # [] = bewusst keine Aufteilung
+    else:
+        aufteilung = BEWIRTUNG_AUFTEILUNG if nr == BEWIRTUNG_KONTO else None  # Bewirtung: 70/30 automatisch
+    teile = _teile(nr, betrag, aufteilung, satz, fall, bu_manuell)
+    steuer = steuerschluessel.Steuer(**{**teile[0]["steuer"], "satz": parse_amount(teile[0]["steuer"]["satz"])}) \
+        if teile else steuerschluessel.bestimmen(k, satz, fall, bu_manuell)
+    hinweis = next((t["steuer"]["hinweis"] for t in teile if t["steuer"]["hinweis"]), None) or steuer.hinweis
     n_stimmen = len(stimmen.get(nr or "", []))
     quelle = "manuell" if bestaetigt else ("regel" if regel else ("ki" if ki_konto else None))
     if not nr:
         ampel, grund, sicher = "rot", "Frei – bitte Konto wählen", 0.0
-    elif steuer.hinweis:  # Steuerlogik prüft immer, auch bei manueller Wahl (CLAUDE.md Regel 15)
-        ampel, grund, sicher = "gelb", steuer.hinweis, 0.3
+    elif hinweis:  # Steuerlogik prüft immer, auch bei manueller Wahl (CLAUDE.md Regel 15)
+        ampel, grund, sicher = "gelb", hinweis, 0.3
+    elif satz_manuell is not None and satz != satz_beleg:
+        ampel, grund, sicher = "gelb", f"Steuersatz von Hand geändert ({satz_beleg} % laut Beleg)", 0.5
+    elif bewirtung and not bestaetigt and not regel:
+        ampel, grund, sicher = "gelb", "Bewirtung erkannt: 70 % abziehbar, 30 % nicht abziehbar", 0.6
     elif bestaetigt:
         ampel, grund, sicher = "gruen", "Von Ihnen bestätigt", 1.0
     elif regel and lernregeln.ist_sicher(regel):
@@ -255,7 +310,10 @@ def _position(i: int, pos: dict[str, Any], modell: str, je_modell: dict[str, lis
                  else "Vorschlag ohne Bestätigung")
         sicher = 0.5
     return {"pos": i, "bezeichnung": pos.get("description"), "menge": pos.get("quantity"), "einheit": pos.get("unit"),
-            "netto": pos.get("net_amount"), "steuersatz": pos.get("tax_rate"),
+            "netto": pos.get("net_amount"), "steuersatz": None if satz is None else _dez(satz),
+            "steuersatz_beleg": pos.get("tax_rate"), "satz_manuell": satz_manuell is not None,
+            "bu_manuell": bu_manuell is not None, "teile": teile,
+            "aufteilung": aufteilung, "aufteilung_manuell": aufteilung_manuell is not None,
             "konto": oeffentlich(k) if k else None, "vorschlag_nr": vorschlag_nr, "bestaetigt": bestaetigt,
             "quelle": quelle, "regel": regel and {"id": regel["id"], "bestaetigungen": regel["bestaetigungen"]},
             "steuer": steuer.oeffentlich(),
@@ -282,6 +340,14 @@ def _ausnahmen(kopf: dict[str, Any], r: dict[str, Any], kreditor: dict[str, Any]
         aus.append("Ausländische Umsatzsteuer – keine deutsche Vorsteuer (ggf. Vorsteuer-Vergütungsverfahren)")
     if (kopf.get("currency") or "EUR") != "EUR":
         aus.append(f'Fremdwährung {kopf["currency"]} – Umrechnung in Euro nötig')
+    beleg_ustid = kopf.get("lieferant_ustid")
+    if kreditor and kreditor.get("ustid") and beleg_ustid and kreditor["ustid"] != beleg_ustid:
+        aus.append(f'USt-IdNr. auf der Rechnung ({beleg_ustid}) weicht vom Kreditor ab ({kreditor["ustid"]})')
+    if fall == "ige" and not (beleg_ustid or (kreditor or {}).get("ustid")):
+        aus.append("i. g. Erwerb: USt-IdNr. des Lieferanten fehlt")
+    if _ist_bewirtung(kopf, r):
+        aus.append("Bewirtung – Anlass und Teilnehmer bitte prüfen" if _BEWIRTUNG_NACHWEIS.search(r.get("pseudonymisiert") or "")
+                   else "Bewirtung – Anlass und Teilnehmer fehlen (Bewirtungsnachweis)")
     val = r.get("validierung")
     if val and val.get("gueltig") is False:
         aus.append("E-Rechnung ungültig")
@@ -311,17 +377,17 @@ def _buchungssaetze(positionen: list[dict[str, Any]], kopf: dict[str, Any], kred
     """
     gruppen: dict[tuple[str, str], dict[str, Any]] = {}
     for p in positionen:
-        if not p["konto"]:
-            continue
-        st = p["steuer"]
-        g = gruppen.setdefault((p["konto"]["nr"], st["bu"]), {
-            "sachkonto": p["konto"]["nr"], "sachkonto_name": p["konto"]["name"], "bu": st["bu"], "steuer": st["text"],
-            "satz": st["satz"], "netto": Decimal(0), "fremdsteuer": Decimal(0), "positionen": 0})
-        netto = parse_amount(p["netto"]) or Decimal(0)
-        g["netto"] += netto
-        if fall == "ausland":  # ausländische Steuer gehört zum Aufwand
-            g["fremdsteuer"] += q2(netto * (parse_amount(p["steuersatz"]) or Decimal(0)) / 100)
-        g["positionen"] += 1
+        for t in p["teile"]:
+            st = t["steuer"]
+            g = gruppen.setdefault((t["konto"]["nr"], st["bu"]), {
+                "sachkonto": t["konto"]["nr"], "sachkonto_name": t["konto"]["name"], "bu": st["bu"], "steuer": st["text"],
+                "satz": st["satz"], "automatik": st["automatik"], "fall": st.get("fall") or fall,
+                "netto": Decimal(0), "fremdsteuer": Decimal(0), "positionen": 0})
+            netto = parse_amount(t["netto"]) or Decimal(0)
+            g["netto"] += netto
+            if fall == "ausland":  # ausländische Steuer gehört zum Aufwand
+                g["fremdsteuer"] += q2(netto * (parse_amount(p["steuersatz"]) or Decimal(0)) / 100)
+            g["positionen"] += 1
 
     leistung = kopf.get("leistung") or {}
     gutschrift = sum((g["netto"] for g in gruppen.values()), Decimal(0)) < 0
@@ -332,15 +398,18 @@ def _buchungssaetze(positionen: list[dict[str, Any]], kopf: dict[str, Any], kred
         e["betrag"] += betrag
 
     for g in gruppen.values():
-        netto, satz = g["netto"], Decimal(g["satz"] or 0)
+        netto, satz, g_fall = g["netto"], Decimal(g["satz"] or 0), g["fall"]
         steuer = q2(netto * satz / 100)
-        if fall == "inland":
+        if g_fall == "inland":
             umsatz = netto + steuer
-        elif fall == "ausland":
+        elif g_fall == "ausland":
             umsatz, steuer = netto + g["fremdsteuer"], Decimal(0)
         else:
             umsatz = netto
+        vst_konto, ust_konto = steuerschluessel.steuerkonten(g_fall, satz) if g_fall != "ausland" else (None, None)
         stapel.append({"umsatz": str(abs(umsatz)), "soll_haben": "S" if gutschrift else "H",
+                       "eu_ustid": ((kreditor or {}).get("ustid") or kopf.get("lieferant_ustid")) if g_fall in ("ige", "13b") else None,
+                       "vorsteuer": str(abs(steuer)) if vst_konto and steuer else None, "vorsteuer_konto": vst_konto,
                        "konto": kreditor["nr"] if kreditor else None, "konto_name": kreditor["name"] if kreditor else None,
                        "gegenkonto": g["sachkonto"], "gegenkonto_name": g["sachkonto_name"], "bu": g["bu"],
                        "steuer": g["steuer"], "belegdatum": kopf.get("invoice_date"),
@@ -348,12 +417,14 @@ def _buchungssaetze(positionen: list[dict[str, Any]], kopf: dict[str, Any], kred
                        "buchungstext": (kopf.get("supplier_name") or "")[:60], "waehrung": kopf.get("currency") or "EUR"})
         aufwand = netto + g["fremdsteuer"]
         buche(soll, g["sachkonto"], g["sachkonto_name"], aufwand, "aufwand")
-        vst_konto, ust_konto = steuerschluessel.steuerkonten(fall, satz) if fall != "ausland" else (None, None)
         if vst_konto and steuer:
             buche(soll, vst_konto, (konto(vst_konto) or {}).get("name", "Vorsteuer"), steuer, "vorsteuer")
+            soll[vst_konto].setdefault("aus", [])
+            if g["automatik"] and g["sachkonto"] not in soll[vst_konto]["aus"]:
+                soll[vst_konto]["aus"].append(g["sachkonto"])  # „aus Automatikkonto 3400“
         if ust_konto and steuer:
             buche(haben, ust_konto, (konto(ust_konto) or {}).get("name", "Umsatzsteuer"), steuer, "umsatzsteuer")
-        an_kreditor = umsatz if fall in ("inland", "ausland") else netto
+        an_kreditor = umsatz if g_fall in ("inland", "ausland") else netto
         buche(haben, kreditor["nr"] if kreditor else "—", kreditor["name"] if kreditor else "Kreditor fehlt",
               an_kreditor, "kreditor")
 
@@ -395,7 +466,8 @@ def ansicht(key: str, modell: str = STANDARD_MODELL) -> dict[str, Any]:
     regeln = zustand.regeln(mandant, knr)
     je_modell = _aufgezeichnete_positionen(b)
     fall = kopf.get("steuerfall") or "inland"
-    positionen = [_position(i, p, modell, je_modell, st.get("konten", {}), regeln, fall)
+    bewirtung = _ist_bewirtung(kopf, r)
+    positionen = [_position(i, p, modell, je_modell, st, regeln, fall, bewirtung)
                   for i, p in enumerate(r["positionen"])]
 
     offen = []
@@ -428,7 +500,8 @@ def ansicht(key: str, modell: str = STANDARD_MODELL) -> dict[str, Any]:
         "status": status, "bereich": bereich, "freigegeben_am": st.get("freigegeben_am"),
         "kopf": kopf, "steuerlogik": r["steuerlogik"], "schritte": r["schritte"], "ki": r["ki"],
         "quelle": r["quelle"], "pseudonymisiert": r["pseudonymisiert"], "platzhalter": r["platzhalter"], "soll": r["soll"],
-        "kreditor": kreditor and {"nr": kreditor["nr"], "name": kreditor["name"]},
+        "kreditor": kreditor and {"nr": kreditor["nr"], "name": kreditor["name"], "ustid": kreditor.get("ustid"),
+                                  "land": kreditor.get("land")},
         "kreditor_vorschlag": None if kreditor else {"nr": zustand.naechste_kreditornummer(mandant, SACHKONTENLAENGE),
                                                    "name": lieferant, "von": lo, "bis": hi},
         "regeln": [{**rg, "sicher": lernregeln.ist_sicher(rg),
@@ -498,12 +571,20 @@ def uebersicht(nutzer: str, modell: str = STANDARD_MODELL) -> dict[str, Any]:
     for m in kanzlei.sichtbare_mandanten(nutzer):
         es = [e for e in l["eintraege"] if e["mandant_id"] == m["id"]]
         offen = [e for e in es if e["bereich"] != "erledigt"]
-        monate = sorted({(e.get("datum") or e.get("monat") or "")[:7] for e in offen} - {""})
+        monat = lambda e: (e.get("datum") or e.get("monat") or "")[:7]  # noqa: E731 (Belegdatum, Buchungsmonat)
+        je_monat: dict[str, dict[str, Any]] = {}
+        for e in offen:
+            g = je_monat.setdefault(monat(e) or "ohne Datum", {"monat": monat(e) or None, "offen": 0, "sicher": 0, "pruefen": 0})
+            g["offen"] += 1
+            if e["bereit"]:
+                g[e["bereich"]] += 1
+        erledigt = [monat(e) for e in es if e["bereich"] == "erledigt" and monat(e)]
         zeilen.append({**kanzlei.mandant_oeffentlich(m, k), "offen": len(offen),
                        "sicher": sum(1 for e in offen if e["bereich"] == "sicher" and e["bereit"]),
                        "pruefen": sum(1 for e in offen if e["bereich"] == "pruefen" and e["bereit"]),
                        "erledigt": len(es) - len(offen), "lesen": sum(1 for e in es if not e["bereit"]),
-                       "monate": monate})
+                       "offen_je_monat": sorted(je_monat.values(), key=lambda g: g["monat"] or "", reverse=True),
+                       "zuletzt_bearbeitet": max(erledigt) if erledigt else None})
     summe = {f: sum(z[f] for z in zeilen) for f in ("offen", "sicher", "pruefen", "erledigt")}
     return {"mandanten": zeilen, "summe": summe, "bereit": l["bereit"]}
 
@@ -555,10 +636,72 @@ def konto_waehlen(key: str, pos: int, nr: str, modell: str = STANDARD_MODELL) ->
     return ansicht(key, modell)
 
 
+def _position_der_ansicht(key: str, pos: int, modell: str) -> dict[str, Any]:
+    a = ansicht(key, modell)
+    if not 0 <= pos < len(a["positionen"]):
+        raise ValueError("Position nicht gefunden")
+    p: dict[str, Any] = a["positionen"][pos]
+    return p
+
+
+def steuerschluessel_waehlen(key: str, pos: int, bu: str | None, modell: str = STANDARD_MODELL) -> dict[str, Any]:
+    """Steuerschlüssel von Hand ("" = keiner, None = zurück zum Vorschlag). Die Steuerlogik prüft ihn trotzdem."""
+    if bu is not None and bu not in {e["bu"] for e in steuerschluessel.auswahl()}:
+        raise ValueError(f"Steuerschlüssel {bu} ist nicht in der Liste")
+    p = _position_der_ansicht(key, pos, modell)
+    zustand.position_setzen(key, pos, "bu", bu, p["steuer"]["bu"] or "keiner", "Steuerschlüssel")
+    return ansicht(key, modell)
+
+
+def steuersatz_waehlen(key: str, pos: int, satz: str | None, modell: str = STANDARD_MODELL) -> dict[str, Any]:
+    """Steuersatz korrigieren, falls falsch erkannt (None = wie auf dem Beleg)."""
+    if satz is not None:
+        wert = parse_amount(satz)
+        if wert is None or not 0 <= wert <= 30:
+            raise ValueError("Steuersatz zwischen 0 und 30 %")
+        satz = _dez(wert)
+    p = _position_der_ansicht(key, pos, modell)
+    zustand.position_setzen(key, pos, "satz", satz, p["steuersatz"], "Steuersatz")
+    return ansicht(key, modell)
+
+
+def aufteilen(key: str, pos: int, teile: list[dict[str, Any]] | None, modell: str = STANDARD_MODELL) -> dict[str, Any]:
+    """Position auf mehrere Konten aufteilen, z. B. Bewirtung 70/30. [] = keine Aufteilung, None = Vorschlag."""
+    if teile:
+        if not 2 <= len(teile) <= 4:
+            raise ValueError("Aufteilung auf 2 bis 4 Konten")
+        summe = Decimal(0)
+        for t in teile:
+            if not konto(str(t.get("konto"))):
+                raise ValueError(f'Konto {t.get("konto")} gibt es im SKR03 nicht')
+            prozent = parse_amount(t.get("prozent"))
+            if prozent is None or not 0 < prozent < 100:
+                raise ValueError("Anteile zwischen 0 und 100 %")
+            summe += prozent
+        if summe != 100:
+            raise ValueError(f"Die Anteile ergeben {_dez(summe)} %, nicht 100 %")
+        teile = [{"konto": str(t["konto"]), "prozent": _dez(parse_amount(t["prozent"]))} for t in teile]  # type: ignore[union-attr]
+    p = _position_der_ansicht(key, pos, modell)
+    vorher = " / ".join(f'{t["konto"]["nr"]} {t["prozent"]} %' for t in p["teile"]) or None
+    zustand.position_setzen(key, pos, "aufteilung", teile, vorher, "Aufteilung")
+    return ansicht(key, modell)
+
+
 def kreditor_anlegen(key: str, nr: int, name: str, modell: str = STANDARD_MODELL) -> dict[str, Any]:
     b = _beleg(key)
     lieferant = ansicht(key, modell)["kopf"].get("supplier_name")
-    zustand.kreditor_anlegen(b["client_id"], nr, name, key, SACHKONTENLAENGE, alias=lieferant)
+    kopf = ansicht(key, modell)["kopf"]
+    ustid = kopf.get("lieferant_ustid")  # aus der Rechnung, beim Kreditor änderbar
+    land = ustid[:2] if ustid else ("DE" if kopf.get("herkunft") == "inland" else None)
+    zustand.kreditor_anlegen(b["client_id"], nr, name, key, SACHKONTENLAENGE, alias=lieferant, ustid=ustid, land=land)
+    return ansicht(key, modell)
+
+
+def kreditor_daten(key: str, ustid: str | None, land: str | None, modell: str = STANDARD_MODELL) -> dict[str, Any]:
+    a = ansicht(key, modell)
+    if not a["kreditor"]:
+        raise ValueError("Kein Kreditor")
+    zustand.kreditor_daten_setzen(a["mandant"]["id"], a["kreditor"]["nr"], ustid, land, key)
     return ansicht(key, modell)
 
 

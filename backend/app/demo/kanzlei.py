@@ -43,6 +43,7 @@ def _start() -> dict[str, Any]:
         haupt, vertretung = _START_ZUSTAENDIG.get(mid, [None, None])
         mandanten[mid] = {"id": mid, "name": m["name"], "nummer": 10001 + i, "kontenrahmen": "SKR03",
                           "ansprechpartner": m.get("person", ""), "branche": m.get("branche", ""),
+                          "ustid": m.get("vat_id"),
                           "zustaendig": haupt, "vertretung": vertretung, "angelegt": jetzt}
         for k in (haupt, vertretung):
             if k:
@@ -82,6 +83,8 @@ def mandant(mid: str) -> dict[str, Any]:
     m = laden()["mandanten"].get(mid)
     if not m:
         raise KeyError(f"Mandant {mid} nicht gefunden")
+    if "ustid" not in m:  # ältere Stammdaten: USt-IdNr. aus den Testmandanten
+        m = {**m, "ustid": testmandanten().get(mid, {}).get("vat_id")}
     return dict(m)
 
 
@@ -152,6 +155,9 @@ def mandant_speichern(nutzer: str, daten: dict[str, Any]) -> dict[str, Any]:
         raise ValueError("Mandantennummer muss eine Zahl sein") from None
     if not 1 <= nummer <= 99999:
         raise ValueError("Mandantennummer muss zwischen 1 und 99999 liegen (DATEV)")
+    ustid = re.sub(r"\s", "", str(daten.get("ustid") or "")).upper()
+    if ustid and not re.fullmatch(r"[A-Z]{2}[0-9A-Z]{2,12}", ustid):
+        raise ValueError("USt-IdNr. des Mandanten: Ländercode und Nummer, z. B. DE123456789")
     rahmen = daten.get("kontenrahmen")
     if rahmen not in KONTENRAHMEN:
         raise ValueError("Kontenrahmen SKR03 oder SKR04 wählen")
@@ -175,6 +181,7 @@ def mandant_speichern(nutzer: str, daten: dict[str, Any]) -> dict[str, Any]:
         neu = {**(alt or {"angelegt": datetime.now().isoformat(timespec="seconds"), "branche": ""}),
                "id": mid, "name": name, "nummer": nummer, "kontenrahmen": rahmen,
                "ansprechpartner": str(daten.get("ansprechpartner") or "").strip(),
+               "ustid": (re.sub(r"\s", "", str(daten.get("ustid") or "")).upper() or None),
                "zustaendig": haupt, "vertretung": vertretung}
         k["mandanten"][mid] = neu
         for kuerzel in (haupt, vertretung):

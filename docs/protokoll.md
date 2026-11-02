@@ -320,6 +320,17 @@ Freigabe Paul Graß inklusive Downloads (KoSIT-Konfiguration 0,5 MB von GitHub, 
 - 141 Tests grün.
 - Nachtrag: Fehlermeldungen für Sachbearbeiter auf Deutsch und einfach („E-Rechnung ist ungültig. Das ist fehlerhaft: …“, „Was tun?“), Regelnummern unter „Technische Details“; Übersetzungstabelle deckt alle 1.646 Regeln ab. Datenschutz geprüft (alles lokal, Regeln laden nichts nach), zusätzlich Schutz gegen DTD/Entitäten. 143 Tests grün.
 
+## 02.11.2026 – Korrekturen je Position, Bewirtung, Dashboard, Kreditor-USt-IdNr.
+
+Sprachnachricht von Paul Graß vorab in Punkte A–E sortiert, alle umgesetzt. Details: `docs/entscheidungen/2026-11-02_korrekturen-bewirtung-dashboard.md`.
+- A Dashboard ohne Kacheln; Spalten „Zuletzt bearbeitet“ und „Offene Belege“ je Monat.
+- B Rechnungsprüfung kurz mit Haken („vorhanden“), Paragraphen nur als Tooltip.
+- C Steuerschlüssel und Steuersatz je Position von Hand änderbar (geprüft durch die Steuerlogik); Aufteilung auf mehrere Konten; Bewirtung erkannt mit 70/30 auf 4650/4654, Vorsteuer voll; Markierung der Position im Beleg beim Überfahren. Testrechnung F22.
+- D Vorsteuer aus Automatikkonten im Buchungssatz gekennzeichnet und in der DATEV-Zeile ausgewiesen; DATEV-Zeile zugeklappt (Beratung in der Entscheidung).
+- E Kreditor mit USt-IdNr. und Land (automatisch aus der Rechnung, änderbar, Abgleich); USt-IdNr. des Mandanten erfassbar.
+- Gefunden und behoben: `Decimal("20").normalize()` ergibt „2E+1“ – 20 % österreichische USt wurde dadurch als 21 % gelesen.
+- 145 Tests grün.
+
 ## Nächste Schritte
 
 Die aktuelle Aufgabenliste steht in `docs/projektplan.md`, Abschnitt 10. Die Liste unten ist der Stand vom 28.10.2026 vor dem Projektplan.

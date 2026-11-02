@@ -92,7 +92,7 @@ h2 { font-size: 21px; margin: 0; letter-spacing: -.01em; }
 .ue-listenkopf { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 10px 18px 12px; }
 .ue-listenkopf b { font-size: 17px; }
 .ue-listenkopf .feld { max-width: 340px; }
-.ue-zeile { display: grid; grid-template-columns: 40px minmax(220px, 2fr) 80px 110px 130px 150px 120px 120px; gap: 12px;
+.ue-zeile { display: grid; grid-template-columns: 40px minmax(200px, 1.6fr) 72px 100px 120px 120px minmax(230px, 1.4fr) 110px; gap: 12px;
   align-items: center; padding: 11px 18px; border-top: 1px solid var(--trenn); cursor: pointer; transition: background .12s; }
 .ue-zeile:hover, .ue-zeile:focus { background: #f7f9fc; outline: none; }
 .ue-spalten { cursor: default; font-size: 11.5px; color: var(--text3); text-transform: uppercase; letter-spacing: .05em; padding-top: 6px; padding-bottom: 6px; background: #fafafc; }
@@ -423,3 +423,51 @@ details[open] > .abschnitt-kopf::after { transform: rotate(90deg); }
 .val-technik ul { list-style: none; padding: 0; margin: 6px 0 0; }
 .val-technik li { padding: 5px 0; border-top: 1px solid rgba(0,0,0,.06); }
 .val-technik small { display: block; color: var(--text3); }
+
+/* Dashboard: offene Belege je Monat */
+.offen-monat { font-size: 13px; line-height: 1.35; }
+.offen-monat .offen-zahl { font-size: 13px; font-weight: 600; color: #a15c00; margin-left: 2px; }
+.offen-monat small { display: inline; margin-left: 6px; color: var(--text2); }
+.m-zuletzt { font-size: 13.5px; }
+.pf-wort { color: #1b7a35; font-size: 12px; margin-left: 4px; }
+.pflicht-liste .fehlt .pf-wort { color: #b3261e; font-weight: 600; }
+.pflicht-liste .hinweis .pf-wort { color: #a15c00; }
+.pflicht-liste .entfaellt .pf-wort { color: var(--text3); }
+.pf-wert { font-size: 12px; color: var(--text2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 220px; }
+.pflicht-liste li { padding: 3px 0; cursor: default; }
+.bs-aus { display: block; color: var(--text3); font-size: 11px; }
+.datev-zeile { margin-top: 8px; font-size: 13px; }
+.datev-zeile > summary { cursor: pointer; color: var(--blau); font-size: 12.5px; }
+.datev-zeile > p { margin: 6px 0; }
+
+/* Steuerschlüssel und Steuersatz als Auswahl (unsichtbares select über dem Chip) */
+.bu-chip { position: relative; display: inline-flex; align-items: center; }
+.bu-chip select, .satz-wahl select { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; font-size: 13px; }
+.bu-chip select:disabled, .satz-wahl select:disabled { cursor: default; }
+.bu-chip:hover:not(:has(select:disabled)) { box-shadow: 0 0 0 1.5px var(--indigo); }
+.bu-chip.manuell { background: #fff4d6; color: #7a4500; }
+.satz-wahl { position: relative; display: inline-block; color: var(--text2); font-size: 12.5px; border-radius: 6px; padding: 0 3px; }
+.satz-wahl:hover:not(:has(select:disabled)) { background: var(--feld); }
+.satz-wahl.manuell span { color: #a15c00; font-weight: 600; }
+/* Aufteilung */
+.aufteilung { grid-column: 1 / 3; display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center; font-size: 12.5px; }
+.aufteilung .teil { background: var(--bg); border-radius: 7px; padding: 2px 8px; }
+.aufteilung.aktiv { background: #f4f6ff; border-radius: 9px; padding: 5px 8px; }
+.klein-link { font-size: 12.5px; }
+.aufteilen-editor { grid-column: 1 / 3; background: var(--bg); border-radius: 10px; padding: 8px 10px; }
+.ae-zeile { display: grid; grid-template-columns: 110px 80px auto; gap: 6px; align-items: center; margin-bottom: 5px; }
+.ae-zeile .feld { padding: 6px 9px; background: #fff; }
+.ae-knoepfe { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.ae-rechts { margin-left: auto; display: flex; gap: 12px; align-items: center; }
+.klein-knopf { padding: 6px 12px; font-size: 13px; }
+.gefahr-link { color: var(--rot); }
+.aufteilen-editor .klein { margin: 6px 0 0; }
+/* Kreditor: USt-IdNr. und Land */
+.kreditor-ustid { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; padding-top: 8px; font-size: 13.5px; }
+.kreditor-ustid-form { display: grid; grid-template-columns: 1fr 70px auto; gap: 6px; margin-top: 6px; }
+/* Hervorhebung der Position im Beleg */
+.vorschau-inhalt .seite { position: relative; }
+.markierung { position: absolute; background: rgba(0, 122, 255, .16); border: 1.5px solid rgba(0, 122, 255, .55); border-radius: 4px;
+  pointer-events: none; animation: markierung-ein .15s ease-out; }
+@keyframes markierung-ein { from { opacity: 0; } to { opacity: 1; } }
+.position:hover { background: #f7f9fc; border-radius: 8px; }

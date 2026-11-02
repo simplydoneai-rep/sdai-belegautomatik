@@ -1,0 +1,64 @@
+{
+  "id": "F22",
+  "quelle": "folgemonat",
+  "client_id": "M4",
+  "merkmale": [
+    "Bewirtung",
+    "7 % und 19 %"
+  ],
+  "dokumente": [
+    {
+      "pfad": "folgemonat/F22_gasthaus.pdf",
+      "art": "pdf"
+    }
+  ],
+  "erwartet": {
+    "document_type": "invoice",
+    "supplier_name": "Gasthaus Zur Linde",
+    "invoice_number": "R-2026-11-0418",
+    "invoice_date": "2026-11-21",
+    "currency": "EUR",
+    "net_total": "378.80",
+    "tax_total": "43.89",
+    "gross_total": "422.69",
+    "reverse_charge": false,
+    "lines": [
+      {
+        "description": "Tagesmenü 3 Gänge",
+        "quantity": "6",
+        "unit": "Portion",
+        "unit_price": "39.00",
+        "net_amount": "234.00",
+        "tax_rate": "7",
+        "account_skr03": "4650"
+      },
+      {
+        "description": "Mineralwasser 0,75 l",
+        "quantity": "4",
+        "unit": "Flasche",
+        "unit_price": "6.50",
+        "net_amount": "26.00",
+        "tax_rate": "19",
+        "account_skr03": "4650"
+      },
+      {
+        "description": "Grauburgunder 0,75 l",
+        "quantity": "3",
+        "unit": "Flasche",
+        "unit_price": "34.00",
+        "net_amount": "102.00",
+        "tax_rate": "19",
+        "account_skr03": "4650"
+      },
+      {
+        "description": "Espresso",
+        "quantity": "6",
+        "unit": "Tasse",
+        "unit_price": "2.80",
+        "net_amount": "16.80",
+        "tax_rate": "19",
+        "account_skr03": "4650"
+      }
+    ]
+  }
+}

@@ -32,6 +32,7 @@ basis.SUPPLIERS["pixelcloud"] = {**basis._supplier(41, "PixelCloud Software Inc.
 basis.SUPPLIERS["gereedschap"] = {**basis._supplier(42, "Gereedschap Groothandel B.V.", "Havenweg 12", "3011 Rotterdam",
                                                     "Sanne de Vries", "Pieter Bakker", country="NL", vat="NL999999042B01"),
                                   "steuernr": None}
+basis.SUPPLIERS["linde"] = basis._supplier(44, "Gasthaus Zur Linde", "Lindenplatz 2", "90762 Fürth", "Familie Seitz", "Klaus Seitz")
 basis.SUPPLIERS["donaustadt"] = {**basis._supplier(43, "Kongresshaus Donaustadt GmbH", "Wagramer Straße 5", "1220 Wien",
                                                    "Lena Huber", "Markus Steiner", country="AT", vat="ATU99916043"),
                                  "steuernr": None}
@@ -113,6 +114,15 @@ RECHNUNGEN: list[dict[str, Any]] = [
      "tags": ["EU-Lieferant", "ausländische Umsatzsteuer"],
      "leistung": ("Leistungszeitraum", "12.11.–13.11.2026"),
      "lines": [("Teilnahme Designkongress Wien, 2 Tage", "2", "Person", "390.00", 20, "4945")]},
+    # Bewirtung: Speisen 7 % (seit 01.01.2026 dauerhaft), Getränke 19 %; 70 % abziehbar (4650), 30 % nicht (4654)
+    {"id": "F22", "sup": "linde", "client": "M4", "nr": "R-2026-11-0418", "date": "2026-11-21",
+     "tags": ["Bewirtung", "7 % und 19 %"],
+     "notes": ["Bewirtungsbeleg – Anlass der Bewirtung: Projektbesprechung Relaunch Website.",
+               "Bewirtete Personen: Lea Brandt (Pixelwerk Design), Jonas Weber und Mia Roth (Kunde Weber Möbel)."],
+     "lines": [("Tagesmenü 3 Gänge", "6", "Portion", "39.00", 7, "4650"),
+               ("Mineralwasser 0,75 l", "4", "Flasche", "6.50", 19, "4650"),
+               ("Grauburgunder 0,75 l", "3", "Flasche", "34.00", 19, "4650"),
+               ("Espresso", "6", "Tasse", "2.80", 19, "4650")]},
 ]
 
 

@@ -98,14 +98,41 @@ def naechste_kreditornummer(mandant: str, sachkontenlaenge: int = 4) -> int:
     return nr
 
 
+def _ustid_pruefen(ustid: str | None, land: str | None) -> tuple[str | None, str | None]:
+    ustid = re.sub(r"\s", "", ustid or "").upper() or None
+    land = (land or "").strip().upper() or None
+    if ustid and not re.fullmatch(r"[A-Z]{2}[0-9A-Z+*]{2,12}", ustid):
+        raise ValueError("USt-IdNr.: Ländercode und Nummer, z. B. NL999999042B01")
+    if land and not re.fullmatch(r"[A-Z]{2}", land):
+        raise ValueError("Land als zweistelliger Code, z. B. NL")
+    if ustid and land and not ustid.startswith(land) and not (land == "GR" and ustid.startswith("EL")):
+        raise ValueError(f"USt-IdNr. {ustid} passt nicht zum Land {land}")
+    return ustid, land or (ustid[:2] if ustid else None)
+
+
+def kreditor_daten_setzen(mandant: str, nr: str, ustid: str | None, land: str | None, beleg: str | None) -> None:
+    """USt-IdNr. und Land des Kreditors (für i. g. Erwerb und § 13b; DATEV fragt beides beim Buchen ab)."""
+    ustid, land = _ustid_pruefen(ustid, land)
+    with _LOCK:
+        z = laden()
+        k = next((k for k in z["kreditoren"].get(mandant, []) if k["nr"] == nr), None)
+        if not k:
+            raise ValueError("Kreditor nicht gefunden")
+        vorher = f'{k.get("ustid") or "–"} · {k.get("land") or "–"}'
+        k["ustid"], k["land"] = ustid, land
+        _protokoll(z, beleg, f"Kreditor {nr} USt-IdNr./Land", vorher, f'{ustid or "–"} · {land or "–"}', "Sachbearbeiter")
+        _speichern(z)
+
+
 def kreditor_anlegen(mandant: str, nr: int, name: str, beleg: str | None, sachkontenlaenge: int = 4,
-                     alias: str | None = None) -> dict[str, Any]:
+                     alias: str | None = None, ustid: str | None = None, land: str | None = None) -> dict[str, Any]:
     lo, hi = kreditor_bereich(sachkontenlaenge)
     name = name.strip()
     if not lo <= nr <= hi:
         raise ValueError(f"Kreditorennummer muss zwischen {lo} und {hi} liegen")
     if not name:
         raise ValueError("Name des Lieferanten fehlt")
+    ustid, land = _ustid_pruefen(ustid, land)
     with _LOCK:
         z = laden()
         liste = z["kreditoren"].setdefault(mandant, [])
@@ -114,7 +141,7 @@ def kreditor_anlegen(mandant: str, nr: int, name: str, beleg: str | None, sachko
         if any(_norm(k["name"]) == _norm(name) for k in liste):
             raise ValueError("Dieser Lieferant hat bereits eine Kreditorennummer")
         k = {"nr": str(nr), "name": name, "aliase": [alias] if alias and alias != name else [],
-             "angelegt": datetime.now().isoformat(timespec="seconds"), "konten": {}}
+             "angelegt": datetime.now().isoformat(timespec="seconds"), "konten": {}, "ustid": ustid, "land": land}
         liste.append(k)
         _protokoll(z, beleg, f"Kreditor {mandant}", None, f"{nr} {name}", "Sachbearbeiter")
         _speichern(z)
@@ -143,6 +170,23 @@ def konto_setzen(key: str, pos: int, konto: str | None, vorher: str | None) -> N
             raise ValueError("Beleg ist schon freigegeben")
         b["konten"][str(pos)] = konto
         _protokoll(z, key, f"Position {pos + 1} Sachkonto", vorher, konto, "Sachbearbeiter")
+        _speichern(z)
+
+
+def position_setzen(key: str, pos: int, feld: str, wert: Any, vorher: Any, bezeichnung: str) -> None:
+    """Manuelle Angabe je Position: ``bu`` (Steuerschlüssel), ``satz`` (Steuersatz) oder ``aufteilung``.
+    ``wert`` None entfernt die Angabe (zurück zum Vorschlag)."""
+    with _LOCK:
+        z = laden()
+        b = z["belege"].setdefault(key, {"status": "offen", "konten": {}})
+        if b.get("status") == "freigegeben":
+            raise ValueError("Beleg ist schon freigegeben")
+        werte = b.setdefault(feld, {})
+        if wert is None:
+            werte.pop(str(pos), None)
+        else:
+            werte[str(pos)] = wert
+        _protokoll(z, key, f"Position {pos + 1} {bezeichnung}", vorher, wert if wert is not None else "Vorschlag", "Sachbearbeiter")
         _speichern(z)
 
 

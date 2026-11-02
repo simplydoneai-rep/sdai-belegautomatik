@@ -43,14 +43,6 @@ function monatText(ym) {
   return `${MONATE[m - 1]} ${j}`;
 }
 
-function monateText(liste) {
-  if (!liste || !liste.length) return "–";
-  if (liste.length === 1) return monatText(liste[0]);
-  const [a, b] = [liste[0], liste[liste.length - 1]];
-  return a.slice(0, 4) === b.slice(0, 4)
-    ? `${MONATE[Number(a.slice(5)) - 1]}–${monatText(b)}` : `${monatText(a)} – ${monatText(b)}`;
-}
-
 /* Leistungsdatum: ganzer Monat → „Okt. 2026“, Zeitraum → „01.10.–15.10.2026“, sonst Datum */
 function leistungText(l, lang = false) {
   if (!l || !l.von) return "fehlt";
@@ -136,6 +128,7 @@ async function init() {
 
 async function ladeStamm() {
   zustand.stamm = await api("/api/stammdaten");
+  if (!zustand.bus) zustand.bus = await api("/api/steuerschluessel");
   const s = zustand.stamm;
   if (!s.nutzer) { zustand.nutzer = s.sachbearbeiter[0].kuerzel; merke("nutzer", zustand.nutzer); return ladeStamm(); }
   zustand.modell = zustand.modell || s.standard_modell;
@@ -195,27 +188,6 @@ function team(personen) {
     data-name="${esc(p.name)} · ${esc(p.rolle)}">${esc(p.kuerzel)}</span>`).join("") || `<span class="klein">–</span>`;
 }
 
-/* Kacheln: Mandanten im Blick (Belegzahlen stehen je Mandant in der Liste) */
-function zeigeKacheln(u, s) {
-  const ms = u.mandanten;
-  const ich = s.nutzer.kuerzel;
-  const zustaendig = ms.filter((m) => m.zustaendig === ich).length;
-  const vertretung = ms.filter((m) => m.vertretung === ich).length;
-  $("k1-titel").textContent = s.leitung ? "Mandanten der Kanzlei" : "Meine Mandanten";
-  $("k1").textContent = ms.length;
-  $("k1-text").textContent = s.leitung ? `${anzahl(s.sachbearbeiter.length, "Person", "Personen")} im Team`
-    : `${zustaendig} zuständig · ${vertretung} Vertretung` + (ms.length > zustaendig + vertretung ? ` · ${ms.length - zustaendig - vertretung} weitere` : "");
-  const offen = ms.filter((m) => m.offen);
-  $("k2").textContent = offen.length;
-  $("k2-text").textContent = offen.length ? `davon ${offen.filter((m) => m.pruefen).length} mit Belegen zur Prüfung` : "nichts offen";
-  const aeltester = offen.flatMap((m) => m.monate.map((mo) => ({ mo, name: m.name }))).sort((a, b) => a.mo.localeCompare(b.mo))[0];
-  $("k3").textContent = aeltester ? monatText(aeltester.mo) : "–";
-  $("k3-text").textContent = aeltester ? aeltester.name : "keine offenen Belege";
-  const fertig = ms.filter((m) => !m.offen && !m.lesen);
-  $("k4").textContent = fertig.length;
-  $("k4-text").textContent = fertig.length ? "ohne offene Belege, bereit für DATEV" : "noch bei keinem Mandanten";
-}
-
 function zeigeUebersicht() {
   const u = zustand.uebersicht;
   if (!u) return;
@@ -223,7 +195,6 @@ function zeigeUebersicht() {
   const stunde = new Date().getHours();
   $("ue-gruss").textContent = `${stunde < 11 ? "Guten Morgen" : stunde < 18 ? "Guten Tag" : "Guten Abend"}, ${s.nutzer.name} · `
     + (s.leitung ? "Kanzleileitung: Sie sehen alle Mandanten" : `${anzahl(u.mandanten.length, "Mandant", "Mandanten")} zugeordnet`);
-  zeigeKacheln(u, s);
   $("ue-titel").textContent = s.leitung ? "Alle Mandanten" : "Meine Mandanten";
   const q = $("ue-suche").value.trim().toLowerCase();
   const zeilen = u.mandanten.filter((m) => !q || `${m.name} ${m.nummer} ${m.ansprechpartner}`.toLowerCase().includes(q));
@@ -234,10 +205,14 @@ function zeigeUebersicht() {
       <span class="m-nr">${esc(m.nummer)}</span>
       <span><span class="marke">${esc(m.kontenrahmen)}</span></span>
       <span class="m-team">${team(m.team)}</span>
+      <span class="m-zuletzt">${m.zuletzt_bearbeitet ? esc(monatText(m.zuletzt_bearbeitet)) : `<span class="klein">noch nichts gebucht</span>`}</span>
       <span class="m-offen">${m.lesen ? `<span class="klein">wird gelesen …</span>` : m.offen
-        ? `<b class="offen-zahl">${m.offen}</b><small>${m.sicher} sicher · ${m.pruefen} prüfen</small>`
-        : `<span class="erledigt-haken">✓ erledigt</span>`}</span>
-      <span class="m-monat">${m.offen ? esc(monateText(m.monate)) : "–"}</span>
+        ? m.offen_je_monat.slice(0, 3).map((g) => `<div class="offen-monat"><b>${g.monat ? esc(monatText(g.monat)) : "ohne Datum"}:</b>
+            <span class="offen-zahl">${anzahl(g.offen, "Beleg", "Belege")} offen</span>
+            <small>${[g.sicher && `${g.sicher} sicher`, g.pruefen && `${g.pruefen} prüfen`].filter(Boolean).join(" · ")}</small></div>`).join("")
+          + (m.offen_je_monat.length > 3 ? `<div class="offen-monat"><small>+ ${m.offen_je_monat.slice(3).reduce((s, g) => s + g.offen, 0)} Belege
+            aus ${m.offen_je_monat.length - 3} älteren Monaten (ab ${esc(monatText(m.offen_je_monat.at(-1).monat))})</small></div>` : "")
+        : `<span class="erledigt-haken">✓ nichts offen</span>`}</span>
       <span class="m-aktion">${s.leitung ? `<button class="link blau-link" data-bearbeiten="${esc(m.id)}">Bearbeiten</button>` : ""}<span class="chevron">›</span></span>
     </div>`).join("") || `<p class="klein mitte">Keine Mandanten${q ? " zu dieser Suche" : " zugeordnet"}.</p>`;
   $("ue-tabelle").querySelectorAll(".ue-zeile").forEach((z) => {
@@ -259,6 +234,7 @@ function oeffneMandant(id) {
   f.name.value = m?.name || "";
   f.nummer.value = m?.nummer || naechsteNummer();
   f.ansprechpartner.value = m?.ansprechpartner || "";
+  f.ustid.value = m?.ustid || "";
   const rahmen = m?.kontenrahmen || "SKR03";
   document.querySelectorAll("#f-kontenrahmen button").forEach((b) => b.classList.toggle("aktiv", b.dataset.wert === rahmen));
   const option = (p, gewaehlt) => {
@@ -284,7 +260,7 @@ async function sichereMandant(e) {
   e.preventDefault();
   const f = e.target;
   const daten = {
-    id: f.dataset.id || null, name: f.name.value, nummer: f.nummer.value, ansprechpartner: f.ansprechpartner.value,
+    id: f.dataset.id || null, name: f.name.value, nummer: f.nummer.value, ansprechpartner: f.ansprechpartner.value, ustid: f.ustid.value,
     kontenrahmen: document.querySelector("#f-kontenrahmen .aktiv").dataset.wert,
     zustaendig: f.zustaendig.value || null, vertretung: f.vertretung.value || null,
   };
@@ -500,22 +476,24 @@ function zeigeBeleg(b) {
   $("b-pos-info").innerHTML = `${anzahl(b.positionen.length, "Position", "Positionen")} · ${sicher} sicher`
     + (unsicher ? ` · <span class="kurz-warn">${unsicher} prüfen</span>` : "") + (b.gelernt ? ` · ${b.gelernt} gelernt` : "");
   $("positionen").innerHTML = b.positionen.map((p) => `
-    <li class="position">
+    <li class="position" data-pos="${p.pos}">
       <div class="p-text">${esc(p.bezeichnung || "Position " + (p.pos + 1))}
         ${p.menge ? `<small>${esc(Number(p.menge).toLocaleString("de-DE"))} ${esc(p.einheit || "")}</small>` : ""}</div>
-      <div class="p-betrag">${geld(p.netto, w)} <small>· ${p.steuersatz ?? "–"} %</small></div>
+      <div class="p-betrag">${geld(p.netto, w)} ${satzWahl(p, fertig)}</div>
       <div class="p-konto">
         <div class="konto-feld ${p.ampel}">
           <input data-pos="${p.pos}" ${fertig ? "disabled" : ""} autocomplete="off"
             value="${p.konto ? esc(p.konto.nr + " · " + p.konto.name) : ""}"
             placeholder="Konto wählen: Nummer oder Begriff, z. B. „War“">
         </div>
-        ${steuerChip(p.steuer)}
+        ${buWahl(p, fertig)}
         <div class="ampel ${p.ampel}" title="${esc(p.grund)}"><span class="punkt ${p.ampel}"></span>
           <span class="ampel-text"><b>${AMPEL[p.ampel]}</b><small>${esc(p.grund)}</small></span></div>
       </div>
+      ${aufteilungZeile(p, w, fertig)}
     </li>`).join("");
   $("positionen").querySelectorAll("input[data-pos]").forEach(bindeKontoFeld);
+  bindePositionsWahl(b);
 
   zeigeBuchungen(b);
   zeigePruefung(b);
@@ -551,11 +529,120 @@ function zeigeBeleg(b) {
   }
 }
 
-function steuerChip(st) {
-  if (!st || (!st.bu && !st.text)) return `<span class="bu-chip leer" title="Steuerschlüssel folgt mit dem Konto">BU –</span>`;
-  if (st.automatik) return `<span class="bu-chip auto" title="${esc(st.text)} – DATEV rechnet die Steuer aus dem Konto, kein Steuerschlüssel">Automatik</span>`;
-  if (!st.bu) return `<span class="bu-chip leer" title="${esc(st.text)}">ohne BU</span>`;
-  return `<span class="bu-chip" title="DATEV-Steuerschlüssel ${esc(st.bu)}: ${esc(st.text)}">BU ${esc(st.bu)}</span>`;
+/* Steuerschlüssel je Position: Vorschlag oder von Hand (alle belegten DATEV-Schlüssel). Die Steuerlogik prüft beides. */
+function buBeschriftung(st) {
+  if (!st || (!st.bu && !st.text)) return ["BU –", "Steuerschlüssel folgt mit dem Konto", "leer"];
+  if (st.automatik) return ["Automatik", `${st.text} – DATEV rechnet die Steuer aus dem Konto, kein Steuerschlüssel`, "auto"];
+  if (!st.bu) return ["ohne BU", st.text, "leer"];
+  return [`BU ${st.bu}`, `DATEV-Steuerschlüssel ${st.bu}: ${st.text}`, ""];
+}
+
+function buWahl(p, fertig) {
+  const st = p.teile[0]?.steuer || p.steuer;
+  const [text, titel, art] = buBeschriftung(st);
+  const gruppen = {};
+  for (const e of zustand.bus || []) (gruppen[e.gruppe] ||= []).push(e);
+  const optionen = Object.entries(gruppen).map(([g, es]) => `<optgroup label="${esc(g)}">${es.map((e) =>
+    `<option value="${esc(e.bu)}" ${p.bu_manuell && e.bu === st.bu ? "selected" : ""}>${e.bu ? `BU ${esc(e.bu)} – ` : ""}${esc(e.text)}</option>`).join("")}</optgroup>`).join("");
+  return `<label class="bu-chip ${art} ${p.bu_manuell ? "manuell" : ""}" title="${esc(titel)}${p.bu_manuell ? " (von Hand gewählt)" : ""}">
+    <span>${esc(text)}${p.bu_manuell ? " ✎" : ""}</span>
+    <select data-bu="${p.pos}" ${fertig || !p.konto ? "disabled" : ""} aria-label="Steuerschlüssel ändern">
+      <option value="__vorschlag" ${p.bu_manuell ? "" : "selected"}>Vorschlag übernehmen</option>${optionen}</select></label>`;
+}
+
+function satzWahl(p, fertig) {
+  const saetze = [...new Set(["19", "7", "0", p.steuersatz_beleg, p.steuersatz].filter((s) => s != null && s !== ""))];
+  return `<label class="satz-wahl ${p.satz_manuell ? "manuell" : ""}" title="${p.satz_manuell ? `Von Hand geändert, laut Beleg ${esc(p.steuersatz_beleg)} %` : "Steuersatz laut Beleg – bei Fehlerkennung ändern"}">
+    · <span>${esc(p.steuersatz ?? "–")} %${p.satz_manuell ? " ✎" : ""}</span>
+    <select data-satz="${p.pos}" ${fertig ? "disabled" : ""} aria-label="Steuersatz korrigieren">
+      ${saetze.map((s) => `<option value="${esc(s)}" ${String(s) === String(p.steuersatz) ? "selected" : ""}>${esc(s)} %${s === p.steuersatz_beleg ? " (laut Beleg)" : ""}</option>`).join("")}
+    </select></label>`;
+}
+
+/* Aufteilung einer Position auf mehrere Konten, z. B. Bewirtung 70 % abziehbar / 30 % nicht abziehbar */
+function aufteilungZeile(p, w, fertig) {
+  if (!p.konto) return "";
+  const geteilt = p.teile.length > 1;
+  const liste = geteilt ? p.teile.map((t) => `<span class="teil"><b>${esc(t.konto.nr)}</b> ${esc(t.konto.name)} · ${esc(t.prozent)} % · ${geld(t.netto, w)}</span>`).join("") : "";
+  return `<div class="aufteilung ${geteilt ? "aktiv" : ""}">
+    ${geteilt ? `<span class="klein">Aufgeteilt${p.aufteilung_manuell ? "" : " (automatisch)"}:</span>${liste}` : ""}
+    ${fertig ? "" : `<button class="link blau-link klein-link" data-aufteilen="${p.pos}">${geteilt ? "Aufteilung ändern" : "Aufteilen"}</button>`}
+  </div><div class="aufteilen-editor" data-editor="${p.pos}" hidden></div>`;
+}
+
+function aufteilungEditor(b, p, li) {
+  const ed = li.querySelector("[data-editor]");
+  const zeilen = (teile) => teile.map((t) => `<div class="ae-zeile">
+      <input class="feld ae-konto" value="${esc(t.konto)}" placeholder="Konto" inputmode="numeric">
+      <input class="feld ae-prozent" value="${esc(t.prozent)}" placeholder="%" inputmode="decimal"><span>%</span></div>`).join("");
+  const start = p.teile.length > 1 ? p.teile.map((t) => ({ konto: t.konto.nr, prozent: t.prozent }))
+    : [{ konto: p.konto.nr, prozent: "70" }, { konto: "", prozent: "30" }];
+  ed.innerHTML = `<div class="ae-liste">${zeilen(start)}</div>
+    <div class="ae-knoepfe">
+      <button class="link blau-link" data-ae="bewirtung">Bewirtung 70 / 30</button>
+      <button class="link blau-link" data-ae="plus">＋ Konto</button>
+      <span class="ae-rechts">
+        ${p.teile.length > 1 ? `<button class="link gefahr-link" data-ae="keine">Aufteilung entfernen</button>` : ""}
+        <button class="link" data-ae="abbrechen">Abbrechen</button>
+        <button class="knopf blau klein-knopf" data-ae="ok">Übernehmen</button></span></div>
+    <p class="klein">Anteile in Prozent vom Nettobetrag, zusammen 100 %. Die Vorsteuer bleibt voll abziehbar.</p>`;
+  ed.hidden = false;
+  const senden = async (teile) => {
+    try {
+      zeigeBeleg(await post("/api/beleg/aufteilung", { key: b.key, pos: p.pos, teile, modell: zustand.modell }));
+      ladeListe(); toast(teile && teile.length ? "Aufteilung übernommen" : "Aufteilung entfernt");
+    } catch (e) { toast(e.message, true); }
+  };
+  ed.querySelectorAll("[data-ae]").forEach((k) => k.addEventListener("click", () => {
+    const art = k.dataset.ae;
+    if (art === "abbrechen") { ed.hidden = true; return; }
+    if (art === "keine") return senden([]);
+    if (art === "bewirtung") { ed.querySelector(".ae-liste").innerHTML = zeilen([{ konto: "4650", prozent: "70" }, { konto: "4654", prozent: "30" }]); return; }
+    if (art === "plus") { ed.querySelector(".ae-liste").insertAdjacentHTML("beforeend", zeilen([{ konto: "", prozent: "" }])); return; }
+    const teile = [...ed.querySelectorAll(".ae-zeile")].map((z) => ({ konto: z.querySelector(".ae-konto").value.trim(),
+      prozent: z.querySelector(".ae-prozent").value.trim().replace(",", ".") })).filter((t) => t.konto || t.prozent);
+    senden(teile);
+  }));
+}
+
+function bindePositionsWahl(b) {
+  const pos = (i) => b.positionen[Number(i)];
+  document.querySelectorAll("#positionen select[data-bu]").forEach((s) => s.addEventListener("change", async () => {
+    try {
+      zeigeBeleg(await post("/api/beleg/steuerschluessel", { key: b.key, pos: Number(s.dataset.bu), wert: s.value === "__vorschlag" ? null : s.value, modell: zustand.modell }));
+      ladeListe(); toast(s.value === "__vorschlag" ? "Steuerschlüssel: Vorschlag" : `Steuerschlüssel ${s.value || "keiner"} übernommen`);
+    } catch (e) { toast(e.message, true); }
+  }));
+  document.querySelectorAll("#positionen select[data-satz]").forEach((s) => s.addEventListener("change", async () => {
+    const p = pos(s.dataset.satz);
+    try {
+      zeigeBeleg(await post("/api/beleg/steuersatz", { key: b.key, pos: p.pos, wert: s.value === p.steuersatz_beleg ? null : s.value, modell: zustand.modell }));
+      ladeListe(); toast(`Steuersatz ${s.value} % übernommen`);
+    } catch (e) { toast(e.message, true); }
+  }));
+  document.querySelectorAll("#positionen [data-aufteilen]").forEach((k) => k.addEventListener("click", () =>
+    aufteilungEditor(b, pos(k.dataset.aufteilen), k.closest(".position"))));
+  // Überfahren einer Position: Zeile im Beleg hervorheben
+  document.querySelectorAll("#positionen .position").forEach((li) => {
+    li.addEventListener("mouseenter", () => markiere_position(Number(li.dataset.pos)));
+    li.addEventListener("mouseleave", () => markiere_position(null));
+  });
+}
+
+function markiere_position(pos) {
+  document.querySelectorAll("#vorschau .markierung").forEach((m) => m.remove());
+  const rahmen = pos == null ? [] : (zustand.markierungen || [])[pos] || [];
+  for (const r of rahmen) {
+    const seite = document.querySelector(`#vorschau .seite[data-seite="${r.seite + 1}"]`);
+    if (!seite) continue;
+    const m = document.createElement("div");
+    m.className = "markierung";
+    Object.assign(m.style, { left: `${r.x0 * 100}%`, width: `${(r.x1 - r.x0) * 100}%`, top: `${r.y0 * 100}%`, height: `${(r.y1 - r.y0) * 100}%` });
+    seite.appendChild(m);
+    const v = $("vorschau");
+    const oben = seite.offsetTop + seite.offsetHeight * r.y0, unten = seite.offsetTop + seite.offsetHeight * r.y1;
+    if (oben < v.scrollTop || unten > v.scrollTop + v.clientHeight) v.scrollTo({ top: oben - v.clientHeight / 3, behavior: "smooth" });
+  }
 }
 
 const ART_MARKE = { vorsteuer: "Vorsteuer", umsatzsteuer: "Umsatzsteuer", kreditor: "Kreditor" };
@@ -567,7 +654,8 @@ function zeigeBuchungen(b) {
   const zeile = (z, ersteHaben) => `<tr class="${z.seite === "Haben" ? "haben" : ""} ${ersteHaben ? "an" : ""}">
       <td class="bs-seite">${z.seite === "Soll" ? "Soll" : ersteHaben ? "an Haben" : "Haben"}</td>
       <td><b>${esc(z.konto)}</b></td>
-      <td>${esc(z.name)}${ART_MARKE[z.art] ? ` <span class="bs-marke ${z.art}">${ART_MARKE[z.art]}</span>` : ""}</td>
+      <td>${esc(z.name)}${ART_MARKE[z.art] ? ` <span class="bs-marke ${z.art}">${ART_MARKE[z.art]}</span>` : ""}${z.aus && z.aus.length
+        ? `<small class="bs-aus">aus Automatikkonto ${esc(z.aus.join(", "))}</small>` : ""}</td>
       <td class="zahl-sp">${z.seite === "Soll" ? geld(z.betrag, w) : ""}</td>
       <td class="zahl-sp">${z.seite === "Haben" ? geld(z.betrag, w) : ""}</td></tr>`;
   let erstesHaben = true;
@@ -581,9 +669,9 @@ function zeigeBuchungen(b) {
   const stapel = bu.stapel.map((z) => `<tr>
       <td class="zahl-sp">${geld(z.umsatz, z.waehrung)}</td>
       <td title="${z.soll_haben === "H" ? "Kreditor im Haben (Rechnung)" : "Kreditor im Soll (Gutschrift)"}">${z.soll_haben}</td>
-      <td>${z.konto ? `<b>${esc(z.konto)}</b><small>${esc(z.konto_name)}</small>` : `<span class="fehlt">Kreditor fehlt</span>`}</td>
+      <td>${z.konto ? `<b>${esc(z.konto)}</b><small>${esc(z.konto_name)}</small>` : `<span class="fehlt">Kreditor fehlt</span>`}${z.eu_ustid ? `<small>USt-IdNr. ${esc(z.eu_ustid)}</small>` : ""}</td>
       <td><b>${esc(z.gegenkonto)}</b><small>${esc(z.gegenkonto_name)}</small></td>
-      <td>${z.bu ? `<b>${esc(z.bu)}</b>` : "–"}<small>${esc(z.steuer)}</small></td>
+      <td>${z.bu ? `<b>${esc(z.bu)}</b>` : "–"}<small>${z.vorsteuer ? `VSt ${geld(z.vorsteuer, z.waehrung)} → ${esc(z.vorsteuer_konto)}` : esc(z.steuer)}</small></td>
       <td>${datum(z.belegdatum)}<small>Leistung ${z.leistungsdatum ? datum(z.leistungsdatum) : "fehlt"}</small></td>
       <td>${esc(z.belegfeld1 || "–")}</td>
     </tr>`).join("");
@@ -606,31 +694,31 @@ function zeigeBuchungen(b) {
 }
 
 /* Rechnungsprüfung: Pflichtangaben nach § 14 UStG, §§ 31, 33 UStDV, § 14a UStG */
-const PFLICHT_STATUS = { ok: ["✓", "ok"], fehlt: ["!", "fehlt"], hinweis: ["i", "hinweis"], entfaellt: ["–", "entfaellt"] };
+const PFLICHT_STATUS = { ok: ["✓", "ok", "vorhanden"], fehlt: ["!", "fehlt", "fehlt"], hinweis: ["i", "hinweis", "fehlt (nur Hinweis)"],
+  entfaellt: ["–", "entfaellt", "nicht nötig"] };
 
 function zeigePruefung(b) {
   const pf = b.pflichtangaben;
   $("pflicht-liste").innerHTML = pf.punkte.map((p) => {
-    const [zeichen, klasse] = PFLICHT_STATUS[p.status];
-    const zusatz = p.status === "entfaellt" ? "bei Kleinbetragsrechnung nicht nötig" : p.key === "datum" ? datum(p.detail) : p.detail;
-    return `<li class="${klasse}"><span class="pf-zeichen">${zeichen}</span>
-      <span>${esc(p.text)}${zusatz ? `<small>${esc(zusatz)}</small>` : ""}</span><span class="pf-grundlage">${esc(p.grundlage)}</span></li>`;
+    // Kurz: Punkt, Haken, „vorhanden“ – die Rechtsgrundlage nur beim Überfahren
+    const [zeichen, klasse, wort] = PFLICHT_STATUS[p.status];
+    const wert = p.status !== "ok" ? "" : p.key === "datum" ? datum(p.detail) : p.detail;
+    return `<li class="${klasse}" title="${esc(p.grundlage)}"><span class="pf-zeichen">${zeichen}</span>
+      <span>${esc(p.text)} <span class="pf-wort">${wort}</span></span><span class="pf-wert">${esc(wert)}</span></li>`;
   }).join("");
   const fehlt = pf.punkte.filter((p) => p.status === "fehlt").length;
   const hinweis = pf.punkte.filter((p) => p.status === "hinweis").length;
   const val = b.validierung;
   const quelle = pf.e_rechnung ? "E-Rechnung, strukturiert geprüft" : "aus dem Belegtext geprüft";
   zeigeValidierung(val);
-  $("pflicht-grundlage").textContent = pf.grundlage;
   const valKurz = !val ? "" : val.gueltig ? `<span class="kurz-ok">✓ XRechnung gültig</span> · `
     : val.gueltig === false ? `<span class="kurz-fehler">✗ E-Rechnung ungültig</span> · ` : "";
-  $("kurz-pruefung").innerHTML = valKurz + (fehlt ? `<span class="kurz-warn">${anzahl(fehlt, "Angabe fehlt", "Angaben fehlen")}</span> · ${esc(pf.grundlage)}`
+  $("kurz-pruefung").innerHTML = valKurz + (fehlt ? `<span class="kurz-warn">${anzahl(fehlt, "Angabe fehlt", "Angaben fehlen")}</span>`
     : `<span class="kurz-ok">✓ ${pf.art === "kleinbetrag" ? "Kleinbetragsrechnung vollständig" : "Alle Pflichtangaben vorhanden"}</span>`
       + (hinweis ? ` · ${anzahl(hinweis, "Hinweis", "Hinweise")}` : "") + (val ? "" : ` · ${quelle}`));
-  $("pflicht-hinweis").textContent = (pf.art === "kleinbetrag"
-    ? "Kleinbetragsrechnung bis 250 € (§ 33 UStDV): weniger Pflichtangaben. " : "")
-    + (b.steuerfall.id === "13b" ? "Bei § 13b hängt der Vorsteuerabzug nicht an einer ordnungsgemäßen Rechnung (§ 15 Abs. 1 Nr. 4 UStG); fehlende Angaben sind nur Hinweise. " : "")
-    + "Geprüft wird lokal, ohne KI. Fehlende Pflichtangaben: beim Lieferanten eine berichtigte Rechnung anfordern, sonst ist der Vorsteuerabzug gefährdet.";
+  $("pflicht-hinweis").textContent = [pf.art === "kleinbetrag" ? "Kleinbetragsrechnung bis 250 €: weniger Angaben nötig." : "",
+    b.steuerfall.id === "13b" ? "Reverse Charge: fehlende Angaben gefährden den Vorsteuerabzug nicht." : "",
+    fehlt ? "Was tun? Beim Lieferanten eine berichtigte Rechnung anfordern." : ""].filter(Boolean).join(" ");
   if ((fehlt || (val && val.gueltig === false)) && b.status !== "freigegeben") setzeKlapp("pruefung", true);  // offen lassen
 }
 
@@ -667,8 +755,20 @@ function zeigeKreditor(b, fertig) {
         <label class="schalter" title="${r.aktiv ? "Regel abschalten" : "Regel einschalten"}">
           <input type="checkbox" data-regel="${esc(r.id)}" ${r.aktiv ? "checked" : ""}><span></span></label>
       </div>`).join("");
-    $("kurz-kreditor").innerHTML = `<b>${esc(b.kreditor.nr)}</b> · ${esc(b.kreditor.name)}` + (b.regeln.length ? ` · ${anzahl(b.regeln.length, "Regel", "Regeln")}` : "");
-    el.innerHTML = `<p class="klein kreditor-info">Kreditor ${esc(b.kreditor.nr)} ist fest zugeordnet für ${esc(b.mandant.name)}.
+    $("kurz-kreditor").innerHTML = `<b>${esc(b.kreditor.nr)}</b> · ${esc(b.kreditor.name)}` + (b.kreditor.ustid ? ` · ${esc(b.kreditor.ustid)}` : "")
+      + (b.regeln.length ? ` · ${anzahl(b.regeln.length, "Regel", "Regeln")}` : "");
+    const kr = b.kreditor, ausRechnung = b.kopf.lieferant_ustid && b.kopf.lieferant_ustid !== kr.ustid;
+    el.innerHTML = `<div class="kreditor-ustid">
+        <span><span class="klein">USt-IdNr.</span> <b>${esc(kr.ustid || "–")}</b> <span class="klein">· Land</span> <b>${esc(kr.land || "–")}</b></span>
+        ${fertig ? "" : `<button class="link blau-link klein-link" id="k-ustid-aendern">ändern</button>`}
+        ${ausRechnung && !fertig ? `<button class="link blau-link klein-link" id="k-ustid-uebernehmen">${esc(b.kopf.lieferant_ustid)} aus der Rechnung übernehmen</button>` : ""}
+      </div>
+      <div class="kreditor-ustid-form" hidden>
+        <input class="feld" id="k-ustid" value="${esc(kr.ustid || "")}" placeholder="USt-IdNr., z. B. NL999999042B01">
+        <input class="feld" id="k-land" value="${esc(kr.land || "")}" placeholder="Land" maxlength="2">
+        <button class="knopf blau klein-knopf" id="k-ustid-ok">Sichern</button>
+      </div>
+      <p class="klein kreditor-info">Kreditor ${esc(b.kreditor.nr)} ist fest zugeordnet für ${esc(b.mandant.name)}.
       ${b.regeln.length ? "Gelernte Regeln für diesen Lieferanten, einzeln abschaltbar:" : "Noch keine gelernten Regeln."}</p>
       <div class="regeln">${regeln}</div>`;
     el.querySelectorAll("input[data-regel]").forEach((i) => i.addEventListener("change", async () => {
@@ -678,6 +778,15 @@ function zeigeKreditor(b, fertig) {
         toast(i.checked ? "Regel eingeschaltet" : "Regel abgeschaltet – Konto kommt wieder von der KI");
       } catch (e) { toast(e.message, true); }
     }));
+    const ustidSenden = async (ustid, land) => {
+      try {
+        zeigeBeleg(await post("/api/beleg/kreditor/daten", { key: b.key, ustid, land, modell: zustand.modell }));
+        setzeKlapp("kreditor", true); ladeListe(); toast("USt-IdNr. und Land beim Kreditor gespeichert");
+      } catch (e) { toast(e.message, true); }
+    };
+    el.querySelector("#k-ustid-aendern")?.addEventListener("click", () => { el.querySelector(".kreditor-ustid-form").hidden = false; });
+    el.querySelector("#k-ustid-ok")?.addEventListener("click", () => ustidSenden($("k-ustid").value, $("k-land").value));
+    el.querySelector("#k-ustid-uebernehmen")?.addEventListener("click", () => ustidSenden(b.kopf.lieferant_ustid, b.kopf.lieferant_ustid.slice(0, 2)));
     return;
   }
   const v = b.kreditor_vorschlag;
@@ -871,6 +980,9 @@ async function ladeVorschau(b) {
     return;
   }
   const { anzahl: n } = await api(`/api/beleg/seiten?${new URLSearchParams({ key: b.key })}`);
+  zustand.markierungen = [];
+  api(`/api/beleg/markierungen?${new URLSearchParams({ key: b.key, modell: zustand.modell })}`)
+    .then((m) => { if (zustand.key === b.key) zustand.markierungen = m; }).catch(() => {});
   ansichtZ.seiten = n; ansichtZ.seite = 1;
   v.innerHTML = [...Array(n).keys()].map((i) => `<div class="seite" data-seite="${i + 1}">
     <img src="/api/beleg/seite?${new URLSearchParams({ key: b.key, i, nutzer: zustand.nutzer })}" alt="Seite ${i + 1} von ${n}" draggable="false"></div>`).join("");

@@ -145,3 +145,43 @@ def test_folgemonat_ist_vorkontiert_und_bleibt_kontrollierbar(leerer_zustand) ->
     assert ansicht.ansicht(eingang["F10"])["positionen"][0]["regel"]["bestaetigungen"] == 2
     a = ansicht.wiedereroeffnen(eingang["F10"])
     assert a["bereich"] == "sicher" and a["positionen"][0]["regel"]["bestaetigungen"] == 1
+
+
+@pytest.mark.skipif(not (TESTDATEN / "folgemonat" / "gold").exists(), reason="Belege November fehlen")
+def test_bewirtung_aufteilung_und_manuelle_korrektur(leerer_zustand) -> None:  # type: ignore[no-untyped-def]
+    from app.demo import ansicht
+
+    ansicht.demo_november()
+    key = {b["id"]: b["key"] for b in ansicht.eingang()}["F22"]
+    a = ansicht.ansicht(key)
+    # Bewirtung erkannt: 4650 mit 70/30-Aufteilung auf 4654, Speisen 7 %, Getränke 19 %, Vorsteuer voll
+    assert all([t["konto"]["nr"] for t in p["teile"]] == ["4650", "4654"] for p in a["positionen"])
+    satz = {(z["seite"], z["konto"]): z["betrag"] for z in a["buchungen"]["satz"]}
+    assert satz[("Soll", "1571")] == "16.38" and satz[("Soll", "1576")] == "27.51" and a["buchungen"]["ausgeglichen"]
+    assert any(x.startswith("Bewirtung") for x in a["ausnahmen"])
+    # Korrekturen von Hand: Aufteilung, Steuersatz, Steuerschlüssel – die Steuerlogik prüft weiter
+    a = ansicht.aufteilen(key, 0, [{"konto": "4650", "prozent": "80"}, {"konto": "4654", "prozent": "20"}])
+    assert [t["netto"] for t in a["positionen"][0]["teile"]] == ["187.20", "46.80"]
+    with pytest.raises(ValueError, match="nicht 100"):
+        ansicht.aufteilen(key, 0, [{"konto": "4650", "prozent": "80"}, {"konto": "4654", "prozent": "30"}])
+    a = ansicht.steuerschluessel_waehlen(key, 2, "8")
+    assert a["positionen"][2]["ampel"] == "gelb" and "7 %" in a["positionen"][2]["grund"]
+    a = ansicht.steuersatz_waehlen(key, 1, "7")
+    assert a["positionen"][1]["teile"][0]["steuer"]["bu"] == "8" and a["positionen"][1]["satz_manuell"]
+    a = ansicht.steuersatz_waehlen(key, 1, None)
+    assert a["positionen"][1]["steuersatz"] == "19"
+
+
+@pytest.mark.skipif(not (TESTDATEN / "folgemonat" / "gold").exists(), reason="Belege November fehlen")
+def test_kreditor_mit_ustid_aus_der_rechnung(leerer_zustand) -> None:  # type: ignore[no-untyped-def]
+    from app.demo import ansicht
+
+    ansicht.demo_november()
+    key = {b["id"]: b["key"] for b in ansicht.eingang()}["F19"]
+    a = ansicht.kreditor_anlegen(key, 70000, "Gereedschap Groothandel B.V.")
+    assert (a["kreditor"]["ustid"], a["kreditor"]["land"]) == ("NL999999042B01", "NL")
+    assert a["buchungen"]["stapel"][0]["eu_ustid"] == "NL999999042B01"
+    a = ansicht.kreditor_daten(key, "NL123456789B01", "NL")
+    assert any("weicht vom Kreditor ab" in x for x in a["ausnahmen"])
+    with pytest.raises(ValueError, match="passt nicht"):
+        ansicht.kreditor_daten(key, "NL123456789B01", "BE")

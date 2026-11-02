@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Belegautomatik</title>
-  <link rel="stylesheet" href="style.css?v=18">
+  <link rel="stylesheet" href="style.css?v=19">
 </head>
 <body>
   <header class="topbar">
@@ -35,12 +35,6 @@
           <button id="ue-neu" class="knopf blau">＋ Mandant</button>
         </div>
       </div>
-      <div class="kacheln">
-        <div class="kachel blau"><span class="klein" id="k1-titel">Meine Mandanten</span><b id="k1">–</b><small id="k1-text"></small></div>
-        <div class="kachel gelb"><span class="klein">Mit offenen Belegen</span><b id="k2">–</b><small id="k2-text"></small></div>
-        <div class="kachel orange"><span class="klein">Ältester offener Monat</span><b id="k3">–</b><small id="k3-text"></small></div>
-        <div class="kachel gruen"><span class="klein">Fertig gebucht</span><b id="k4">–</b><small id="k4-text"></small></div>
-      </div>
       <div class="karte ue-liste">
         <div class="ue-listenkopf">
           <b id="ue-titel">Mandanten</b>
@@ -48,7 +42,7 @@
         </div>
         <div class="ue-zeile ue-spalten">
           <span></span><span>Mandant</span><span>Nummer</span><span>Kontenrahmen</span><span>Sachbearbeiter</span>
-          <span>Offen</span><span>Monat</span><span></span>
+          <span>Zuletzt bearbeitet</span><span>Offene Belege</span><span></span>
         </div>
         <div id="ue-tabelle"></div>
       </div>
@@ -132,7 +126,7 @@
             <span class="kurz" id="kurz-pruefung"></span></summary>
           <div class="abschnitt-inhalt">
             <div id="validierung" class="validierung" hidden></div>
-            <div class="unter-titel">Pflichtangaben <span class="klein" id="pflicht-grundlage"></span></div>
+            <div class="unter-titel">Pflichtangaben</div>
             <ul id="pflicht-liste" class="pflicht-liste"></ul>
             <p id="pflicht-hinweis" class="klein pflicht-hinweis"></p>
           </div>
@@ -156,9 +150,13 @@
           <div class="abschnitt-inhalt">
             <div class="unter-titel">Buchungssatz <span class="klein">so bucht DATEV den Beleg</span></div>
             <table id="buchungssatz" class="buchungssatz"></table>
-            <div class="unter-titel">DATEV-Buchungsstapel <span class="klein">Konto = Kreditor, Gegenkonto = Sachkonto</span></div>
-            <div class="tabelle-rahmen"><table id="buchungen" class="buchungen"></table></div>
             <p id="buchungen-hinweis" class="klein buchungen-hinweis"></p>
+            <details class="datev-zeile">
+              <summary>So geht der Beleg an DATEV (Exportzeile im Buchungsstapel)</summary>
+              <p class="klein">Dieselbe Buchung im DATEV-Format: Konto = Kreditor, Gegenkonto = Sachkonto mit Steuerschlüssel.
+                Die Vorsteuer bucht DATEV daraus selbst.</p>
+              <div class="tabelle-rahmen"><table id="buchungen" class="buchungen"></table></div>
+            </details>
           </div>
         </details>
 
@@ -243,6 +241,7 @@
           <label>Unternehmensname<input name="name" class="feld" required autocomplete="off"></label>
           <label>Mandantennummer<input name="nummer" class="feld" inputmode="numeric" required autocomplete="off"></label>
           <label>Ansprechpartner im Unternehmen<input name="ansprechpartner" class="feld" autocomplete="off"></label>
+          <label>USt-IdNr. des Mandanten<input name="ustid" class="feld" autocomplete="off" placeholder="z. B. DE123456789"></label>
         </div>
         <div class="form-gruppe">
           <span class="form-label">Kontenrahmen</span>
@@ -292,6 +291,6 @@
   </div>
 
   <div id="toast" class="toast" hidden></div>
-  <script src="app.js?v=18"></script>
+  <script src="app.js?v=20"></script>
 </body>
 </html>

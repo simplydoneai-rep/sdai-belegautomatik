@@ -22,5 +22,24 @@
   "nicht_verwenden": {
     "7": "Vorsteuer 16 % (nur Zeitraum 2020/2021), nicht 7 %",
     "17": "i. g. Erwerb 16 % (Altfälle)"
-  }
+  },
+  "_auswahl_hinweis": "Auswahlliste für die manuelle Änderung je Position (Stand 02.11.2026). Enthält alle Schlüssel, die in den Quellen oben belegt sind (Lexware-Tabelle ab 01.01.2021, DATEV-Community, DATEV-Lernunterlage für 1–3). Sonderschlüssel (z. B. Aufhebung der Automatik, Generalumkehr, Berichtigungsschlüssel) und die dreistelligen DATEV-Schlüssel fehlen bewusst: Sie sind nicht öffentlich belegt und werden vor Phase 4 aus der DATEV-Dokumentation ergänzt.",
+  "auswahl": [
+    {"bu": "", "text": "kein Steuerschlüssel", "gruppe": "Ohne", "fall": null, "satz": null},
+    {"bu": "9", "text": "Vorsteuer 19 %", "gruppe": "Vorsteuer", "fall": "inland", "satz": "19"},
+    {"bu": "8", "text": "Vorsteuer 7 %", "gruppe": "Vorsteuer", "fall": "inland", "satz": "7"},
+    {"bu": "19", "text": "i. g. Erwerb 19 % Vorsteuer und Umsatzsteuer", "gruppe": "Innergemeinschaftlicher Erwerb", "fall": "ige", "satz": "19"},
+    {"bu": "18", "text": "i. g. Erwerb 7 % Vorsteuer und Umsatzsteuer", "gruppe": "Innergemeinschaftlicher Erwerb", "fall": "ige", "satz": "7"},
+    {"bu": "94", "text": "§ 13b UStG 19 % Vorsteuer und Umsatzsteuer", "gruppe": "Reverse Charge (§ 13b)", "fall": "13b", "satz": "19"},
+    {"bu": "91", "text": "§ 13b UStG 7 % Vorsteuer und Umsatzsteuer", "gruppe": "Reverse Charge (§ 13b)", "fall": "13b", "satz": "7"},
+    {"bu": "3", "text": "Umsatzsteuer 19 %", "gruppe": "Umsatzsteuer (Ausgangsrechnungen)", "fall": "ausgang", "satz": "19"},
+    {"bu": "2", "text": "Umsatzsteuer 7 %", "gruppe": "Umsatzsteuer (Ausgangsrechnungen)", "fall": "ausgang", "satz": "7"},
+    {"bu": "1", "text": "umsatzsteuerfrei mit Vorsteuerabzug", "gruppe": "Umsatzsteuer (Ausgangsrechnungen)", "fall": "ausgang", "satz": "0"},
+    {"bu": "7", "text": "Vorsteuer 16 % (nur 01.07.–31.12.2020)", "gruppe": "Altfälle 2020", "fall": "inland", "satz": "16"},
+    {"bu": "6", "text": "Vorsteuer 5 % (nur 01.07.–31.12.2020)", "gruppe": "Altfälle 2020", "fall": "inland", "satz": "5"},
+    {"bu": "17", "text": "i. g. Erwerb 16 % (nur 2020)", "gruppe": "Altfälle 2020", "fall": "ige", "satz": "16"},
+    {"bu": "16", "text": "i. g. Erwerb 5 % (nur 2020)", "gruppe": "Altfälle 2020", "fall": "ige", "satz": "5"},
+    {"bu": "5", "text": "Umsatzsteuer 16 % (nur 2020)", "gruppe": "Altfälle 2020", "fall": "ausgang", "satz": "16"},
+    {"bu": "4", "text": "Umsatzsteuer 5 % (nur 2020)", "gruppe": "Altfälle 2020", "fall": "ausgang", "satz": "5"}
+  ]
 }

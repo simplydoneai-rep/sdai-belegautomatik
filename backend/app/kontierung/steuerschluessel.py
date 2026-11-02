@@ -44,15 +44,24 @@ class Steuer:
     satz: Decimal | None  # deutscher Steuersatz der Buchung
     automatik: bool
     hinweis: str | None  # Widerspruch: senkt die Sicherheit, wird in der Oberfläche markiert
+    manuell: bool = False  # vom Sachbearbeiter gewählt
+    fall: str | None = None  # bei manuellem Schlüssel: Steuerfall, den der Schlüssel bucht
 
     def oeffentlich(self) -> dict[str, Any]:
         return {"bu": self.bu, "text": self.text, "satz": None if self.satz is None else str(self.satz),
-                "automatik": self.automatik, "hinweis": self.hinweis}
+                "automatik": self.automatik, "hinweis": self.hinweis, "manuell": self.manuell, "fall": self.fall}
 
 
 @lru_cache(maxsize=1)
 def _tabelle() -> dict[str, dict[str, dict[str, str]]]:
     data: dict[str, dict[str, dict[str, str]]] = json.loads(_DATEI.read_text(encoding="utf-8"))["schluessel"]
+    return data
+
+
+@lru_cache(maxsize=1)
+def auswahl() -> list[dict[str, Any]]:
+    """Alle belegten DATEV-Steuerschlüssel für die manuelle Auswahl (tabellen/datev_steuerschluessel.json)."""
+    data: list[dict[str, Any]] = json.loads(_DATEI.read_text(encoding="utf-8"))["auswahl"]
     return data
 
 
@@ -105,9 +114,14 @@ def herkunft_aus_ustid(ustid: str | None) -> str | None:
     return "eu" if land in EU_LAENDER else "drittland"
 
 
-def bestimmen(konto: dict[str, Any] | None, satz_beleg: Decimal | None, fall: str) -> Steuer:
+def bestimmen(konto: dict[str, Any] | None, satz_beleg: Decimal | None, fall: str,
+              manuell_bu: str | None = None) -> Steuer:
+    """Steuerschlüssel je Buchungszeile. ``manuell_bu``: vom Sachbearbeiter gewählter Schlüssel ("" = keiner);
+    er gilt, wird aber gegen Konto, Steuersatz und Steuerfall der Rechnung geprüft (CLAUDE.md Regel 15)."""
     if not konto:
         return Steuer("", "", None, False, None)
+    if manuell_bu is not None:
+        return _manuell(konto, satz_beleg, fall, manuell_bu)
     nr = konto["nr"]
     auto = automatik(konto)
     if auto:
@@ -137,6 +151,32 @@ def bestimmen(konto: dict[str, Any] | None, satz_beleg: Decimal | None, fall: st
     eintrag = _tabelle()[fall][_satz_text(satz)]
     zusatz = "" if satz_beleg == satz else " (Regelsatz angenommen)"
     return Steuer(eintrag["bu"], eintrag["text"] + zusatz, satz, False, None)
+
+
+def _manuell(konto: dict[str, Any], satz_beleg: Decimal | None, fall: str, bu: str) -> Steuer:
+    nr = konto["nr"]
+    auto = automatik(konto)
+    eintrag = next((e for e in auswahl() if e["bu"] == bu), None)
+    if eintrag is None:
+        return Steuer(bu, f"Schlüssel {bu}", None, False, f"Steuerschlüssel {bu} ist nicht in der Liste", True)
+    if bu == "":
+        if auto:  # Automatikkonto braucht keinen Schlüssel: Ergebnis wie automatisch, nur als manuell markiert
+            st = bestimmen(konto, satz_beleg, fall)
+            return Steuer("", st.text, st.satz, True, st.hinweis, True)
+        hinweis = ("Ohne Steuerschlüssel wird keine Vorsteuer gebucht" if fall in ("inland", "ige", "13b")
+                   and satz_beleg not in (None, Decimal(0)) or fall in ("ige", "13b") else None)
+        return Steuer("", "kein Steuerschlüssel", Decimal(0), False, hinweis, True)
+    satz = Decimal(eintrag["satz"])
+    hinweis = None
+    if auto:
+        hinweis = f"Konto {nr} ist ein Automatikkonto – ein zusätzlicher Steuerschlüssel ist nicht vorgesehen"
+    elif eintrag["fall"] == "ausgang":
+        hinweis = f"Schlüssel {bu} ist für Ausgangsrechnungen (Umsatzsteuer), nicht für Eingangsrechnungen"
+    elif eintrag["fall"] != fall:
+        hinweis = f"Schlüssel {bu} gilt für {FALL_TEXT[eintrag['fall']]}, die Rechnung ist {FALL_TEXT[fall]}"
+    elif fall == "inland" and satz_beleg is not None and satz_beleg != satz:
+        hinweis = f"Schlüssel {bu} bucht {_satz_text(satz)} % Vorsteuer, die Rechnung weist {_satz_text(satz_beleg)} % aus"
+    return Steuer(bu, eintrag["text"], satz, False, hinweis, True, eintrag["fall"] if eintrag["fall"] in FAELLE else None)
 
 
 @lru_cache(maxsize=1)
