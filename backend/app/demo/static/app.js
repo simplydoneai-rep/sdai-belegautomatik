@@ -577,6 +577,7 @@ function zeigeBeleg(b) {
         <div class="ampel ${p.ampel}" title="${esc(p.grund)}"><span class="punkt ${p.ampel}"></span>
           <span class="ampel-text"><b>${AMPEL[p.ampel]}</b><small>${esc(p.grund)}</small></span></div>
       </div>
+      ${satzKorrektur(p, fertig)}
       ${aufteilungZeile(p, w, fertig)}
     </li>`).join("");
   $("positionen").querySelectorAll("input[data-pos]").forEach(bindeKontoFeld);
@@ -637,13 +638,22 @@ function buWahl(p, fertig) {
       <option value="__vorschlag" ${p.bu_manuell ? "" : "selected"}>Vorschlag übernehmen</option>${optionen}</select></label>`;
 }
 
+/* Steuersatz der Rechnung: nur Anzeige. Geändert wird über den Steuerschlüssel; eine falsch gelesene Rechnung
+   korrigiert der Knopf im Hinweis (satzKorrektur), eine Korrektur lässt sich hier zurücknehmen. */
 function satzWahl(p, fertig) {
-  const saetze = [...new Set(["19", "7", "0", p.steuersatz_beleg, p.steuersatz].filter((s) => s != null && s !== ""))];
-  return `<label class="satz-wahl ${p.satz_manuell ? "manuell" : ""}" title="${p.satz_manuell ? `Von Hand geändert, laut Beleg ${esc(p.steuersatz_beleg)} %` : "Steuersatz laut Beleg – bei Fehlerkennung ändern"}">
-    · <span>${esc(p.steuersatz ?? "–")} %${p.satz_manuell ? " ✎" : ""}</span>
-    <select data-satz="${p.pos}" ${fertig ? "disabled" : ""} aria-label="Steuersatz korrigieren">
-      ${saetze.map((s) => `<option value="${esc(s)}" ${String(s) === String(p.steuersatz) ? "selected" : ""}>${esc(s)} %${s === p.steuersatz_beleg ? " (laut Beleg)" : ""}</option>`).join("")}
-    </select></label>`;
+  if (!p.satz_manuell) return `<span class="satz-anzeige" title="Steuersatz laut Rechnung">· ${esc(p.steuersatz ?? "–")} %</span>`;
+  return `<span class="satz-anzeige manuell" title="Korrigiert, laut Erkennung ${esc(p.steuersatz_beleg)} %">· ${esc(p.steuersatz)} % ✎
+    ${fertig ? "" : `<button class="link blau-link klein-link" data-satz-zurueck="${p.pos}">zurück auf ${esc(p.steuersatz_beleg)} %</button>`}</span>`;
+}
+
+/* Gewählter Schlüssel passt nicht zum Satz der Rechnung: Angebot, die Rechnung als falsch gelesen zu korrigieren */
+function satzKorrektur(p, fertig) {
+  const st = p.teile[0]?.steuer;
+  if (fertig || !p.bu_manuell || !st || st.satz == null || st.automatik || (st.fall && st.fall !== "inland")
+      || String(Number(st.satz)) === String(Number(p.steuersatz)) || Number(st.satz) === 0) return "";
+  return `<div class="satz-korrektur">Rechnung falsch gelesen?
+    <button class="link blau-link klein-link" data-satz-auf="${p.pos}" data-satz="${esc(String(Number(st.satz)))}">Steuersatz auf ${esc(String(Number(st.satz)))} % korrigieren</button>
+    <span class="klein">Sonst bleibt es bei ${esc(p.steuersatz)} % laut Rechnung und ${esc(String(Number(st.satz)))} % Vorsteuer.</span></div>`;
 }
 
 /* Aufteilung einer Position auf mehrere Konten, z. B. Bewirtung 70 % abziehbar / 30 % nicht abziehbar */
@@ -701,13 +711,14 @@ function bindePositionsWahl(b) {
       ladeListe(); toast(s.value === "__vorschlag" ? "Steuerschlüssel: Vorschlag" : `Steuerschlüssel ${s.value || "keiner"} übernommen`);
     } catch (e) { toast(e.message, true); }
   }));
-  document.querySelectorAll("#positionen select[data-satz]").forEach((s) => s.addEventListener("change", async () => {
-    const p = pos(s.dataset.satz);
+  const satzSenden = async (p, wert) => {
     try {
-      zeigeBeleg(await post("/api/beleg/steuersatz", { key: b.key, pos: p.pos, wert: s.value === p.steuersatz_beleg ? null : s.value, modell: zustand.modell }));
-      ladeListe(); toast(`Steuersatz ${s.value} % übernommen`);
+      zeigeBeleg(await post("/api/beleg/steuersatz", { key: b.key, pos: p.pos, wert, modell: zustand.modell }));
+      ladeListe(); toast(wert == null ? `Steuersatz wieder laut Rechnung (${p.steuersatz_beleg} %)` : `Steuersatz auf ${wert} % korrigiert`);
     } catch (e) { toast(e.message, true); }
-  }));
+  };
+  document.querySelectorAll("#positionen [data-satz-auf]").forEach((k) => k.addEventListener("click", () => satzSenden(pos(k.dataset.satzAuf), k.dataset.satz)));
+  document.querySelectorAll("#positionen [data-satz-zurueck]").forEach((k) => k.addEventListener("click", () => satzSenden(pos(k.dataset.satzZurueck), null)));
   document.querySelectorAll("#positionen [data-aufteilen]").forEach((k) => k.addEventListener("click", () =>
     aufteilungEditor(b, pos(k.dataset.aufteilen), k.closest(".position"))));
   // Überfahren einer Position: Zeile im Beleg hervorheben
