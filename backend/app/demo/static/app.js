@@ -81,14 +81,9 @@ async function init() {
   setzeSymbole();
   await ladeStamm();
 
-  $("nutzer").addEventListener("change", async (e) => {
-    zustand.nutzer = e.target.value; merke("nutzer", zustand.nutzer);
-    await ladeStamm();
-    toast(`Angemeldet als ${zustand.stamm.nutzer.name}`);
-    route();
-  });
+  $("nutzer-knopf").addEventListener("click", (e) => { e.stopPropagation(); waehleNutzer(); });
+  $("mandant-knopf").addEventListener("click", (e) => { e.stopPropagation(); waehleMandant(); });
   document.querySelectorAll(".segment.drei button").forEach((b) => b.addEventListener("click", () => setzeFilter(b.dataset.filter)));
-  $("mandant").addEventListener("change", (e) => { location.hash = `#/belege/${e.target.value}`; });
   $("suche").addEventListener("input", (e) => { zustand.suche = e.target.value.toLowerCase(); zeigeListe(); });
   $("ue-suche").addEventListener("input", zeigeUebersicht);
   $("modell").addEventListener("change", async (e) => {
@@ -108,9 +103,10 @@ async function init() {
   document.addEventListener("click", (e) => {
     if (!e.target.closest(".konto-feld, .dropdown")) schliesseDropdown();
     if (!e.target.closest(".demo-menue")) $("demo-liste").hidden = true;
+    if (!e.target.closest(".auswahl")) schliesseAuswahl();
   });
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") document.querySelectorAll(".blatt-hintergrund").forEach((b) => { b.hidden = true; });
+    if (e.key === "Escape") { document.querySelectorAll(".blatt-hintergrund").forEach((b) => { b.hidden = true; }); schliesseAuswahl(); }
   });
   $("ue-neu").addEventListener("click", () => oeffneMandant(null));
   $("ue-rechte").addEventListener("click", oeffneRechte);
@@ -132,11 +128,10 @@ async function ladeStamm() {
   const s = zustand.stamm;
   if (!s.nutzer) { zustand.nutzer = s.sachbearbeiter[0].kuerzel; merke("nutzer", zustand.nutzer); return ladeStamm(); }
   zustand.modell = zustand.modell || s.standard_modell;
-  $("nutzer").innerHTML = s.sachbearbeiter.map((p) => `<option value="${esc(p.kuerzel)}" ${p.kuerzel === zustand.nutzer ? "selected" : ""}>
-    ${esc(p.name)} · ${esc(s.rollen[p.rolle])}</option>`).join("");
   $("nutzer-avatar").textContent = s.nutzer.kuerzel;
+  $("nutzer-name").textContent = s.nutzer.name;
+  $("nutzer-rolle").textContent = s.rollen[s.nutzer.rolle];
   $("modell").innerHTML = s.modelle.map((m) => `<option value="${m.id}" ${m.id === zustand.modell ? "selected" : ""}>${esc(m.kurz)}</option>`).join("");
-  $("mandant").innerHTML = s.mandanten.map((m) => `<option value="${esc(m.id)}">${esc(m.name)}</option>`).join("");
   $("ue-aktionen").hidden = !s.leitung;
 }
 
@@ -169,7 +164,6 @@ function zeigeSeite(seite, mandant) {
     $("beleg").hidden = true; $("aktionsleiste").hidden = true; $("leer").hidden = false;
     leereVorschau();
   }
-  $("mandant").value = mandant;
   zeigeMandantKopf();
   ladeListe();
 }
@@ -200,7 +194,7 @@ function zeigeUebersicht() {
   const zeilen = u.mandanten.filter((m) => !q || `${m.name} ${m.nummer} ${m.ansprechpartner}`.toLowerCase().includes(q));
   $("ue-tabelle").innerHTML = zeilen.map((m) => `
     <div class="ue-zeile" data-mandant="${esc(m.id)}" tabindex="0">
-      <span class="m-avatar">${esc(m.name.replace(/[^A-Za-zÄÖÜäöü ]/g, "").split(" ").filter(Boolean).slice(0, 2).map((w) => w[0]).join("").toUpperCase())}</span>
+      <span class="m-avatar">${esc(initialen(m.name))}</span>
       <span class="m-name"><b>${esc(m.name)}</b><small>${esc(m.ansprechpartner || "Kein Ansprechpartner")}</small></span>
       <span class="m-nr">${esc(m.nummer)}</span>
       <span><span class="marke">${esc(m.kontenrahmen)}</span></span>
@@ -352,9 +346,102 @@ function setzeKlapp(name, offen) {
 }
 
 /* ---------- Belegverarbeitung: Liste ---------- */
+function initialen(name) {
+  return name.replace(/[^A-Za-zÄÖÜäöü ]/g, "").split(" ").filter(Boolean).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
+}
+
+/* ---------- Auswahl im iOS-Stil (Person, Mandant): Liste mit Häkchen, Suche, Tastatur ---------- */
+let auswahl = null;
+
+function schliesseAuswahl() {
+  $("auswahl").hidden = true;
+  document.querySelectorAll(".nutzer-knopf, .mandant-knopf").forEach((k) => k.classList.remove("offen"));
+  auswahl = null;
+}
+
+function zeigeAuswahl(anker, { titel, eintraege, gewaehlt, suche = false, rechts = false, onWahl }) {
+  if (auswahl && auswahl.anker === anker) return schliesseAuswahl();
+  schliesseAuswahl();
+  const el = $("auswahl");
+  auswahl = { anker, eintraege, onWahl, aktiv: Math.max(0, eintraege.findIndex((e) => e.id === gewaehlt)) };
+  el.innerHTML = `<div class="aw-titel">${esc(titel)}</div>
+    ${suche ? `<input class="feld suchfeld aw-suche" placeholder="Suchen" autocomplete="off">` : ""}
+    <ul class="aw-liste"></ul>`;
+  const zeichne = (q = "") => {
+    const treffer = eintraege.filter((e) => !q || `${e.titel} ${e.untertitel || ""}`.toLowerCase().includes(q.toLowerCase()));
+    auswahl.sichtbar = treffer;
+    auswahl.aktiv = Math.min(auswahl.aktiv, Math.max(0, treffer.length - 1));
+    el.querySelector(".aw-liste").innerHTML = treffer.map((e, i) => `
+      <li class="aw-eintrag ${e.id === gewaehlt ? "gewaehlt" : ""} ${i === auswahl.aktiv ? "aktiv" : ""}" data-i="${i}" role="option">
+        <span class="${e.rund ? "avatar" : "m-avatar"}">${esc(e.avatar)}</span>
+        <span class="aw-text"><b>${esc(e.titel)}</b>${e.untertitel ? `<small>${esc(e.untertitel)}</small>` : ""}</span>
+        ${e.rechts ? `<span class="aw-rechts">${e.rechts}</span>` : ""}
+        <span class="aw-haken">${e.id === gewaehlt ? "✓" : ""}</span>
+      </li>`).join("") || `<li class="aw-leer">Keine Treffer</li>`;
+    el.querySelectorAll(".aw-eintrag").forEach((li) => li.addEventListener("click", () => {
+      const e = treffer[Number(li.dataset.i)]; schliesseAuswahl(); onWahl(e.id);
+    }));
+  };
+  zeichne();
+  const r = anker.getBoundingClientRect();
+  el.style.top = `${r.bottom + 6}px`;
+  el.style.left = rechts ? "" : `${r.left}px`;
+  el.style.right = rechts ? `${window.innerWidth - r.right}px` : "";
+  el.hidden = false;
+  anker.classList.add("offen");
+  const feld = el.querySelector(".aw-suche");
+  feld?.addEventListener("input", () => zeichne(feld.value));
+  (feld || el).focus?.();
+  el.onkeydown = (ev) => {
+    if (!auswahl) return;
+    const n = auswahl.sichtbar.length;
+    if (ev.key === "ArrowDown") { auswahl.aktiv = Math.min(auswahl.aktiv + 1, n - 1); zeichne(feld?.value || ""); ev.preventDefault(); }
+    else if (ev.key === "ArrowUp") { auswahl.aktiv = Math.max(auswahl.aktiv - 1, 0); zeichne(feld?.value || ""); ev.preventDefault(); }
+    else if (ev.key === "Enter" && n) { const e = auswahl.sichtbar[auswahl.aktiv]; schliesseAuswahl(); onWahl(e.id); }
+  };
+}
+
+function waehleNutzer() {
+  const s = zustand.stamm;
+  zeigeAuswahl($("nutzer-knopf"), {
+    titel: "Angemeldet als (Demo)", gewaehlt: zustand.nutzer, rechts: true,
+    eintraege: s.sachbearbeiter.map((p) => {
+      const n = Object.values(p.zugriff || {}).filter((w) => w === "an").length;
+      return { id: p.kuerzel, avatar: p.kuerzel, rund: true, titel: p.name,
+        untertitel: `${s.rollen[p.rolle]} · ${p.rolle === "leitung" ? "alle Mandanten" : anzahl(n, "Mandant", "Mandanten")}` };
+    }),
+    onWahl: async (kuerzel) => {
+      if (kuerzel === zustand.nutzer) return;
+      zustand.nutzer = kuerzel; merke("nutzer", kuerzel);
+      await ladeStamm();
+      toast(`Angemeldet als ${zustand.stamm.nutzer.name}`);
+      route();
+    },
+  });
+}
+
+async function waehleMandant() {
+  const s = zustand.stamm;
+  const offen = {};
+  try {  // offene Belege je Mandant aus der Übersicht (schon berechnet, daher schnell)
+    const u = zustand.uebersicht || await api(`/api/uebersicht?${new URLSearchParams({ modell: zustand.modell })}`);
+    for (const m of u.mandanten) offen[m.id] = m;
+  } catch { /* ohne Zahlen weiter */ }
+  zeigeAuswahl($("mandant-knopf"), {
+    titel: "Mandant wechseln", gewaehlt: zustand.mandant, suche: s.mandanten.length > 5,
+    eintraege: s.mandanten.map((m) => ({
+      id: m.id, avatar: initialen(m.name), titel: m.name, untertitel: `${m.nummer} · ${m.kontenrahmen}`,
+      rechts: offen[m.id] ? (offen[m.id].offen ? `<span class="aw-offen">${offen[m.id].offen} offen</span>` : `<span class="aw-fertig">erledigt</span>`) : "",
+    })),
+    onWahl: (id) => { location.hash = `#/belege/${id}`; },
+  });
+}
+
 function zeigeMandantKopf() {
   const m = zustand.stamm.mandanten.find((x) => x.id === zustand.mandant);
   if (!m) return;
+  $("mandant-name").textContent = m.name;
+  $("mandant-avatar").textContent = initialen(m.name);
   $("mandant-info").innerHTML = `Mandant ${esc(m.nummer)} · ${esc(m.kontenrahmen)} · ${team(m.team)}`;
   const h = $("mandant-hinweis");
   h.hidden = m.kontenrahmen !== "SKR04";

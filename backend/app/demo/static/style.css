@@ -31,8 +31,16 @@ h2 { font-size: 21px; margin: 0; letter-spacing: -.01em; }
 .hauptnav a { padding: 6px 16px; border-radius: 8px; font-size: 13.5px; font-weight: 500; color: var(--text); text-decoration: none; }
 .hauptnav a.aktiv { background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.12); }
 .topbar-rechts { display: flex; gap: 12px; align-items: center; justify-content: flex-end; }
-.nutzer-wahl { display: flex; align-items: center; gap: 6px; background: var(--feld); border-radius: 999px; padding: 3px 8px 3px 3px; font-size: 13px; }
-.nutzer-wahl select { border: 0; background: transparent; font-size: 13px; padding: 3px; cursor: pointer; max-width: 230px; }
+/* Person oben rechts: Avatar, Name, Rolle */
+.nutzer-knopf { display: flex; align-items: center; gap: 8px; border: 0; background: transparent; border-radius: 12px; padding: 4px 8px 4px 4px;
+  cursor: pointer; text-align: left; transition: background .12s; }
+.nutzer-knopf:hover, .nutzer-knopf.offen { background: var(--feld); }
+.nutzer-knopf .avatar { width: 30px; height: 30px; font-size: 11.5px; }
+.nk-text { display: flex; flex-direction: column; line-height: 1.15; }
+.nk-text b { font-size: 13px; font-weight: 600; }
+.nk-text small { font-size: 11.5px; color: var(--text2); }
+.pfeil { color: var(--text3); font-size: 14px; margin-top: -4px; transition: transform .15s; }
+.offen .pfeil { transform: rotate(180deg); margin-top: 4px; }
 .avatar { width: 26px; height: 26px; border-radius: 50%; background: linear-gradient(135deg, #64d2ff, #0a84ff); color: #fff;
   display: inline-grid; place-items: center; font-size: 11px; font-weight: 700; flex: none; }
 .demo-hinweis { font-size: 12px; color: var(--text3); }
@@ -116,9 +124,12 @@ h2 { font-size: 21px; margin: 0; letter-spacing: -.01em; }
 .eingang { border-right: 1px solid #d8d8de; background: var(--bg); display: flex; flex-direction: column; min-height: 0; }
 .eingang-kopf { padding: 12px 16px 8px; }
 .zurueck { color: var(--blau); text-decoration: none; font-size: 14px; }
-.mandant-wahl { display: block; margin: 6px 0 2px; }
-.mandant-wahl select { width: 100%; border: 0; background: transparent; font-size: 22px; font-weight: 700; letter-spacing: -.01em;
-  padding: 2px 0; cursor: pointer; outline: none; text-overflow: ellipsis; }
+/* Mandant in der Belegverarbeitung: Kachel mit Initialen, Name und Pfeil */
+.mandant-knopf { display: flex; align-items: center; gap: 10px; width: 100%; margin: 8px 0 4px; padding: 8px 10px; border: 1px solid var(--rand);
+  border-radius: 14px; background: #fff; cursor: pointer; text-align: left; box-shadow: var(--schatten); transition: box-shadow .12s; }
+.mandant-knopf:hover, .mandant-knopf.offen { box-shadow: 0 0 0 3px var(--blau-hell), var(--schatten); }
+.mandant-knopf .m-avatar { width: 34px; height: 34px; flex: none; }
+.mandant-name { flex: 1; font-size: 17px; font-weight: 700; letter-spacing: -.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .mandant-info { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; margin-bottom: 10px; }
 .mandant-info .kuerzel { height: 20px; min-width: 26px; font-size: 10.5px; }
 .mini-hinweis { background: var(--gelb-hell); color: #7a4500; border-radius: 10px; padding: 8px 10px; font-size: 12.5px; margin-bottom: 10px; }
@@ -471,3 +482,23 @@ details[open] > .abschnitt-kopf::after { transform: rotate(90deg); }
   pointer-events: none; animation: markierung-ein .15s ease-out; }
 @keyframes markierung-ein { from { opacity: 0; } to { opacity: 1; } }
 .position:hover { background: #f7f9fc; border-radius: 8px; }
+
+/* Auswahlliste im iOS-Stil */
+.auswahl { position: fixed; z-index: 80; width: 320px; max-height: 70vh; display: flex; flex-direction: column; background: rgba(255,255,255,.96);
+  backdrop-filter: blur(20px); border-radius: 14px; padding: 6px; box-shadow: 0 12px 40px rgba(0,0,0,.18), 0 0 0 1px rgba(0,0,0,.05);
+  animation: aw-ein .12s ease-out; }
+@keyframes aw-ein { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+.aw-titel { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--text3); padding: 6px 10px 4px; }
+.aw-suche { margin: 2px 4px 6px; width: calc(100% - 8px); }
+.aw-liste { list-style: none; margin: 0; padding: 0; overflow-y: auto; }
+.aw-eintrag { display: grid; grid-template-columns: auto 1fr auto 18px; gap: 10px; align-items: center; padding: 7px 8px; border-radius: 10px; cursor: pointer; }
+.aw-eintrag:hover, .aw-eintrag.aktiv { background: var(--blau-hell); }
+.aw-eintrag .avatar, .aw-eintrag .m-avatar { width: 30px; height: 30px; font-size: 11.5px; }
+.aw-text { display: flex; flex-direction: column; min-width: 0; line-height: 1.2; }
+.aw-text b { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.aw-text small { font-size: 12px; color: var(--text2); }
+.aw-haken { color: var(--blau); font-weight: 700; }
+.aw-eintrag.gewaehlt b { color: var(--blau); }
+.aw-offen { font-size: 11.5px; font-weight: 600; color: #a15c00; background: var(--gelb-hell); border-radius: 999px; padding: 1px 8px; white-space: nowrap; }
+.aw-fertig { font-size: 11.5px; font-weight: 600; color: #1b7a35; background: var(--gruen-hell); border-radius: 999px; padding: 1px 8px; }
+.aw-leer { padding: 10px; color: var(--text3); font-size: 13px; }

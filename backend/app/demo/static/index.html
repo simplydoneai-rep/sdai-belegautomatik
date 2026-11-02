@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Belegautomatik</title>
-  <link rel="stylesheet" href="style.css?v=19">
+  <link rel="stylesheet" href="style.css?v=23">
 </head>
 <body>
   <header class="topbar">
@@ -14,10 +14,12 @@
       <a href="#/belege" data-nav="belege">Belegverarbeitung</a>
     </nav>
     <div class="topbar-rechts">
-      <label class="nutzer-wahl" title="Demo ohne Anmeldung: Person wählen, um die Rechte zu sehen. Anmeldung mit Zwei-Faktor folgt.">
+      <button id="nutzer-knopf" class="nutzer-knopf" aria-haspopup="listbox"
+        title="Demo ohne Anmeldung: Person wählen, um die Rechte zu sehen. Anmeldung mit Zwei-Faktor folgt.">
         <span id="nutzer-avatar" class="avatar">–</span>
-        <select id="nutzer"></select>
-      </label>
+        <span class="nk-text"><b id="nutzer-name"></b><small id="nutzer-rolle"></small></span>
+        <span class="pfeil">⌄</span>
+      </button>
       <span class="demo-hinweis">Demo · nur Testbelege</span>
     </div>
   </header>
@@ -55,9 +57,11 @@
     <aside class="eingang">
       <div class="eingang-kopf">
         <a href="#/uebersicht" class="zurueck">‹ Übersicht</a>
-        <label class="mandant-wahl">
-          <select id="mandant" aria-label="Mandant wechseln"></select>
-        </label>
+        <button id="mandant-knopf" class="mandant-knopf" aria-haspopup="listbox" title="Mandant wechseln">
+          <span id="mandant-avatar" class="m-avatar"></span>
+          <span id="mandant-name" class="mandant-name"></span>
+          <span class="pfeil">⌄</span>
+        </button>
         <div id="mandant-info" class="klein mandant-info"></div>
         <div id="mandant-hinweis" class="mini-hinweis" hidden></div>
         <div class="segment drei" role="tablist">
@@ -198,6 +202,7 @@
 
   <!-- ============================== Blätter (Dialoge) ============================== -->
   <div id="dropdown" class="dropdown" hidden></div>
+  <div id="auswahl" class="auswahl" role="listbox" hidden></div>
 
   <div id="blatt-hintergrund" class="blatt-hintergrund" hidden>
     <div class="blatt" role="dialog" aria-modal="true">
@@ -291,6 +296,6 @@
   </div>
 
   <div id="toast" class="toast" hidden></div>
-  <script src="app.js?v=21"></script>
+  <script src="app.js?v=23"></script>
 </body>
 </html>
