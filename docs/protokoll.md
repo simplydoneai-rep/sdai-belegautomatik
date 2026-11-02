@@ -339,6 +339,15 @@ Sprachnachricht von Paul Graß vorab in Punkte A–E sortiert, alle umgesetzt. D
 - **Aufteilung:** keine Vorbelegung mehr mit 70/30; der Knopf „Bewirtung 70 / 30“ und die automatische Aufteilung erscheinen nur bei einem erkannten Bewirtungsbeleg.
 - 146 Tests grün.
 
+## 02.11.2026 – Pseudonymisierung: Einzelunternehmer und Teilnehmerlisten
+
+Lücke geschlossen (Freigabe Paul Graß), Details: `docs/entscheidungen/2026-11-02_pseudonymisierung-einzelunternehmer.md`.
+- Lieferanten ohne Rechtsform einer Kapitalgesellschaft (Einzelunternehmer, e.K., GbR, OHG, KG ohne GmbH) gelten als natürliche Person: Name, Anschrift und USt-IdNr. gehen nicht mehr an die KI.
+- Namen in Teilnehmerlisten (z. B. „Bewirtete Personen:“) werden ersetzt.
+- Alle 64 Testbelege richtig eingeordnet, keine Reste im KI-Text, Rückübersetzung korrekt.
+- Offen: Namenserkennung für Freitext ohne Anrede (NER); Zusatz in `CLAUDE.md` Regel 4 vorgeschlagen.
+- 159 Tests grün.
+
 ## Nächste Schritte
 
 Die aktuelle Aufgabenliste steht in `docs/projektplan.md`, Abschnitt 10. Die Liste unten ist der Stand vom 28.10.2026 vor dem Projektplan.

@@ -118,3 +118,33 @@ def test_keine_lecks_in_textbelegen() -> None:
             read = read_document(root / doc["pfad"])
             res = pseudonymize(read.text, profile, load_accounts(), own_vat_ids=(c["vat_id"],))
             assert leaks(res.payload.text, gold["sensible_werte"]) == [], gold["id"]
+
+
+@pytest.mark.parametrize(("kopf", "person"), [
+    ("Bürowelt Kranich e.K.", True), ("Malerbetrieb Max Müller", True), ("Gasthaus Zur Linde", True),
+    ("Schmidt & Partner GbR", True), ("Müller KG", True),
+    ("Frischgut Großhandel GmbH", False), ("Mühle Hollerbach GmbH & Co. KG", False), ("Northwind Analytics B.V.", False),
+    ("PixelCloud Software Inc.", False), ("Stadtwerke Fürth", False), ("Finanzamt Nürnberg", False),
+])
+def test_lieferant_als_person_erkannt(kopf: str, person: bool) -> None:
+    from app.pseudo.pseudonymizer import lieferant_ist_person
+
+    assert lieferant_ist_person(kopf) is person
+
+
+def test_einzelunternehmer_wird_ersetzt_firma_bleibt() -> None:
+    src = ("Malerbetrieb Max Müller   Tel. 0911 12345\nLindenweg 4 · 90762 Fürth\nUSt-IdNr.: DE999200099\n"
+           "1   Wand streichen   20   m²   12,00 €   19 %   240,00 €")
+    text, mapping = run(src)
+    for wert in ("Müller", "Lindenweg 4", "90762", "DE999200099"):
+        assert wert not in text, wert
+    assert mapping["[LIEFERANT_1]"] == "Malerbetrieb Max Müller" and "Wand streichen" in text
+    firma, _ = run("Frischgut Großhandel GmbH\nHafenstraße 21 · 90451 Nürnberg\nUSt-IdNr.: DE999200001")
+    assert "Frischgut Großhandel GmbH" in firma and "Hafenstraße 21" in firma and "DE999200001" in firma
+
+
+def test_teilnehmer_einer_bewirtung() -> None:
+    text, _ = run("Anlass: Projektbesprechung\nBewirtete Personen: Jonas Weber und Mia Roth (Kunde)\nTeilnehmer: Dr. Eva Graf")
+    for name in ("Weber", "Roth", "Graf"):
+        assert name not in text
+    assert "Projektbesprechung" in text

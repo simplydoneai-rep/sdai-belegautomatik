@@ -68,6 +68,49 @@ _SIGNATURE = re.compile(
 )
 _ACCOUNTNO = re.compile(r"(?i)\b(?:Konto-?(?:nr|nummer)\.?|Kto\.?-?Nr\.?)[:\s]*(\d{5,12})")
 
+# Lieferant als natürliche Person (Einzelunternehmer, Freiberufler, e.K., GbR, OHG, KG ohne GmbH):
+# Kapitalgesellschaften müssen ihre Rechtsform im Namen führen (§ 4 GmbHG, § 4 AktG, § 5a GmbHG);
+# fehlt sie, steht hinter der Firma ein Mensch. Behörden und Verbände ohne Rechtsform sind ausgenommen.
+_KAPITALGESELLSCHAFT = re.compile(
+    r"(?i)(?<![\w.])(gmbh|mbh|ag|ug|se|kgaa|e\.\s?g\.|eg|e\.\s?v\.|stiftung|ltd\.?|limited|inc\.?|llc|corp\.?|corporation"
+    r"|plc|b\.\s?v\.|n\.\s?v\.|s\.\s?a\.|s\.\s?p\.\s?a\.|s\.\s?r\.\s?l\.|sarl|sas|s\.\s?l\.|gesmbh|a/s|aps|oyj?)(?![\w])"
+)
+_OEFFENTLICH = re.compile(
+    r"(?i)\b(stadt|gemeinde|landkreis|landratsamt|amt|stadtwerke|zweckverband|verband|kammer|universit|hochschule"
+    r"|finanzamt|bundes|landes|kirche|beh(ö|oe)rde|ministerium|anstalt|k(ö|oe)rperschaft)"
+)
+_STRASSE = re.compile(
+    r"\b[A-ZÄÖÜ][\wäöüß\-]*(?:straße|strasse|str\.|weg|platz|allee|gasse|ring|damm|ufer|steig|pfad|chaussee|markt|hof"
+    r"|berg|tor|garten|feld|park)[ \t]+\d+[ \t]?[a-zA-Z]?\b"
+)
+_PLZ_ORT = re.compile(r"\b\d{4,5}[ \t]+[A-ZÄÖÜ][\wäöüß\-]+(?:[ \t][A-ZÄÖÜ][\wäöüß\-]+)?")  # nicht über Zeilen hinweg
+_VATID_MIT_HINWEIS = re.compile(r"(?i)(?:USt-?Id(?:ent)?(?:-?Nr)?\.?|VAT(?:\s+(?:ID|No\.?))?|UID)[:\s]*([A-Z]{2}\s?[0-9A-Z]{8,12})\b")
+# Teilnehmerlisten (Bewirtungsbeleg, Seminar): Namen stehen dort ohne Anrede
+_TEILNEHMER = re.compile(
+    r"(?im)\b(?:bewirtete\s+personen?|teilnehmer(?:innen)?|teilnehmende|g(?:ä|ae)ste|anwesende?|participants?|attendees?)"
+    r"\s*:([^\n]*)"
+)
+_NAME_IN_LISTE = re.compile(
+    r"(?:Dr\.\s|Prof\.\s)?[A-ZÄÖÜ][a-zäöüß]+(?:-[A-ZÄÖÜ][a-zäöüß]+)?\s(?:(?:von|van|de|der|zu)\s)?[A-ZÄÖÜ][a-zäöüß]+(?:-[A-ZÄÖÜ][a-zäöüß]+)?"
+)
+_KEIN_NAME = re.compile(r"(?i)^(rechnung|invoice|gutschrift|quittung|beleg|seite|kassenbon|bon|lieferschein|tel|fax|mobil"
+                        r"|e-?mail|www|http|iban|bic|ust|steuer|datum|kunden)")
+
+
+def lieferant_ist_person(name: str) -> bool:
+    """Ist der Lieferant eine natürliche Person (bzw. eine Personengesellschaft aus Menschen)?"""
+    return not (_KAPITALGESELLSCHAFT.search(name) or _OEFFENTLICH.search(name))
+
+
+def _lieferant_im_kopf(text: str) -> str | None:
+    """Name des Lieferanten aus dem Briefkopf: erster sinnvoller Abschnitt in den ersten Zeilen."""
+    for line in text.splitlines()[:4]:
+        teil = re.split(r"\s{3,}|\s·\s|\s\|\s", line.strip())[0].strip(" ,;:")
+        if len(teil) < 4 or "[" in teil or ":" in teil or _KEIN_NAME.search(teil) or sum(c.isdigit() for c in teil) > 3:
+            continue
+        return teil
+    return None
+
 _UMLAUT = str.maketrans({"ä": "a", "ö": "o", "ü": "u", "ß": "b", "Ä": "A", "Ö": "O", "Ü": "U", "é": "e"})
 FUZZY_MIN_SCORE = 85.0  # rapidfuzz-Ähnlichkeit 0–100, fängt OCR-Lesefehler in Mandantendaten
 
@@ -142,9 +185,11 @@ def pseudonymize(
 ) -> PseudonymizationResult:
     """Ersetzt personenbezogene und mandantenbezogene Angaben durch Platzhalter.
 
-    Lieferantenname, Positionen, Beträge, Steuersätze und Datum bleiben erhalten.
-    Fremde USt-IdNr. des Lieferanten bleiben ebenfalls erhalten (Firmenangabe, für die
-    Steuerlogik nötig: Inland/EU); die USt-IdNr. des Mandanten wird ersetzt.
+    Lieferantenname (Firma), Positionen, Beträge, Steuersätze und Datum bleiben erhalten.
+    Fremde USt-IdNr. des Lieferanten bleiben ebenfalls erhalten (Firmenangabe); die USt-IdNr.
+    des Mandanten wird ersetzt. Ist der Lieferant eine natürliche Person (Einzelunternehmer,
+    e.K., Freiberufler, Personengesellschaft ohne GmbH/AG), werden auch sein Name, seine
+    Anschrift und seine USt-IdNr. ersetzt. Inland/EU bestimmt die Steuerlogik lokal aus dem Rohtext.
     """
     reg = _Registry()
     text = raw_text
@@ -159,6 +204,16 @@ def pseudonymize(
     for vat in own_vat_ids:
         text = text.replace(vat, reg.token("USTID_MANDANT", vat))
 
+    # Lieferant als natürliche Person: Name, Anschrift und USt-IdNr. sind personenbezogen
+    lieferant = _lieferant_im_kopf(text)
+    if lieferant and lieferant_ist_person(lieferant):
+        text = _replace_fuzzy(text, lieferant, reg.token("LIEFERANT", lieferant))
+        kopf = "\n".join(text.splitlines()[:8])
+        for muster in (_STRASSE, _PLZ_ORT):
+            if m := muster.search(kopf):
+                text = text.replace(m.group(0), reg.token("ANSCHRIFT", m.group(0)))
+        text = _sub_group(_VATID_MIT_HINWEIS, text, reg, "USTID_LIEFERANT", group=1)
+
     text = _sub_group(_IBAN, text, reg, "IBAN")
     text = _sub_group(_BIC, text, reg, "BIC", group=1)
     text = _sub_group(_EMAIL, text, reg, "EMAIL")
@@ -166,6 +221,8 @@ def pseudonymize(
     text = _sub_group(_ACCOUNTNO, text, reg, "KONTO", group=1)
     text = _sub_group(_PERSON, text, reg, "PERSON", group=1)
     text = _sub_group(_SIGNATURE, text, reg, "PERSON", group=1)
+    text = _TEILNEHMER.sub(lambda m: m.group(0).replace(
+        m.group(1), _NAME_IN_LISTE.sub(lambda n: reg.token("PERSON", n.group(0)), m.group(1))), text)
     # Einmal erkannte Personennamen auch an Stellen ohne Hinweiswort ersetzen.
     for placeholder, value in list(reg.mapping.items()):
         if placeholder.startswith("[PERSON_") and len(value) >= 5:
