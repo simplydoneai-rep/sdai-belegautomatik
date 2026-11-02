@@ -20,4 +20,4 @@ Der Lieferantenname ging bisher immer im Klartext an die KI (`CLAUDE.md` Regel 4
 ## Grenzen
 - Namen in Freitext ohne Anrede und ohne Teilnehmer-Kennwort (z. B. „Beratung Schulz“) erkennt die musterbasierte Pseudonymisierung nicht. Abhilfe später: Namenserkennung (NER) mit deutschem Modell, wie in `CLAUDE.md` (Presidio mit spaCy) vorgesehen.
 - Bei ersetztem Lieferantennamen fehlt der KI der Name als Hinweis für die Kontierung (z. B. „Malerbetrieb“). Die Positionen reichen in der Regel; Lernregeln je Kreditor arbeiten lokal mit dem echten Namen.
-- `CLAUDE.md` Regel 4 („Lieferantenname (Firma)“) sollte um den Zusatz „außer bei natürlichen Personen“ ergänzt werden.
+- `CLAUDE.md` Regel 4 am 02.11.2026 ergänzt: „außer bei natürlichen Personen“ (Freigabe Paul Graß).
