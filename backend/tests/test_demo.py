@@ -185,3 +185,19 @@ def test_kreditor_mit_ustid_aus_der_rechnung(leerer_zustand) -> None:  # type: i
     assert any("weicht vom Kreditor ab" in x for x in a["ausnahmen"])
     with pytest.raises(ValueError, match="passt nicht"):
         ansicht.kreditor_daten(key, "NL123456789B01", "BE")
+
+
+@pytest.mark.skipif(not (TESTDATEN / "folgemonat" / "gold").exists(), reason="Belege November fehlen")
+def test_buchungssatz_folgt_konto_und_schluessel(leerer_zustand) -> None:  # type: ignore[no-untyped-def]
+    from app.demo import ansicht
+
+    ansicht.demo_november()
+    key = {b["id"]: b["key"] for b in ansicht.eingang()}["F10"]  # Reinigung 680,00 + 19 % = 809,20
+    satz = lambda a: {(z["seite"], z["konto"]): z["betrag"] for z in a["buchungen"]["satz"]}  # noqa: E731
+    a = ansicht.konto_waehlen(key, 0, "3400")  # Automatikkonto: Vorsteuer aus dem Konto
+    assert satz(a)[("Soll", "3400")] == "680.00" and satz(a)[("Soll", "1576")] == "129.20"
+    a = ansicht.steuerschluessel_waehlen(key, 0, "40")  # Automatik aufgehoben: keine Vorsteuer, brutto in den Aufwand
+    assert satz(a)[("Soll", "3400")] == "809.20" and ("Soll", "1576") not in satz(a) and a["buchungen"]["ausgeglichen"]
+    a = ansicht.konto_waehlen(key, 0, "4980")  # Kontowechsel setzt den Schlüssel zurück → BU 9
+    assert not a["positionen"][0]["bu_manuell"] and a["buchungen"]["stapel"][0]["bu"] == "9"
+    assert satz(a)[("Soll", "4980")] == "680.00" and a["buchungen"]["summe_haben"] == "809.20"

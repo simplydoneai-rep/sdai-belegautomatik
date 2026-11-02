@@ -159,10 +159,14 @@ def _manuell(konto: dict[str, Any], satz_beleg: Decimal | None, fall: str, bu: s
     eintrag = next((e for e in auswahl() if e["bu"] == bu), None)
     if eintrag is None:
         return Steuer(bu, f"Schlüssel {bu}", None, False, f"Steuerschlüssel {bu} ist nicht in der Liste", True)
+    if bu == "40":  # Aufhebung der Automatik: Automatikkonto ohne Vorsteuer, Umsatzsteuer der Rechnung wird Aufwand
+        hinweis = None if auto else f"Schlüssel 40 hebt nur die Automatik auf; Konto {nr} hat keine Automatik"
+        return Steuer("40", "Aufhebung der Automatik – keine Vorsteuer", Decimal(0), False, hinweis, True, None)
     if bu == "":
-        if auto:  # Automatikkonto braucht keinen Schlüssel: Ergebnis wie automatisch, nur als manuell markiert
+        if auto:  # die Automatik steckt im Konto: ohne Schlüssel bucht DATEV weiter Vorsteuer
             st = bestimmen(konto, satz_beleg, fall)
-            return Steuer("", st.text, st.satz, True, st.hinweis, True)
+            return Steuer("", st.text, st.satz, True,
+                          st.hinweis or "Automatikkonto bucht weiter Vorsteuer – ohne Vorsteuer: Schlüssel 40 wählen", True)
         hinweis = ("Ohne Steuerschlüssel wird keine Vorsteuer gebucht" if fall in ("inland", "ige", "13b")
                    and satz_beleg not in (None, Decimal(0)) or fall in ("ige", "13b") else None)
         return Steuer("", "kein Steuerschlüssel", Decimal(0), False, hinweis, True)

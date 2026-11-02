@@ -370,8 +370,10 @@ def _buchungssaetze(positionen: list[dict[str, Any]], kopf: dict[str, Any], kred
 
     - **stapel**: Zeilen wie im DATEV-Buchungsstapel, eine je Sachkonto und Steuerschlüssel. Konto = Kreditor,
       Gegenkonto = Sachkonto, Soll/Haben-Kennzeichen bezogen auf das Konto: Rechnung „H“ (Kreditor im Haben),
-      Gutschrift „S“. Umsatz brutto im Inland und bei ausländischer USt, netto bei § 13b und i. g. Erwerb
-      (DATEV rechnet die Steuer aus Automatikkonto oder Steuerschlüssel).
+      Gutschrift „S“. Umsatz brutto im Inland und bei ausländischer USt, netto bei § 13b und i. g. Erwerb.
+      Wie in DATEV: Aus dem Bruttobetrag wird die Vorsteuer mit dem Satz von Automatikkonto bzw. Steuerschlüssel
+      herausgerechnet, der Rest ist Aufwand. Ohne Vorsteuer (Schlüssel 40, kein Schlüssel, ausländische USt)
+      bleibt die Umsatzsteuer der Rechnung im Aufwand; der Kreditor steht immer mit dem Rechnungsbetrag im Haben.
     - **satz**: der vollständige Buchungssatz, den DATEV daraus bucht: Aufwand und Vorsteuer im Soll, Kreditor
       (und bei § 13b / i. g. Erwerb die Umsatzsteuer) im Haben.
     """
@@ -382,11 +384,11 @@ def _buchungssaetze(positionen: list[dict[str, Any]], kopf: dict[str, Any], kred
             g = gruppen.setdefault((t["konto"]["nr"], st["bu"]), {
                 "sachkonto": t["konto"]["nr"], "sachkonto_name": t["konto"]["name"], "bu": st["bu"], "steuer": st["text"],
                 "satz": st["satz"], "automatik": st["automatik"], "fall": st.get("fall") or fall,
-                "netto": Decimal(0), "fremdsteuer": Decimal(0), "positionen": 0})
+                "netto": Decimal(0), "beleg_steuer": Decimal(0), "positionen": 0})
             netto = parse_amount(t["netto"]) or Decimal(0)
             g["netto"] += netto
-            if fall == "ausland":  # ausländische Steuer gehört zum Aufwand
-                g["fremdsteuer"] += q2(netto * (parse_amount(p["steuersatz"]) or Decimal(0)) / 100)
+            # Umsatzsteuer laut Rechnung (Satz der Position, ggf. von Hand korrigiert)
+            g["beleg_steuer"] += q2(netto * (parse_amount(p["steuersatz"]) or Decimal(0)) / 100)
             g["positionen"] += 1
 
     leistung = kopf.get("leistung") or {}
@@ -399,13 +401,14 @@ def _buchungssaetze(positionen: list[dict[str, Any]], kopf: dict[str, Any], kred
 
     for g in gruppen.values():
         netto, satz, g_fall = g["netto"], Decimal(g["satz"] or 0), g["fall"]
-        steuer = q2(netto * satz / 100)
-        if g_fall == "inland":
-            umsatz = netto + steuer
-        elif g_fall == "ausland":
-            umsatz, steuer = netto + g["fremdsteuer"], Decimal(0)
-        else:
+        if g_fall in ("ige", "13b"):  # Steuer schuldet der Mandant: netto, Vorsteuer = Umsatzsteuer
             umsatz = netto
+            steuer = q2(netto * satz / 100)
+            aufwand = netto
+        else:  # Inland und ausländische USt: brutto, Vorsteuer aus dem Bruttobetrag
+            umsatz = netto + g["beleg_steuer"]
+            steuer = q2(umsatz * satz / (100 + satz)) if g_fall == "inland" and satz else Decimal(0)
+            aufwand = umsatz - steuer
         vst_konto, ust_konto = steuerschluessel.steuerkonten(g_fall, satz) if g_fall != "ausland" else (None, None)
         stapel.append({"umsatz": str(abs(umsatz)), "soll_haben": "S" if gutschrift else "H",
                        "eu_ustid": ((kreditor or {}).get("ustid") or kopf.get("lieferant_ustid")) if g_fall in ("ige", "13b") else None,
@@ -415,7 +418,6 @@ def _buchungssaetze(positionen: list[dict[str, Any]], kopf: dict[str, Any], kred
                        "steuer": g["steuer"], "belegdatum": kopf.get("invoice_date"),
                        "leistungsdatum": leistung.get("von"), "belegfeld1": kopf.get("invoice_number"),
                        "buchungstext": (kopf.get("supplier_name") or "")[:60], "waehrung": kopf.get("currency") or "EUR"})
-        aufwand = netto + g["fremdsteuer"]
         buche(soll, g["sachkonto"], g["sachkonto_name"], aufwand, "aufwand")
         if vst_konto and steuer:
             buche(soll, vst_konto, (konto(vst_konto) or {}).get("name", "Vorsteuer"), steuer, "vorsteuer")
@@ -424,7 +426,7 @@ def _buchungssaetze(positionen: list[dict[str, Any]], kopf: dict[str, Any], kred
                 soll[vst_konto]["aus"].append(g["sachkonto"])  # „aus Automatikkonto 3400“
         if ust_konto and steuer:
             buche(haben, ust_konto, (konto(ust_konto) or {}).get("name", "Umsatzsteuer"), steuer, "umsatzsteuer")
-        an_kreditor = umsatz if g_fall in ("inland", "ausland") else netto
+        an_kreditor = umsatz
         buche(haben, kreditor["nr"] if kreditor else "—", kreditor["name"] if kreditor else "Kreditor fehlt",
               an_kreditor, "kreditor")
 
@@ -509,7 +511,7 @@ def ansicht(key: str, modell: str = STANDARD_MODELL) -> dict[str, Any]:
         "positionen": positionen, "ampel": ampel, "ausnahmen": ausnahmen,
         "steuerfall": {"id": fall, "text": steuerschluessel.FALL_TEXT[fall]},
         "buchungen": _buchungssaetze(positionen, kopf, kreditor, fall),
-        "pflichtangaben": r["pflichtangaben"], "validierung": r.get("validierung"),
+        "pflichtangaben": r["pflichtangaben"], "validierung": r.get("validierung"), "bewirtung": bewirtung,
         "sicherheit": round(sicherheit, 2), "gelernt": gelernt,
         "offen": offen, "freigabe_moeglich": not offen and status != "freigegeben",
         "protokoll": zustand.protokoll(key)[-30:],
@@ -631,8 +633,11 @@ def konto_waehlen(key: str, pos: int, nr: str, modell: str = STANDARD_MODELL) ->
     a = ansicht(key, modell)
     if not 0 <= pos < len(a["positionen"]):
         raise ValueError("Position nicht gefunden")
-    vorher = (a["positionen"][pos]["konto"] or {}).get("nr")
+    p = a["positionen"][pos]
+    vorher = (p["konto"] or {}).get("nr")
     zustand.konto_setzen(key, pos, nr, vorher)
+    if p["bu_manuell"] and nr != vorher:  # neues Konto: Steuerschlüssel wieder aus Konto und Rechnung bestimmen
+        zustand.position_setzen(key, pos, "bu", None, p["steuer"]["bu"] or "keiner", "Steuerschlüssel (Kontowechsel)")
     return ansicht(key, modell)
 
 

@@ -26,6 +26,8 @@
   "_auswahl_hinweis": "Auswahlliste für die manuelle Änderung je Position (Stand 02.11.2026). Enthält alle Schlüssel, die in den Quellen oben belegt sind (Lexware-Tabelle ab 01.01.2021, DATEV-Community, DATEV-Lernunterlage für 1–3). Sonderschlüssel (z. B. Aufhebung der Automatik, Generalumkehr, Berichtigungsschlüssel) und die dreistelligen DATEV-Schlüssel fehlen bewusst: Sie sind nicht öffentlich belegt und werden vor Phase 4 aus der DATEV-Dokumentation ergänzt.",
   "auswahl": [
     {"bu": "", "text": "kein Steuerschlüssel", "gruppe": "Ohne", "fall": null, "satz": null},
+    {"bu": "40", "text": "Aufhebung der Automatik (keine Vorsteuer)", "gruppe": "Automatikkonten", "fall": "aufhebung", "satz": "0",
+     "quelle": "DATEV-Community „BU 9 oder 40 füllt sich automatisch aus“ (https://www.datev-community.de/t5/Betriebliches-Rechnungswesen/BU-9-oder-40-f%C3%BCllt-sich-automatisch-aus/m-p/369189): Schlüssel 40 für Automatikkonten, Buchung wie ohne Automatik"},
     {"bu": "9", "text": "Vorsteuer 19 %", "gruppe": "Vorsteuer", "fall": "inland", "satz": "19"},
     {"bu": "8", "text": "Vorsteuer 7 %", "gruppe": "Vorsteuer", "fall": "inland", "satz": "7"},
     {"bu": "19", "text": "i. g. Erwerb 19 % Vorsteuer und Umsatzsteuer", "gruppe": "Innergemeinschaftlicher Erwerb", "fall": "ige", "satz": "19"},

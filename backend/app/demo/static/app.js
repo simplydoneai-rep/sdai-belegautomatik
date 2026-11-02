@@ -575,17 +575,18 @@ function aufteilungEditor(b, p, li) {
   const zeilen = (teile) => teile.map((t) => `<div class="ae-zeile">
       <input class="feld ae-konto" value="${esc(t.konto)}" placeholder="Konto" inputmode="numeric">
       <input class="feld ae-prozent" value="${esc(t.prozent)}" placeholder="%" inputmode="decimal"><span>%</span></div>`).join("");
+  // Ohne Vorbelegung: bisheriges Konto und ein leeres Feld. 70/30 nur bei einem erkannten Bewirtungsbeleg.
   const start = p.teile.length > 1 ? p.teile.map((t) => ({ konto: t.konto.nr, prozent: t.prozent }))
-    : [{ konto: p.konto.nr, prozent: "70" }, { konto: "", prozent: "30" }];
+    : [{ konto: p.konto.nr, prozent: "" }, { konto: "", prozent: "" }];
   ed.innerHTML = `<div class="ae-liste">${zeilen(start)}</div>
     <div class="ae-knoepfe">
-      <button class="link blau-link" data-ae="bewirtung">Bewirtung 70 / 30</button>
+      ${b.bewirtung ? `<button class="link blau-link" data-ae="bewirtung">Bewirtung 70 / 30</button>` : ""}
       <button class="link blau-link" data-ae="plus">＋ Konto</button>
       <span class="ae-rechts">
         ${p.teile.length > 1 ? `<button class="link gefahr-link" data-ae="keine">Aufteilung entfernen</button>` : ""}
         <button class="link" data-ae="abbrechen">Abbrechen</button>
         <button class="knopf blau klein-knopf" data-ae="ok">Übernehmen</button></span></div>
-    <p class="klein">Anteile in Prozent vom Nettobetrag, zusammen 100 %. Die Vorsteuer bleibt voll abziehbar.</p>`;
+    <p class="klein">Anteile in Prozent vom Nettobetrag, zusammen 100 %. Jeder Teil bekommt den Steuerschlüssel seines Kontos.</p>`;
   ed.hidden = false;
   const senden = async (teile) => {
     try {

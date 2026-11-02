@@ -331,6 +331,14 @@ Sprachnachricht von Paul Graß vorab in Punkte A–E sortiert, alle umgesetzt. D
 - Gefunden und behoben: `Decimal("20").normalize()` ergibt „2E+1“ – 20 % österreichische USt wurde dadurch als 21 % gelesen.
 - 145 Tests grün.
 
+## 02.11.2026 – Buchungssatz wie DATEV, Aufhebung der Automatik, Aufteilung ohne Vorbelegung
+
+- **Schlüssel 40 „Aufhebung der Automatik“** in die Auswahl aufgenommen (Quelle: DATEV-Community; Schlüssel 40 für Automatikkonten, Buchung wie ohne Automatik). „Kein Steuerschlüssel“ auf einem Automatikkonto bucht weiter Vorsteuer und wird mit Hinweis auf Schlüssel 40 markiert.
+- **Buchungssatz wie in DATEV gerechnet:** Umsatz brutto, Vorsteuer mit dem Satz von Automatikkonto bzw. Schlüssel aus dem Bruttobetrag herausgerechnet, Rest Aufwand. Behoben: Ohne Vorsteuer (Schlüssel 40, kein Schlüssel) stand der Kreditor bisher nur mit netto im Haben; jetzt geht die Umsatzsteuer der Rechnung in den Aufwand.
+- Kontowechsel setzt einen von Hand gewählten Steuerschlüssel zurück, damit der Schlüssel zum neuen Konto passt. Im Browser geprüft: Buchungssatz ändert sich sofort.
+- **Aufteilung:** keine Vorbelegung mehr mit 70/30; der Knopf „Bewirtung 70 / 30“ und die automatische Aufteilung erscheinen nur bei einem erkannten Bewirtungsbeleg.
+- 146 Tests grün.
+
 ## Nächste Schritte
 
 Die aktuelle Aufgabenliste steht in `docs/projektplan.md`, Abschnitt 10. Die Liste unten ist der Stand vom 28.10.2026 vor dem Projektplan.
