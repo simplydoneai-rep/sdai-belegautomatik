@@ -361,6 +361,8 @@ Lücke geschlossen (Freigabe Paul Graß), Details: `docs/entscheidungen/2026-11-
 
 - Markenfarben übernommen (Primary #FF7601, Black #0A0A0A, Grey #888888): Orange für Aktionen, ausgewählte Rechnung schwarz, Ampel „unsicher“ jetzt Gelb statt Orange, neutrale Grautöne, Knöpfe als Pillen, Poppins als erste Schrift (für den Betrieb selbst ausliefern, nicht über Google Fonts).
 
+- Poppins (OFL) und das Logo von simplydone-ai.de liegen jetzt lokal in der Demo (`static/schrift/`, `static/marke/`), Logo auch als Favicon. Keine Verbindung zu Google Fonts.
+
 ## Nächste Schritte
 
 Die aktuelle Aufgabenliste steht in `docs/projektplan.md`, Abschnitt 10. Die Liste unten ist der Stand vom 28.10.2026 vor dem Projektplan.

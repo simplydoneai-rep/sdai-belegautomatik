@@ -26,3 +26,9 @@ Vorgabe Paul Graß, abgeglichen mit simplydone-ai.de: Primary `#FF7601`, Black `
 - Grautöne neutral statt bläulich (iOS); Nebentext `#555555`, Beschriftungen Grey `#888888`.
 - Kürzel der Sachbearbeiter grau, damit Orange nur für Aktionen steht.
 - **Schrift Poppins** steht vorn in der Schriftliste und greift nur, wenn sie installiert ist; sonst Segoe UI. Für den Betrieb Poppins selbst ausliefern, nicht über Google Fonts einbinden: Das Nachladen von Google-Servern überträgt die IP-Adresse an Google (LG München I, Urteil vom 20.01.2022, Az. 3 O 17493/20).
+
+## Nachtrag 03.11.2026: Schrift und Logo lokal
+- **Poppins** 400/500/600/700 aus dem offiziellen Repository `github.com/google/fonts` (`ofl/poppins`, SIL Open Font License 1.1, Lizenztext in `static/schrift/OFL.txt`). Eingebunden per `@font-face` aus `static/schrift/`; der Browser lädt nichts von Google.
+- **Logo** von `https://www.simplydone-ai.de/assets/brand/icon.svg` nach `static/marke/logo.svg`, auch als Favicon. Vor dem Einbinden geprüft: reines SVG ohne Skripte, Ereignis-Attribute oder externe Verweise.
+- SHA-256 beim Download: Regular `7e65201e…a7ba`, Medium `90373e7d…fd05`, SemiBold `d3bf1bda…a286`, Bold `983676516…a6c`, OFL `6be04893…2573`, Logo `57fb115d…d8164`.
+- Poppins läuft breiter als die Systemschrift: Knöpfe brechen nicht mehr um (`white-space: nowrap`); der doppelte Satz „Nur ansehen und freigeben“ unter der Sammelfreigabe ist entfallen.

@@ -1,3 +1,8 @@
+/* Poppins (SIL Open Font License 1.1, schrift/OFL.txt) wird selbst ausgeliefert, nicht über Google Fonts */
+@font-face { font-family: Poppins; font-style: normal; font-weight: 400; font-display: swap; src: url("schrift/Poppins-Regular.ttf") format("truetype"); }
+@font-face { font-family: Poppins; font-style: normal; font-weight: 500; font-display: swap; src: url("schrift/Poppins-Medium.ttf") format("truetype"); }
+@font-face { font-family: Poppins; font-style: normal; font-weight: 600; font-display: swap; src: url("schrift/Poppins-SemiBold.ttf") format("truetype"); }
+@font-face { font-family: Poppins; font-style: normal; font-weight: 700; font-display: swap; src: url("schrift/Poppins-Bold.ttf") format("truetype"); }
 /* Design-Tokens: alle Farben, Größen und Radien nur von hier. Farbe trägt nur Status (Ampel) und den einen Akzent. */
 :root {
   /* Markenfarben Simply Done AI (simplydone-ai.de): Primary #FF7601, Black #0A0A0A, White #FFFFFF, Grey #888888 */
@@ -36,8 +41,7 @@ h2 { font-size: 21px; margin: 0; letter-spacing: -.01em; }
   position: relative; z-index: 30; }
 .brand { font-weight: 600; display: flex; align-items: center; gap: 8px; }
 .brand .sub { color: var(--text3); font-weight: 400; }
-.logo { width: 26px; height: 26px; border-radius: var(--r1); background: var(--akzent); color: #fff;
-  display: inline-grid; place-items: center; font-size: var(--t3); }
+.logo { height: 24px; width: auto; display: block; }
 .hauptnav { display: flex; background: var(--segment); border-radius: var(--r2); padding: 2px; }
 .hauptnav a { padding: 6px 16px; border-radius: var(--r1); font-size: var(--t3); font-weight: 500; color: var(--text); text-decoration: none; }
 .hauptnav a.aktiv { background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.12); }
@@ -61,7 +65,7 @@ h2 { font-size: 21px; margin: 0; letter-spacing: -.01em; }
 .feld:focus { box-shadow: 0 0 0 3px var(--akzent-hell); background: #fff; }
 .suchfeld { padding-left: 34px; background: var(--feld) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%238e8e93'%3E%3Cpath d='M11.7 10.3a6 6 0 1 0-1.4 1.4l3.6 3.6 1.4-1.4-3.6-3.6zM7 11a4 4 0 1 1 0-8 4 4 0 0 1 0 8z'/%3E%3C/svg%3E") no-repeat 12px center; }
 .karte { background: var(--karte); border-radius: var(--radius); box-shadow: var(--schatten); border: 1px solid var(--rand); }
-.knopf { border: 0; border-radius: 999px; padding: 10px 16px; font-weight: 600; cursor: pointer; }
+.knopf { border: 0; border-radius: 999px; white-space: nowrap; padding: 10px 16px; font-weight: 600; cursor: pointer; }
 .knopf.blau { background: var(--akzent); color: #fff; }
 .knopf.blau:disabled { background: var(--linie-stark); cursor: not-allowed; }
 .knopf.gross { padding: 11px 26px; font-size: var(--t4); min-width: 170px; }

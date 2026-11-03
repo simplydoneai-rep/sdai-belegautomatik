@@ -4,11 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Belegautomatik</title>
-  <link rel="stylesheet" href="style.css?v=26">
+  <link rel="icon" href="marke/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css?v=28">
 </head>
 <body>
   <header class="topbar">
-    <div class="brand"><span class="logo">S</span> Simply Done AI <span class="sub">Belegautomatik</span></div>
+    <div class="brand"><img class="logo" src="marke/logo.svg" alt=""> Simply Done AI <span class="sub">Belegautomatik</span></div>
     <nav class="hauptnav" aria-label="Bereiche">
       <a href="#/uebersicht" data-nav="uebersicht">Übersicht</a>
       <a href="#/belege" data-nav="belege">Belegverarbeitung</a>
@@ -73,7 +74,7 @@
       </div>
       <div id="summe" class="summe"></div>
       <div id="sammel" class="sammel" hidden>
-        <div><b id="sammel-zahl"></b><div class="klein" id="sammel-text"></div></div>
+        <b id="sammel-zahl"></b>
         <button id="sammel-knopf" class="knopf blau">Ansehen und freigeben</button>
       </div>
       <ul id="liste" class="liste"></ul>
@@ -293,6 +294,6 @@
   </div>
 
   <div id="toast" class="toast" hidden></div>
-  <script src="app.js?v=25"></script>
+  <script src="app.js?v=27"></script>
 </body>
 </html>

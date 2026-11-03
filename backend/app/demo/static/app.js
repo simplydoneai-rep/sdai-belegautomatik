@@ -498,7 +498,6 @@ function zeigeListe() {
   $("summe").innerHTML = BEREICH_TEXT[f](l.anzahl[f], l.summe[f]) + (l.bereit ? "" : " · <i>werden gelesen …</i>");
   $("sammel").hidden = !(f === "sicher" && l.anzahl.sicher > 0);
   $("sammel-zahl").textContent = `${l.anzahl.sicher} sicher vorkontiert`;
-  $("sammel-text").textContent = "Nur ansehen und freigeben";
 
   const eintraege = l.eintraege.filter((e) => e.bereich === f)
     .filter((e) => !zustand.suche || (e.lieferant || "").toLowerCase().includes(zustand.suche));
