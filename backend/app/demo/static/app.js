@@ -94,6 +94,9 @@ async function init() {
   });
   $("datei").addEventListener("change", hochladen);
   $("a-knopf").addEventListener("click", aktion);
+  $("b-entfernen").addEventListener("click", zeigeEntfernen);
+  $("export-knopf").addEventListener("click", () => oeffneExport());
+  $("export-ok").addEventListener("click", exportieren);
   $("sammel-knopf").addEventListener("click", oeffneSammelfreigabe);
   $("blatt-abbrechen").addEventListener("click", () => { $("blatt-hintergrund").hidden = true; });
   $("blatt-ok").addEventListener("click", sammelfreigabe);
@@ -618,6 +621,7 @@ function zelle(e) {
   if (gruende.length) marken.push(`<span class="marke orange" title="${esc(gruende.join(" · "))}">${esc(gruende[0])}${gruende.length > 1 ? ` +${gruende.length - 1}` : ""}</span>`);
   if (e.frei) marken.push(`<span class="marke orange">${e.frei} ohne Konto</span>`);
   if (e.art === "xml") marken.push(`<span class="marke">${art}</span>`);
+  if (e.export) marken.push(`<span class="marke">exportiert</span>`);
   return `<li class="zelle ${e.key === zustand.key ? "gewaehlt" : ""}" data-key="${esc(e.key)}">
     <span class="punkt ${e.bereich === "erledigt" ? "grau" : e.ampel}"></span>
     <span class="z1">${esc(e.lieferant || e.id)}</span>
@@ -642,6 +646,8 @@ function zeigeListe() {
   const leer = { sicher: "Keine sicher vorkontierten Rechnungen.", pruefen: "Nichts zu prüfen.", erledigt: "Noch nichts freigegeben." }[f];
   $("liste").innerHTML = eintraege.map(zelle).join("") || `<li class="klein mitte">${leer}</li>`;
   $("liste").querySelectorAll(".zelle[data-key]").forEach((z) => z.addEventListener("click", () => oeffne(z.dataset.key)));
+  zeigeEntfernte(l);
+  zeigeExportKnopf(l);
   $("konto-liste").innerHTML = l.nach_konto.map((g) => `<li><b>${esc(g.nr)}</b><span>${esc(g.name)}</span>
     <span class="klein">${g.anzahl}× · ${geld(g.summe)}</span></li>`).join("") || `<li class="klein">Alles verbucht</li>`;
 }
@@ -663,11 +669,14 @@ function zeigeBeleg(b) {
   $("leer").hidden = true;
   $("beleg").hidden = false;
   $("aktionsleiste").hidden = false;
-  const fertig = b.status === "freigegeben";
+  const fertig = b.status !== "offen";  // freigegeben oder entfernt: nur ansehen
   const k = b.kopf;
   const w = k.currency || "EUR";
   const chip = $("b-status");
-  if (fertig) { chip.className = "status-chip fertig"; chip.innerHTML = "✓ Freigegeben"; }
+  $("b-entfernen").hidden = b.status !== "offen";
+  $("b-entfernen-form").hidden = true;
+  if (b.status === "entfernt") { chip.className = "status-chip"; chip.innerHTML = `Entfernt · ${esc(b.entfernt?.grund || "")}`; }
+  else if (fertig) { chip.className = "status-chip fertig"; chip.innerHTML = b.export ? "✓ Exportiert" : "✓ Freigegeben"; }
   else if (b.bereich === "sicher") { chip.className = "status-chip gruen"; chip.innerHTML = `<span class="punkt gruen"></span>Sicher vorkontiert · ${prozent(b.sicherheit)}`; }
   else { chip.className = `status-chip ${b.ampel === "rot" ? "rot" : "gelb"}`; chip.innerHTML = `<span class="punkt ${b.ampel === "rot" ? "rot" : "gelb"}"></span>Bitte prüfen`; }
 
@@ -732,7 +741,6 @@ function zeigeBeleg(b) {
     ["Brutto", geld(k.gross_total, w), "brutto"], ["Steuerfall", esc(b.steuerfall.text)],
     ["Mandant", esc(`${b.mandant.name} · ${b.mandant.beraternummer} / ${b.mandant.nummer} · ${b.mandant.kontenrahmen}`), "empfaenger"]]
     .map(([a, c, feld]) => `<tr ${feld ? `data-feld="${feld}"` : ""}><td>${a}</td><td>${c}</td></tr>`).join("");
-  zeigeZahlung();
   $("kurz-daten").textContent = [k.invoice_number && `Nr. ${k.invoice_number}`, HERKUNFT[k.herkunft],
     k.lieferant_ustid && `USt-IdNr. ${k.lieferant_ustid}`].filter(Boolean).join(" · ");
   $("verlauf").innerHTML = b.protokoll.slice().reverse().map((e) => `<li><span><b>${esc(e.feld)}</b>: ${esc(e.alt ?? "–")} → ${esc(e.neu ?? "–")}
@@ -742,7 +750,18 @@ function zeigeBeleg(b) {
   bindeFeldHover();
 
   const knopf = $("a-knopf");
-  if (fertig) {
+  knopf.title = "";
+  if (b.status === "entfernt") {
+    knopf.textContent = "Wiederherstellen";
+    knopf.className = "knopf grau gross";
+    knopf.disabled = false;
+    $("a-hinweis").innerHTML = `Entfernt am ${new Date(b.entfernt.zeit).toLocaleString("de-DE")} von ${esc(b.entfernt.nutzer)}. Das Original bleibt gespeichert.`;
+  } else if (b.export) {
+    knopf.textContent = "Wieder öffnen";
+    knopf.className = "knopf grau gross";
+    knopf.disabled = true;
+    $("a-hinweis").innerHTML = "An DATEV exportiert. Korrektur in DATEV per Storno und neuer Buchung.";
+  } else if (fertig) {
     knopf.textContent = "Wieder öffnen";
     knopf.className = "knopf grau gross";
     knopf.disabled = false;
@@ -915,14 +934,6 @@ function bindeFeldHover() {
   });
 }
 
-/* Zahlungsangaben in den Rechnungsdaten (aus dem Beleg gelesen, nur zur Information) */
-function zeigeZahlung() {
-  const z = zustand.felder?.zahlung?.text;
-  document.querySelector('#kopf tr[data-feld="zahlung"]')?.remove();
-  if (!z) return;
-  $("kopf").insertAdjacentHTML("beforeend", `<tr data-feld="zahlung"><td>Zahlung</td><td>${esc(z.split("\n").slice(0, 3).join(" · "))}</td></tr>`);
-  bindeFeldHover();
-}
 
 // Kontonamen sagen schon „Vorsteuer“ / „Umsatzsteuer“; markiert wird nur der Kreditor
 const ART_MARKE = { kreditor: "Kreditor" };
@@ -1162,6 +1173,11 @@ async function waehle(nr) {
 async function aktion() {
   const b = zustand.beleg;
   try {
+    if (b.status === "entfernt") {
+      zeigeBeleg(await post("/api/beleg/wiederherstellen", { key: b.key, modell: zustand.modell }));
+      toast("Beleg wiederhergestellt");
+      return ladeListe();
+    }
     if (b.status === "freigegeben") {
       zeigeBeleg(await post("/api/beleg/wiedereroeffnen", { key: b.key, modell: zustand.modell }));
       toast("Beleg wieder geöffnet");
@@ -1267,9 +1283,6 @@ async function ladeVorschau(b) {
       + `<details class="eb-xml" ${bild ? "" : "open"}><summary>Original-XML</summary><pre>${esc(xml)}</pre></details>`;
     $("v-seiten").textContent = bild ? bild.format : "E-Rechnung (XML)";
     $("werkzeuge").hidden = true;
-    const z = bild?.zahlung || {};
-    zustand.felder = { zahlung: { rahmen: [], text: [z.art, z.bedingungen, z.iban && `IBAN ${z.iban}`].filter(Boolean).join("\n") } };
-    zeigeZahlung();
     return;
   }
   const { anzahl: n } = await api(`/api/beleg/seiten?${new URLSearchParams({ key: b.key })}`);
@@ -1277,7 +1290,7 @@ async function ladeVorschau(b) {
   api(`/api/beleg/markierungen?${new URLSearchParams({ key: b.key, modell: zustand.modell })}`)
     .then((m) => { if (zustand.key === b.key) zustand.markierungen = m; }).catch(() => {});
   api(`/api/beleg/feldrahmen?${new URLSearchParams({ key: b.key, modell: zustand.modell })}`)
-    .then((f) => { if (zustand.key === b.key) { zustand.felder = f; zeigeZahlung(); } }).catch(() => {});
+    .then((f) => { if (zustand.key === b.key) zustand.felder = f; }).catch(() => {});
   ansichtZ.seiten = n; ansichtZ.seite = 1;
   v.innerHTML = [...Array(n).keys()].map((i) => `<div class="seite" data-seite="${i + 1}">
     <img src="/api/beleg/seite?${new URLSearchParams({ key: b.key, i, nutzer: zustand.nutzer })}" alt="Seite ${i + 1} von ${n}" draggable="false"></div>`).join("");
@@ -1297,7 +1310,7 @@ function belegbildHtml(e) {
     .filter(Boolean).map(esc).join("<br>");
   const zeile = (label, wert, feld = "") => wert ? `<tr data-feld="${feld}"><td>${label}</td><td>${wert}</td></tr>` : "";
   const SUMME_FELD = { "Summe Positionen netto": "entgelt", "Gesamt netto": "entgelt", Umsatzsteuer: "steuer",
-    "Gesamt brutto": "brutto", Zahlbetrag: "brutto zahlung" };
+    "Gesamt brutto": "brutto", Zahlbetrag: "brutto" };
   const kontakt = [v.contact, v.phone, v.email].filter(Boolean).map(esc).join(" · ");
   const positionen = e.positionen.map((p, i) => `<tr data-pos="${i}">
       <td>${esc(p.nr && p.nr !== p.bezeichnung && p.nr.length <= 8 ? p.nr : i + 1)}</td>
@@ -1321,7 +1334,7 @@ function belegbildHtml(e) {
     <div class="eb-empfaenger" data-feld="empfaenger"><small>Rechnungsempfänger</small><b>${esc(k.name || "–")}</b><div>${anschrift(k)}</div></div>
     <table class="eb-daten">
       ${zeile("Rechnungsnummer", esc(e.nummer), "nummer")}${zeile("Rechnungsdatum", datum(e.datum), "datum")}
-      ${zeile("Leistung", e.leistung ? esc(leistungText(e.leistung, true)) : "", "leistungszeit")}${zeile("Fällig am", e.faellig ? datum(e.faellig) : "", "zahlung")}
+      ${zeile("Leistung", e.leistung ? esc(leistungText(e.leistung, true)) : "", "leistungszeit")}${zeile("Fällig am", e.faellig ? datum(e.faellig) : "")}
       ${e.referenzen.map((r) => zeile(esc(r.label), esc(r.wert))).join("")}${w !== "EUR" ? zeile("Währung", esc(w)) : ""}
     </table>
     <table class="eb-pos" data-feld="menge_art"><thead><tr><th>Pos.</th><th>Bezeichnung</th><th class="zahl-sp">Menge</th><th class="zahl-sp">Einzelpreis</th>
@@ -1331,7 +1344,7 @@ function belegbildHtml(e) {
     <table class="eb-steuern" data-feld="steuer hinweis_13b"><thead><tr><th>Umsatzsteuer</th><th class="zahl-sp">Satz</th><th class="zahl-sp">Grundlage</th><th class="zahl-sp">Steuer</th></tr></thead>
       <tbody>${e.steuern.map((s) => `<tr><td>${esc(s.kategorie)}${s.grund ? `<small>${esc(s.grund)}</small>` : ""}</td>
         <td class="zahl-sp">${esc(s.satz)} %</td><td class="zahl-sp">${geld(s.basis, w)}</td><td class="zahl-sp">${geld(s.betrag, w)}</td></tr>`).join("")}</tbody></table>
-    ${zahlung.length ? `<div class="eb-block" data-feld="zahlung"><small>Zahlung</small>${zahlung.map((t) => `<div>${t}</div>`).join("")}</div>` : ""}
+    ${zahlung.length ? `<div class="eb-block"><small>Zahlung</small>${zahlung.map((t) => `<div>${t}</div>`).join("")}</div>` : ""}
     ${e.hinweise.length ? `<div class="eb-block" data-feld="hinweis_13b"><small>Hinweise</small>${e.hinweise.map((h) => `<p>${esc(h)}</p>`).join("")}</div>` : ""}
     ${fuss ? `<footer class="eb-fuss" data-feld="steuernummer ustid_beide">${fuss}</footer>` : ""}
   </article>`;
@@ -1467,4 +1480,121 @@ function bindeTrennlinie() {
     window.addEventListener("mouseup", los);
   });
   griff.addEventListener("dblclick", () => { setze(0); merke("belegBreite", ""); });
+}
+
+/* ---------- Beleg entfernen ---------- */
+/* Gehört ein Beleg nicht hierher (anderer Mandant, Werbung, doppelt …), wird er aus der Bearbeitung genommen.
+   Das Original bleibt gespeichert (GoBD); unter „Entfernte Belege“ lässt er sich wiederherstellen. */
+async function zeigeEntfernen() {
+  const b = zustand.beleg, f = $("b-entfernen-form");
+  zustand.gruende = zustand.gruende || await api("/api/beleg/entfernen/gruende");
+  f.innerHTML = `<span>Beleg entfernen?</span>
+    <select id="entfernen-grund" class="feld" aria-label="Grund"><option value="">Grund wählen</option>
+      ${zustand.gruende.map((g) => `<option>${esc(g)}</option>`).join("")}</select>
+    <button class="link klein-link" data-nein>Abbrechen</button>
+    <button class="knopf klein-knopf gefahr-knopf" data-ja disabled>Entfernen</button>`;
+  f.hidden = false;
+  const grund = $("entfernen-grund"), ja = f.querySelector("[data-ja]");
+  grund.addEventListener("change", () => { ja.disabled = !grund.value; });
+  f.querySelector("[data-nein]").addEventListener("click", () => { f.hidden = true; });
+  ja.addEventListener("click", async () => {
+    try {
+      await post("/api/beleg/entfernen", { key: b.key, grund: grund.value, modell: zustand.modell });
+      toast(`${b.kopf.supplier_name || "Beleg"} entfernt – unter „Entfernte Belege“ wiederherstellbar`);
+      await ladeListe();
+      const naechste = zustand.liste.eintraege.find((e) => e.bereich === zustand.filter && e.bereit);
+      if (naechste) oeffne(naechste.key);
+      else { zustand.key = null; $("beleg").hidden = true; $("aktionsleiste").hidden = true; $("leer").hidden = false; leereVorschau(); }
+    } catch (e) { toast(e.message, true); }
+  });
+}
+
+function zeigeEntfernte(l) {
+  const weg = l.eintraege.filter((e) => e.bereich === "entfernt");
+  $("entfernt-box").hidden = !weg.length;
+  $("entfernt-titel").textContent = `Entfernte Belege (${weg.length})`;
+  $("entfernt-liste").innerHTML = weg.map((e) => `<li data-key="${esc(e.key)}">
+      <span><b>${esc(e.lieferant || e.id)}</b><small>${esc(e.entfernt?.grund || "")}</small></span>
+      <button class="link blau-link klein-link">Ansehen</button></li>`).join("");
+  $("entfernt-liste").querySelectorAll("li").forEach((li) => li.querySelector("button").addEventListener("click", () => oeffne(li.dataset.key)));
+}
+
+/* ---------- DATEV-Export ---------- */
+/* Der Knopf erscheint, sobald es freigegebene, noch nicht exportierte Belege gibt; hervorgehoben, wenn nichts mehr offen ist.
+   Exportiert wird je Monat (Belegdatum) – erst wenn in diesem Monat alle Belege erledigt sind. */
+function zeigeExportKnopf(l) {
+  const bereit = l.eintraege.filter((e) => e.bereich === "erledigt" && !e.export).length;
+  $("export-zeile").hidden = !bereit;
+  $("export-knopf").className = `knopf ${l.anzahl_offen ? "grau" : "blau"}`;
+  $("export-info").textContent = `${anzahl(bereit, "Beleg", "Belege")} bereit` + (l.anzahl_offen ? ` · ${l.anzahl_offen} noch offen` : "");
+}
+
+async function oeffneExport(monat = null) {
+  try {
+    zustand.export = await api(`/api/export/vorschau?${new URLSearchParams({ mandant: zustand.mandant, modell: zustand.modell, ...(monat ? { monat } : {}) })}`);
+  } catch (e) { return toast(e.message, true); }
+  zeigeExport();
+  $("export-blatt").hidden = false;
+}
+
+function zeigeExport() {
+  const x = zustand.export, m = x.mandant;
+  const monate = x.monate.map((g) => `<option value="${esc(g.monat)}" ${g.monat === x.monat ? "selected" : ""}>${esc(monatText(g.monat))}
+    · ${g.bereit} bereit${g.offen ? `, ${g.offen} offen` : ""}${g.exportiert ? `, ${g.exportiert} exportiert` : ""}</option>`).join("");
+  const belege = x.belege.map((b) => `<details class="export-beleg">
+      <summary><span class="eb-lief"><b>${esc(b.lieferant || "–")}</b><small>${esc(b.nummer || "ohne Nummer")} · ${datum(b.datum)}</small></span>
+        <span class="zahl-sp">${geld(b.brutto, b.waehrung)}</span></summary>
+      <table class="export-zeilen"><thead><tr><th class="zahl-sp">Umsatz</th><th>S/H</th><th>Konto</th><th>Gegenkonto</th><th>BU</th><th>Buchungstext</th></tr></thead>
+        <tbody>${b.zeilen.map((z) => `<tr><td class="zahl-sp">${geld(z.umsatz, z.waehrung)}</td><td>${esc(z.soll_haben)}</td>
+          <td><b>${esc(z.konto)}</b><small>${esc(z.konto_name || "")}</small></td><td><b>${esc(z.gegenkonto)}</b><small>${esc(z.gegenkonto_name || "")}</small></td>
+          <td>${esc(z.bu || "–")}</td><td>${esc(z.buchungstext || "")}</td></tr>`).join("")}</tbody></table>
+    </details>`).join("");
+  const frueher = x.exporte.map((e) => `<li><span>${esc(monatText(e.monat))} · ${anzahl(e.anzahl, "Beleg", "Belege")} · ${geld(e.summe)}
+      <small>${new Date(e.zeit).toLocaleString("de-DE")} · ${esc(e.nutzer)} · SHA-256 ${esc(e.sha256.slice(0, 12))}…</small></span>
+      <a class="link blau-link klein-link" href="/api/export/datei?${new URLSearchParams({ mandant: m.id, id: e.id })}" data-datei>Herunterladen</a></li>`).join("");
+  $("export-inhalt").innerHTML = `
+    <div class="export-kopf">
+      <div><b class="export-mandant">${esc(m.name)}</b>
+        <small>Berater ${esc(m.beraternummer)} / Mandant ${esc(m.nummer)} · ${esc(m.kontenrahmen)} · Sachkonten ${esc(m.sachkontenlaenge || 4)}-stellig</small>
+        <small>Sachbearbeiter: ${m.team.map((p) => `${esc(p.name)} (${esc(p.rolle)})`).join(", ") || "–"}</small></div>
+      <div class="export-zahlen"><span><small>Monat</small>${x.monate.length > 1 ? `<select id="export-monat" class="feld">${monate}</select>`
+          : `<b>${x.monat ? esc(monatText(x.monat)) : "–"}</b>`}</span>
+        <span><small>Rechnungen</small><b>${x.anzahl}</b></span>
+        <span><small>Summe brutto</small><b>${geld(x.summe)}</b></span></div>
+    </div>
+    ${x.fremdwaehrung.length ? `<p class="export-warnung">${anzahl(x.fremdwaehrung.length, "Rechnung", "Rechnungen")} in Fremdwährung
+      (${x.fremdwaehrung.map((f) => `${esc(f.lieferant)}: ${geld(f.brutto, f.waehrung)}`).join(", ")}): nicht in der Summe; die Umrechnung in Euro fehlt noch.</p>` : ""}
+    ${x.grund ? `<p class="export-warnung">${esc(x.grund)}. Exportiert wird ein Monat erst, wenn dort alle Belege erledigt sind.</p>` : ""}
+    <div class="export-liste">${belege || `<p class="klein mitte">Keine Rechnungen zum Exportieren.</p>`}</div>
+    ${frueher ? `<details class="export-frueher"><summary>Bisherige Exporte</summary><ul>${frueher}</ul></details>` : ""}`;
+  $("export-monat")?.addEventListener("change", (e) => oeffneExport(e.target.value));
+  $("export-inhalt").querySelectorAll("[data-datei]").forEach((a) => a.addEventListener("click", (e) => { e.preventDefault(); herunterladen(a.href); }));
+  $("export-ok").disabled = !x.moeglich;
+  $("export-hinweis").textContent = x.moeglich ? "DATEV-Buchungsstapel (CSV) · Belege gelten danach als exportiert" : "";
+}
+
+async function herunterladen(url, opts = {}) {
+  const r = await fetch(url, { ...opts, headers: { ...(opts.headers || {}), "X-Nutzer": zustand.nutzer } });
+  if (!r.ok) throw new Error((await r.json().catch(() => ({}))).detail || `Fehler ${r.status}`);
+  const name = (r.headers.get("Content-Disposition") || "").match(/filename="([^"]+)"/)?.[1] || "export.csv";
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(await r.blob());
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  return name;
+}
+
+async function exportieren() {
+  const x = zustand.export;
+  try {
+    $("export-ok").disabled = true;
+    const name = await herunterladen("/api/export", { method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ mandant: x.mandant.id, monat: x.monat, modell: zustand.modell }) });
+    $("export-blatt").hidden = true;
+    toast(`${name} erstellt`);
+    await ladeListe();
+    if (zustand.key) oeffne(zustand.key, false);
+  } catch (e) { toast(e.message, true); $("export-ok").disabled = false; }
 }

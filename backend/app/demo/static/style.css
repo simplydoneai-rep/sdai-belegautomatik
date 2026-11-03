@@ -560,7 +560,7 @@ details[open] > .abschnitt-kopf::after { transform: rotate(90deg); }
 
 /* Beraternummern */
 .berater-liste li { grid-template-columns: 1fr auto auto; }
-.berater-form { display: grid; grid-template-columns: 130px 1fr auto; gap: 8px; padding: 12px 16px 16px; }
+.berater-form { display: grid; grid-template-columns: 175px 1fr auto; gap: 8px; padding: 12px 16px 16px; }
 
 /* Auswahlfelder einheitlich: eigener Pfeil, der beim Öffnen nicht grau wird */
 select.feld, .menue-zeile select { appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5 6 8l3.5-3.5' fill='none' stroke='%23555555' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
@@ -595,3 +595,45 @@ select.feld:disabled { cursor: default; opacity: .6; }
 #beleg tr[data-feld]:hover td, .pflicht-liste li[data-feld]:hover, .fakt[data-feld]:hover { background: var(--hover); }
 .eb-blatt .markiert, .eb-blatt .markiert td { background: var(--akzent-hell); }
 .eb-blatt div.markiert, .eb-blatt footer.markiert { box-shadow: 0 0 0 4px var(--akzent-hell); border-radius: 2px; }
+
+/* Beleg entfernen */
+.entfernen-form { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 10px; padding: 8px 10px;
+  background: var(--rot-hell); color: var(--rot-text); border-radius: var(--r1); font-size: var(--t2); }
+.entfernen-form .feld { width: auto; flex: 1; min-width: 220px; background-color: #fff; }
+.gefahr-knopf { background: var(--rot); color: #fff; }
+.gefahr-knopf:disabled { background: var(--linie-stark); cursor: not-allowed; }
+.entfernt-liste li { grid-template-columns: 1fr auto; align-items: center; }
+.entfernt-liste small { display: block; color: var(--text2); font-size: var(--t1); }
+
+/* DATEV-Export */
+.export-zeile { display: flex; align-items: center; gap: 10px; padding: 8px 16px; border-top: 1px solid var(--linie-stark); }
+.export-inhalt { padding: 14px 16px 4px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+.export-kopf { background: var(--karte); border-radius: var(--r2); padding: 12px 14px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.export-kopf small { display: block; color: var(--text2); font-size: var(--t2); margin-top: 2px; }
+.export-mandant { font-size: var(--t5); }
+.export-zahlen { display: flex; gap: 18px; align-items: flex-end; }
+.export-zahlen small { font-size: var(--t1); color: var(--text3); margin: 0 0 2px; }
+.export-zahlen b { font-size: var(--t4); font-variant-numeric: tabular-nums; }
+.export-zahlen .feld { width: auto; padding-top: 6px; padding-bottom: 6px; }
+.export-warnung { margin: 0; background: var(--gelb-hell); color: var(--gelb-text); border-radius: var(--r1); padding: 8px 10px; font-size: var(--t2); }
+.export-liste { background: var(--karte); border-radius: var(--r2); }
+.export-beleg { border-top: 1px solid var(--trenn); }
+.export-beleg:first-child { border-top: 0; }
+.export-beleg summary { display: flex; align-items: center; gap: 10px; padding: 9px 14px; cursor: pointer; list-style: none; }
+.export-beleg summary::-webkit-details-marker { display: none; }
+.export-beleg summary::before { content: "›"; color: var(--text3); font-size: var(--t5); transition: transform .15s; }
+.export-beleg[open] summary::before { transform: rotate(90deg); }
+.export-beleg .eb-lief { flex: 1; min-width: 0; }
+.export-beleg .eb-lief small { display: block; color: var(--text2); font-size: var(--t1); }
+.export-beleg .zahl-sp { font-variant-numeric: tabular-nums; font-weight: 600; }
+.export-zeilen { margin: 0 14px 10px; width: calc(100% - 28px); border-collapse: collapse; font-size: var(--t2); }
+.export-zeilen th { text-align: left; font-size: var(--t1); color: var(--text3); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; padding: 4px 6px; }
+.export-zeilen td { padding: 5px 6px; border-top: 1px solid var(--trenn); vertical-align: top; }
+.export-zeilen td small { display: block; color: var(--text2); font-size: var(--t1); }
+.export-zeilen .zahl-sp { text-align: right; white-space: nowrap; }
+.export-frueher { font-size: var(--t2); }
+.export-frueher summary { cursor: pointer; color: var(--text2); padding: 4px 0; }
+.export-frueher ul { list-style: none; margin: 4px 0 0; padding: 0; background: var(--karte); border-radius: var(--r2); }
+.export-frueher li { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 8px 12px; border-top: 1px solid var(--trenn); }
+.export-frueher li:first-child { border-top: 0; }
+.export-frueher small { display: block; color: var(--text3); font-size: var(--t1); }

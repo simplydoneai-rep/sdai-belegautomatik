@@ -31,3 +31,4 @@ testdaten/demo/uploads/
 
 # Prüfregeln der KoSIT (eingerichtet mit backend/scripts/kosit_einrichten.py)
 tools/kosit/
+testdaten/demo/exporte/

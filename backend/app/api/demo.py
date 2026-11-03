@@ -343,6 +343,72 @@ def wiedereroeffnen(a: BelegAktion) -> dict[str, Any]:
         raise _fehler(exc) from exc
 
 
+class Entfernen(BaseModel):
+    key: str
+    grund: str
+    modell: str = ansicht.STANDARD_MODELL
+
+
+@app.post("/api/beleg/entfernen")
+def entfernen(e: Entfernen) -> dict[str, Any]:
+    """Beleg aus der Bearbeitung nehmen (Original bleibt gespeichert, wiederherstellbar)."""
+    try:
+        return ansicht.entfernen(_key(e.key), e.grund, _modell(e.modell))
+    except ValueError as exc:
+        raise _fehler(exc) from exc
+
+
+@app.post("/api/beleg/wiederherstellen")
+def wiederherstellen(a: BelegAktion) -> dict[str, Any]:
+    try:
+        return ansicht.wiederherstellen(_key(a.key), _modell(a.modell))
+    except ValueError as exc:
+        raise _fehler(exc) from exc
+
+
+@app.get("/api/beleg/entfernen/gruende")
+def entfern_gruende() -> list[str]:
+    return list(zustand.ENTFERN_GRUENDE)
+
+
+class ExportAuftrag(BaseModel):
+    mandant: str
+    monat: str
+    modell: str = ansicht.STANDARD_MODELL
+
+
+@app.get("/api/export/vorschau")
+def export_vorschau(mandant: str, monat: str | None = None, modell: str = ansicht.STANDARD_MODELL) -> dict[str, Any]:
+    return ansicht.export_vorschau(_mandant(mandant), monat, _modell(modell))
+
+
+@app.post("/api/export")
+def exportieren(x: ExportAuftrag) -> Response:
+    """DATEV-Buchungsstapel als CSV (Windows-1252). Die Datei bleibt als Exportstapel mit Hash gespeichert."""
+    try:
+        r = ansicht.exportieren(_mandant(x.mandant), x.monat, _modell(x.modell))
+    except ValueError as exc:
+        raise _fehler(exc) from exc
+    log.info("export mandant=%s monat=%s belege=%s", x.mandant, x.monat, r["export"]["anzahl"])
+    return Response(r["daten"], media_type="text/csv; charset=windows-1252",
+                    headers={"Content-Disposition": f'attachment; filename="{r["datei"]}"'})
+
+
+@app.get("/api/export/datei")
+def export_datei(mandant: str, id: str) -> Response:
+    """Frühere Exportdatei erneut herunterladen (unverändert, Hash wird geprüft)."""
+    import hashlib
+
+    e = next((e for e in zustand.exporte(_mandant(mandant)) if e["id"] == id), None)
+    if not e:
+        raise HTTPException(404, "Export nicht gefunden")
+    daten = (zustand.EXPORTE / e["datei"]).read_bytes()
+    if hashlib.sha256(daten).hexdigest() != e["sha256"]:
+        raise HTTPException(409, "Exportdatei wurde verändert")
+    return Response(daten, media_type="text/csv; charset=windows-1252",
+                    headers={"Content-Disposition": f'attachment; filename="{e["datei"]}"'})
+
+
 class Sammel(BaseModel):
     keys: list[str]
     modell: str = ansicht.STANDARD_MODELL

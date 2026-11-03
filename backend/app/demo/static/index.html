@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Belegautomatik</title>
   <link rel="icon" href="marke/logo.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="style.css?v=35">
+  <link rel="stylesheet" href="style.css?v=38">
 </head>
 <body>
   <header class="topbar">
@@ -93,6 +93,14 @@
         <summary>Offene Positionen nach Sachkonto</summary>
         <ul id="konto-liste"></ul>
       </details>
+      <details id="entfernt-box" class="karte nach-konto" hidden>
+        <summary id="entfernt-titel">Entfernte Belege</summary>
+        <ul id="entfernt-liste" class="entfernt-liste"></ul>
+      </details>
+      <div id="export-zeile" class="export-zeile" hidden>
+        <button id="export-knopf" class="knopf grau">DATEV-Export</button>
+        <span id="export-info" class="klein"></span>
+      </div>
       <div class="eingang-fuss">
         <label class="knopf hell">＋ Rechnung hinzufügen
           <input id="datei" type="file" accept=".pdf,.xml,.jpg,.jpeg,.png,.tif,.tiff" hidden>
@@ -119,7 +127,8 @@
           <div class="detail-kopf">
             <div>
               <div class="kopf-zeile"><div id="b-status" class="status-chip"></div>
-                <button id="b-verlauf" class="link verlauf-knopf" title="Alle Änderungen an diesem Beleg">Verlauf</button></div>
+                <button id="b-verlauf" class="link verlauf-knopf" title="Alle Änderungen an diesem Beleg">Verlauf</button>
+                <button id="b-entfernen" class="link gefahr-link klein-link" title="Beleg gehört nicht hierher: aus der Bearbeitung nehmen">Entfernen</button></div>
               <h2 id="b-lieferant"></h2>
               <p id="b-meta" class="meta"></p>
             </div>
@@ -131,6 +140,7 @@
             </div>
           </div>
           <div id="b-fakten" class="fakten"></div>
+          <div id="b-entfernen-form" class="entfernen-form" hidden></div>
         </section>
 
         <div id="b-ausnahmen" class="hinweis-karte" hidden></div>
@@ -326,7 +336,22 @@
     </div>
   </div>
 
+  <div id="export-blatt" class="blatt-hintergrund" hidden>
+    <div class="blatt" role="dialog" aria-modal="true">
+      <div class="blatt-kopf">
+        <button class="link blau-link" data-schliessen="export-blatt">Abbrechen</button>
+        <b>DATEV-Export</b>
+        <span></span>
+      </div>
+      <div id="export-inhalt" class="export-inhalt"></div>
+      <div class="blatt-fuss">
+        <span id="export-hinweis" class="klein"></span>
+        <button id="export-ok" class="knopf blau gross">Exportieren</button>
+      </div>
+    </div>
+  </div>
+
   <div id="toast" class="toast" hidden></div>
-  <script src="app.js?v=36"></script>
+  <script src="app.js?v=38"></script>
 </body>
 </html>

@@ -219,6 +219,8 @@ def wiedereroeffnen(key: str, mandant: str) -> None:
         b = z["belege"].get(key)
         if not b or b.get("status") != "freigegeben":
             raise ValueError("Beleg ist nicht freigegeben")
+        if b.get("export"):
+            raise ValueError("Beleg ist schon an DATEV exportiert. Korrektur dort per Storno und neuer Buchung.")
         regeln = z.get("regeln", {}).get(mandant, {}).get(b.get("kreditor", ""), [])
         for g in reversed(b.get("gelernt", [])):
             lernregeln.rueckgaengig(regeln, g)
@@ -276,3 +278,73 @@ def folgemonat_einspielen() -> bool:
 def protokoll(key: str | None = None) -> list[dict[str, Any]]:
     eintraege: list[dict[str, Any]] = laden()["protokoll"]
     return [e for e in eintraege if key is None or e["beleg"] == key]
+
+
+ENTFERN_GRUENDE = ("Gehört zu einem anderen Mandanten", "Kein Beleg (z. B. Werbung, Mahnung)", "Doppelt eingegangen",
+                   "Privat", "Sonstiges")
+
+
+def entfernen(key: str, mandant: str, grund: str) -> None:
+    """Beleg aus der Bearbeitung nehmen. Das Original bleibt gespeichert (GoBD, CLAUDE.md Regel 9), der Beleg ist
+    wiederherstellbar; Grund, Person und Zeitpunkt stehen im Protokoll."""
+    if grund not in ENTFERN_GRUENDE:
+        raise ValueError("Grund wählen")
+    with _LOCK:
+        z = laden()
+        b = z["belege"].setdefault(key, {"status": "offen", "konten": {}})
+        if b.get("status") == "freigegeben":
+            raise ValueError("Freigegebene Belege zuerst wieder öffnen")
+        if b.get("status") == "entfernt":
+            raise ValueError("Beleg ist schon entfernt")
+        b.update({"status": "entfernt", "mandant": mandant,
+                  "entfernt": {"grund": grund, "zeit": datetime.now().isoformat(timespec="seconds"), "nutzer": NUTZER.get()}})
+        _protokoll(z, key, "Status", "offen", f"entfernt ({grund})", "Sachbearbeiter")
+        _speichern(z)
+
+
+def wiederherstellen(key: str) -> None:
+    with _LOCK:
+        z = laden()
+        b = z["belege"].get(key)
+        if not b or b.get("status") != "entfernt":
+            raise ValueError("Beleg ist nicht entfernt")
+        b["status"] = "offen"
+        b.pop("entfernt", None)
+        _protokoll(z, key, "Status", "entfernt", "offen (wiederhergestellt)", "Sachbearbeiter")
+        _speichern(z)
+
+
+EXPORTE = ZUSTAND.parent / "exporte"
+
+
+def export_merken(mandant: str, monat: str, keys: list[str], datei: str, daten: bytes, anzahl: int, summe: str) -> dict[str, Any]:
+    """Exportstapel festhalten (CLAUDE.md: export_batch mit Hash der Datei). Die Datei wird nie überschrieben;
+    die Belege gelten danach als exportiert und lassen sich nicht mehr wieder öffnen."""
+    import hashlib
+
+    jetzt = datetime.now()
+    eintrag = {"id": jetzt.strftime("%Y%m%d-%H%M%S-") + mandant, "mandant": mandant, "monat": monat, "belege": keys,
+               "datei": datei, "sha256": hashlib.sha256(daten).hexdigest(), "anzahl": anzahl, "summe": summe,
+               "zeit": jetzt.isoformat(timespec="seconds"), "nutzer": NUTZER.get()}
+    with _LOCK:
+        z = laden()
+        for key in keys:
+            b = z["belege"].get(key, {})
+            if b.get("status") != "freigegeben" or b.get("export"):
+                raise ValueError("Beleg ist nicht freigegeben oder schon exportiert")
+        EXPORTE.mkdir(parents=True, exist_ok=True)
+        ziel = EXPORTE / datei
+        if ziel.exists():
+            raise ValueError("Exportdatei gibt es schon")
+        ziel.write_bytes(daten)
+        for key in keys:
+            z["belege"][key]["export"] = eintrag["id"]
+        z.setdefault("exporte", []).append(eintrag)
+        _protokoll(z, None, f"DATEV-Export {mandant} {monat}", None,
+                   f"{anzahl} Belege · {datei} · SHA-256 {eintrag['sha256'][:12]}…", "Sachbearbeiter")
+        _speichern(z)
+    return eintrag
+
+
+def exporte(mandant: str) -> list[dict[str, Any]]:
+    return [e for e in laden().get("exporte", []) if e["mandant"] == mandant]

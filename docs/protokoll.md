@@ -384,6 +384,14 @@ Lücke geschlossen (Freigabe Paul Graß), Details: `docs/entscheidungen/2026-11-
 - Auswahlfelder einheitlich mit eigenem Pfeil; Formular „Sachbearbeiter erfassen“ breiter.
 - Entscheidung: `docs/entscheidungen/2026-11-03_rechte-sachkontenlaenge-fundstellen.md`.
 
+## 04.11.2026 – DATEV-Export, Belege entfernen
+
+- DATEV-Export je Mandant und Monat: Fenster mit Mandant, Nummern, Sachbearbeitern, Monat, Anzahl, Summe und aufklappbaren Rechnungen; CSV als DATEV-Buchungsstapel (EXTF 700/21, Windows-1252), vor der Ausgabe gegen ein Prüfskript geprüft, als Exportstapel mit SHA-256 gespeichert. Ein Monat wird erst exportiert, wenn dort alles erledigt ist; exportierte Belege sind gesperrt. Format: `docs/datev/buchungsstapel.md` (vorläufig, Sekundärquellen; Testimport in DATEV offen).
+- Belege entfernen statt löschen (GoBD): mit Grund, Original bleibt, wiederherstellbar unter „Entfernte Belege“.
+- Verfahrensdokumentation als Entwurf angelegt (`docs/verfahrensdokumentation.md`).
+- Eingabefeld Beraternummer breiter; Zeile „Zahlung“ in den Rechnungsdaten entfernt.
+- Entscheidung: `docs/entscheidungen/2026-11-04_entfernen-und-datev-export.md`.
+
 ## Nächste Schritte
 
 Die aktuelle Aufgabenliste steht in `docs/projektplan.md`, Abschnitt 10. Die Liste unten ist der Stand vom 28.10.2026 vor dem Projektplan.

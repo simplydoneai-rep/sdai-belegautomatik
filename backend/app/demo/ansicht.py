@@ -495,6 +495,8 @@ def ansicht(key: str, modell: str = STANDARD_MODELL) -> dict[str, Any]:
     ampel = _gesamt(positionen, r["steuerlogik"]["ok"], bool(kreditor))
     if status == "freigegeben":
         bereich = "erledigt"
+    elif status == "entfernt":
+        bereich = "entfernt"
     elif ampel == "gruen" and not ausnahmen and Decimal(str(sicherheit)) >= MIN_SICHERHEIT:
         bereich = "sicher"
     else:
@@ -507,6 +509,7 @@ def ansicht(key: str, modell: str = STANDARD_MODELL) -> dict[str, Any]:
         "monat": b.get("monat"),
         "mandant": _mandant_kurz(mandant),
         "status": status, "bereich": bereich, "freigegeben_am": st.get("freigegeben_am"),
+        "export": st.get("export"), "entfernt": st.get("entfernt"),
         "kopf": kopf, "steuerlogik": r["steuerlogik"], "schritte": r["schritte"], "ki": r["ki"],
         "quelle": r["quelle"], "pseudonymisiert": r["pseudonymisiert"], "platzhalter": r["platzhalter"], "soll": r["soll"],
         "kreditor": kreditor and {"nr": kreditor["nr"], "name": kreditor["name"], "ustid": kreditor.get("ustid"),
@@ -520,7 +523,7 @@ def ansicht(key: str, modell: str = STANDARD_MODELL) -> dict[str, Any]:
         "buchungen": _buchungssaetze(positionen, kopf, kreditor, fall, laenge),
         "pflichtangaben": r["pflichtangaben"], "validierung": r.get("validierung"), "bewirtung": bewirtung,
         "sicherheit": round(sicherheit, 2), "gelernt": gelernt,
-        "offen": offen, "freigabe_moeglich": not offen and status != "freigegeben",
+        "offen": offen, "freigabe_moeglich": not offen and status == "offen",
         "protokoll": zustand.protokoll(key)[-30:],
     }
 
@@ -545,7 +548,8 @@ def liste(mandant: str | None = None, modell: str = STANDARD_MODELL) -> dict[str
                       "brutto": a["kopf"].get("gross_total"), "ampel": a["ampel"], "status": a["status"],
                       "bereich": a["bereich"], "sicherheit": a["sicherheit"], "ausnahmen": a["ausnahmen"],
                       "kreditor": a["kreditor"] and a["kreditor"]["nr"], "positionen": len(a["positionen"]),
-                      "gelernt": a["gelernt"], "frei": sum(1 for p in a["positionen"] if p["ampel"] == "rot")})
+                      "gelernt": a["gelernt"], "frei": sum(1 for p in a["positionen"] if p["ampel"] == "rot"),
+                      "export": a["export"], "entfernt": a["entfernt"]})
             if a["status"] == "offen":
                 for p in a["positionen"]:
                     k = p["konto"] or {"nr": "—", "name": "Noch kein Konto"}
@@ -579,6 +583,7 @@ def uebersicht(nutzer: str, modell: str = STANDARD_MODELL) -> dict[str, Any]:
     zeilen = []
     for m in kanzlei.sichtbare_mandanten(nutzer):
         es = [e for e in l["eintraege"] if e["mandant_id"] == m["id"]]
+        es = [e for e in es if e["bereich"] != "entfernt"]
         offen = [e for e in es if e["bereich"] != "erledigt"]
         monat = lambda e: (e.get("datum") or e.get("monat") or "")[:7]  # noqa: E731 (Belegdatum, Buchungsmonat)
         je_monat: dict[str, dict[str, Any]] = {}
@@ -811,7 +816,92 @@ def feldsuche(a: dict[str, Any]) -> dict[str, dict[str, Any]]:
         "brutto": {"werte": _betrag_texte(k.get("gross_total")),
                    "worte": ["gesamt", "brutto", "rechnungsbetrag", "endbetrag", "zahlbetrag", "total"],
                    "art": "zeile", "letzte": True},
-        "zahlung": {"muster": r"(?i)\biban\b|zahlbar|zahlungsziel|skonto|\bbic\b|bankverbindung", "art": "alle"},
         "hinweis_13b": {"muster": r"(?i)steuerschuldnerschaft|reverse\s+charge", "art": "alle"},
         "ustid_beide": {"werte": [k.get("lieferant_ustid"), m.get("ustid")], "art": "alle"},
     }
+
+
+# --------------------------------------------------------------------------- Entfernen und DATEV-Export
+
+
+def entfernen(key: str, grund: str, modell: str = STANDARD_MODELL) -> dict[str, Any]:
+    zustand.entfernen(key, _beleg(key)["client_id"], grund)
+    return ansicht(key, modell)
+
+
+def wiederherstellen(key: str, modell: str = STANDARD_MODELL) -> dict[str, Any]:
+    zustand.wiederherstellen(key)
+    return ansicht(key, modell)
+
+
+def _monat(e: dict[str, Any]) -> str:
+    return (e.get("datum") or e.get("monat") or "")[:7]
+
+
+def export_vorschau(mandant: str, monat: str | None = None, modell: str = STANDARD_MODELL) -> dict[str, Any]:
+    """Was würde exportiert? Je Monat (Belegdatum): freigegebene, noch nicht exportierte Belege. Exportiert wird
+    ein Monat erst, wenn dort kein Beleg mehr offen ist (entfernte Belege zählen nicht)."""
+    l = liste(mandant, modell)
+    es = [e for e in l["eintraege"] if e["bereich"] != "entfernt"]
+    monate: dict[str, dict[str, Any]] = {}
+    for e in es:
+        g = monate.setdefault(_monat(e) or "ohne Datum", {"monat": _monat(e) or None, "offen": 0, "bereit": 0, "exportiert": 0})
+        if not e["bereit"] or e["bereich"] != "erledigt":
+            g["offen"] += 1
+        elif e.get("export"):
+            g["exportiert"] += 1
+        else:
+            g["bereit"] += 1
+    kandidaten = sorted((g for g in monate.values() if g["bereit"] and g["monat"]), key=lambda g: g["monat"])
+    if not monat:
+        fertig = [g for g in kandidaten if not g["offen"]]
+        monat = (fertig or kandidaten or [{"monat": None}])[0]["monat"]
+    g = monate.get(monat or "", {"offen": 0, "bereit": 0})
+    belege = []
+    for e in es:
+        if _monat(e) != monat or e["bereich"] != "erledigt" or e.get("export"):
+            continue
+        a = ansicht(e["key"], modell)
+        belege.append({"key": e["key"], "lieferant": a["kopf"].get("supplier_name"), "nummer": a["kopf"].get("invoice_number"),
+                       "datum": a["kopf"].get("invoice_date"), "brutto": a["kopf"].get("gross_total"),
+                       "waehrung": a["kopf"].get("currency") or "EUR", "kreditor": a["kreditor"],
+                       "zeilen": a["buchungen"]["stapel"]})
+    belege.sort(key=lambda b: (b["datum"] or "", b["lieferant"] or ""))
+    euro = [b for b in belege if b["waehrung"] == "EUR"]
+    grund = ("Kein freigegebener Beleg zum Exportieren" if not belege else
+             f"{g['offen']} Beleg{'e' if g['offen'] != 1 else ''} in diesem Monat noch offen" if g["offen"] else None)
+    return {
+        "mandant": kanzlei.mandant_oeffentlich(kanzlei.mandant(mandant)), "monat": monat,
+        "monate": [x for x in sorted(monate.values(), key=lambda x: x["monat"] or "") if x["bereit"] or x["exportiert"]],
+        "belege": belege, "anzahl": len(belege),
+        "summe": str(sum((parse_amount(b["brutto"]) or Decimal(0) for b in euro), Decimal(0))),
+        "fremdwaehrung": [{"lieferant": b["lieferant"], "waehrung": b["waehrung"], "brutto": b["brutto"]}
+                          for b in belege if b["waehrung"] != "EUR"],
+        "offen": g["offen"], "moeglich": grund is None, "grund": grund,
+        "exporte": list(reversed(zustand.exporte(mandant)))[:5],
+    }
+
+
+def exportieren(mandant: str, monat: str, modell: str = STANDARD_MODELL) -> dict[str, Any]:
+    """DATEV-Buchungsstapel des Monats schreiben, gegen das Prüfskript prüfen und als Exportstapel festhalten."""
+    import calendar
+    from datetime import date, datetime
+
+    from app.export import datev
+
+    v = export_vorschau(mandant, monat, modell)
+    if not v["moeglich"]:
+        raise ValueError(f"Export nicht möglich: {v['grund']}")
+    m = kanzlei.mandant(mandant)
+    jahr, mon = (int(x) for x in monat.split("-"))
+    kopf = datev.Kopf(beraternummer=int(m["beraternummer"]), mandantennummer=int(m["nummer"]), wj_beginn=date(jahr, 1, 1),
+                      sachkontenlaenge=int(m.get("sachkontenlaenge", 4)), datum_von=date(jahr, mon, 1),
+                      datum_bis=date(jahr, mon, calendar.monthrange(jahr, mon)[1]),
+                      bezeichnung=f"Eingangsrechnungen {mon:02d}/{jahr}", kontenrahmen=m["kontenrahmen"], erzeugt=datetime.now())
+    daten = datev.buchungsstapel(kopf, [z for b in v["belege"] for z in b["zeilen"]])
+    fehler = datev.pruefe(daten)
+    if fehler:
+        raise ValueError("Exportdatei fehlerhaft: " + "; ".join(fehler[:3]))
+    datei = f"EXTF_Buchungsstapel_{m['beraternummer']}_{m['nummer']}_{jahr}{mon:02d}_{kopf.erzeugt:%Y%m%d-%H%M%S}.csv"
+    eintrag = zustand.export_merken(mandant, monat, [b["key"] for b in v["belege"]], datei, daten, v["anzahl"], v["summe"])
+    return {"datei": datei, "daten": daten, "export": eintrag}
