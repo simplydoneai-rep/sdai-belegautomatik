@@ -283,7 +283,9 @@ details[open] > .abschnitt-kopf::after { transform: rotate(90deg); }
 .vorschau-inhalt { position: absolute; inset: 0; overflow: auto; padding: 14px 64px 14px 14px; }
 .vorschau-inhalt .seite { margin: 0 auto 14px; max-width: none; }
 .vorschau-inhalt img { width: 100%; display: block; border-radius: var(--r1); box-shadow: 0 2px 12px rgba(0,0,0,.14); background: #fff; user-select: none; }
-.vorschau-inhalt pre { background: #fff; border-radius: var(--r1); padding: 12px; font-size: var(--t1); white-space: pre-wrap; margin: 0; }
+/* E-Rechnung (XML): auch lange Werte ohne Leerzeichen (Anhänge, Kennungen) im Rahmen umbrechen */
+.vorschau-inhalt.xml { padding-right: 14px; }
+.vorschau-inhalt pre { background: #fff; border-radius: var(--r1); padding: 12px; font-size: var(--t1); white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; }
 .vorschau-inhalt.zieht { cursor: grabbing; }
 .werkzeuge { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; gap: 2px;
   background: rgba(10,10,10,.6); backdrop-filter: blur(16px); color: #fff; border-radius: var(--r3); padding: 8px 5px; opacity: .55;
@@ -448,7 +450,7 @@ details[open] > .abschnitt-kopf::after { transform: rotate(90deg); }
 .bu-chip select { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; font-size: var(--t3); }
 .bu-chip select:disabled { cursor: default; }
 .bu-chip:hover:not(:has(select:disabled)) { box-shadow: 0 0 0 1.5px var(--akzent); }
-.bu-chip.manuell { background: var(--gelb-hell); color: var(--gelb-text); }
+.bu-chip.manuell { background: var(--karte); color: var(--text); box-shadow: inset 0 0 0 1.5px var(--text); }
 /* Aufteilung */
 .aufteilung { grid-column: 1 / 3; display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center; font-size: var(--t2); }
 .aufteilung .teil { background: var(--bg); border-radius: var(--r1); padding: 2px 8px; }
@@ -494,8 +496,15 @@ details[open] > .abschnitt-kopf::after { transform: rotate(90deg); }
 
 /* Steuersatz nur anzeigen; Korrektur einer falsch gelesenen Rechnung im Hinweis */
 .satz-anzeige { color: var(--text2); font-size: var(--t2); }
-.satz-anzeige.manuell { color: var(--gelb-text); font-weight: 600; }
+.satz-anzeige.manuell { color: var(--text); font-weight: 600; }
 .satz-anzeige .klein-link { font-weight: 400; margin-left: 4px; }
 .satz-korrektur { grid-column: 1 / 3; font-size: var(--t2); background: var(--gelb-hell); color: var(--gelb-text); border-radius: var(--r1); padding: 5px 9px;
   display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: center; }
-.satz-korrektur .klein { color: var(--gelb-text); }
+.satz-korrektur .blau-link { color: var(--text); font-weight: 600; text-decoration: underline; }
+
+/* Vollbild des Belegs: Seite mittig mit begrenzter Breite, Werkzeuge immer sichtbar */
+.vorschau-rahmen.vollbild { position: fixed; inset: 0; z-index: 85; background: var(--vorschau-bg); }
+.vorschau-rahmen.vollbild .vorschau-inhalt { padding: 24px max(80px, calc(50% - 520px)); }
+.vorschau-rahmen.vollbild .werkzeuge { opacity: 1; right: 20px; }
+.w-zoom { border: 0; background: transparent; color: #fff; cursor: pointer; padding: 2px 4px; border-radius: var(--r1); }
+.w-zoom:hover { background: rgba(255,255,255,.16); }

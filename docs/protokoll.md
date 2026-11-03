@@ -363,6 +363,9 @@ Lücke geschlossen (Freigabe Paul Graß), Details: `docs/entscheidungen/2026-11-
 
 - Poppins (OFL) und das Logo von simplydone-ai.de liegen jetzt lokal in der Demo (`static/schrift/`, `static/marke/`), Logo auch als Favicon. Keine Verbindung zu Google Fonts.
 
+- Von Hand geänderter Steuerschlüssel oder Steuersatz ist kein Warnfall mehr: neutral mit Rahmen und ✎. Gelb bleibt nur der Hinweis, wenn der Schlüssel nicht zum Satz der Rechnung passt.
+- Belegansicht: E-Rechnung (XML) bricht lange Werte im Rahmen um und nutzt die volle Breite. Der Knopf mit den vier Ecken öffnet jetzt ein Vollbild über das ganze Fenster (Esc beendet); vorher setzte er nur den Zoom zurück. Zurück auf Seitenbreite per Klick auf die Prozentanzeige. Die Fullscreen-API des Browsers wird bewusst nicht genutzt, weil eingebettete Browser sie sperren können.
+
 ## Nächste Schritte
 
 Die aktuelle Aufgabenliste steht in `docs/projektplan.md`, Abschnitt 10. Die Liste unten ist der Stand vom 28.10.2026 vor dem Projektplan.

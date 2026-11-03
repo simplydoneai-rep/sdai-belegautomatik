@@ -25,7 +25,8 @@ const PFADE = {
   runter: '<path d="M6 9l6 6 6-6"/>',
   plus: '<path d="M12 5v14M5 12h14"/>',
   minus: '<path d="M5 12h14"/>',
-  passend: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
+  vollbild: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
+  vollbild_aus: '<path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/>',
   haken: '<path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/>',
 };
 const svg = (name) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${PFADE[name] || ""}</svg>`;
@@ -1058,7 +1059,14 @@ async function demoAktion(was) {
 const ansichtZ = { seiten: 0, seite: 1, zoom: 1 };
 const ZOOM = [0.5, 0.75, 1, 1.25, 1.5, 2, 2.5, 3];
 
+function vollbild(an) {
+  document.querySelector(".vorschau-rahmen").classList.toggle("vollbild", an);
+  $("w-vollbild").innerHTML = svg(an ? "vollbild_aus" : "vollbild");
+  $("w-vollbild").title = an ? "Vollbild beenden (Esc)" : "Vollbild";
+}
+
 function leereVorschau() {
+  vollbild(false);
   $("vorschau").innerHTML = `<p class="klein mitte">Keine Rechnung gewählt</p>`;
   $("v-seiten").textContent = "";
   $("werkzeuge").hidden = true;
@@ -1067,6 +1075,7 @@ function leereVorschau() {
 async function ladeVorschau(b) {
   const v = $("vorschau");
   ansichtZ.zoom = 1;
+  v.classList.toggle("xml", b.art === "xml");  // ohne Werkzeugleiste: volle Breite
   if (b.art === "xml") {
     const t = await (await fetch(`/api/beleg/datei?${new URLSearchParams({ key: b.key })}`, { headers: { "X-Nutzer": zustand.nutzer } })).text();
     v.innerHTML = `<pre>${esc(t)}</pre>`;
@@ -1152,7 +1161,10 @@ function bindeWerkzeuge() {
   }, { passive: false });
   $("w-plus").addEventListener("click", () => zoome(1));
   $("w-minus").addEventListener("click", () => zoome(-1));
-  $("w-passend").addEventListener("click", () => { ansichtZ.zoom = 1; wendeZoomAn(); });
+  $("w-zoom").addEventListener("click", () => { ansichtZ.zoom = 1; wendeZoomAn(); });
+  // Vollbild: Beleg über das ganze Fenster (ohne Fullscreen-API, die eingebettete Browser oft sperren); Esc beendet es
+  $("w-vollbild").addEventListener("click", () => vollbild(!document.querySelector(".vorschau-rahmen.vollbild")));
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && document.querySelector(".vorschau-rahmen.vollbild")) vollbild(false); });
   $("w-hoch").addEventListener("click", () => springeZuSeite(ansichtZ.seite - 1));
   $("w-runter").addEventListener("click", () => springeZuSeite(ansichtZ.seite + 1));
   $("w-seite").addEventListener("change", (e) => springeZuSeite(Number(e.target.value) || 1));
