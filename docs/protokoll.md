@@ -359,6 +359,8 @@ Lücke geschlossen (Freigabe Paul Graß), Details: `docs/entscheidungen/2026-11-
 - Jede Aussage einmal: Prüfhinweise nur oben, „Summen stimmen“ nur im Fehlerfall, grüner Haken ohne „vorhanden“. Erklärsätze (Nummernkreis, Inland-Vorsteuer, „Sonst bleibt es bei …“) gekürzt oder im Tooltip.
 - Funktionen und Schnittstellen unverändert; 159 Tests grün. Entscheidung: `docs/entscheidungen/2026-11-03_design-aufraeumen.md`.
 
+- Markenfarben übernommen (Primary #FF7601, Black #0A0A0A, Grey #888888): Orange für Aktionen, ausgewählte Rechnung schwarz, Ampel „unsicher“ jetzt Gelb statt Orange, neutrale Grautöne, Knöpfe als Pillen, Poppins als erste Schrift (für den Betrieb selbst ausliefern, nicht über Google Fonts).
+
 ## Nächste Schritte
 
 Die aktuelle Aufgabenliste steht in `docs/projektplan.md`, Abschnitt 10. Die Liste unten ist der Stand vom 28.10.2026 vor dem Projektplan.

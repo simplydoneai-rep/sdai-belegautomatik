@@ -17,3 +17,12 @@ Stand: 03.11.2026 · Anlass: Rückmeldung Paul Graß, die Oberfläche wirke „K
 
 ## Nicht entschieden
 Ein eigener Styleguide durch einen Designer (Farben der Marke Simply Done AI, Schrift, Logo) ersetzt später die Tokens. Die Tokens sind so angelegt, dass das an einer Stelle geschieht.
+
+## Nachtrag 03.11.2026: Markenfarben
+Vorgabe Paul Graß, abgeglichen mit simplydone-ai.de: Primary `#FF7601`, Black `#0A0A0A`, White `#FFFFFF`, Grey `#888888`; Schrift Poppins, Knöpfe als Pillen.
+- **Akzent = Primary.** Orange als Fläche nur für Aktionen (Freigeben, Anlegen, ＋ Mandant), Fokus und Hervorhebung im Beleg. Orange als Schrift (Links) in der dunkleren Stufe `#B85000`, weil `#FF7601` auf Weiß nur etwa 2,9 : 1 Kontrast hat (WCAG verlangt 4,5 : 1 für Fließtext).
+- **Ausgewählte Rechnung schwarz** mit weißer Schrift, wie der schwarze Knopf der Website.
+- **Ampel „unsicher“ ist jetzt Gelb** (`#FFCC00`) statt Orange. Sonst wäre ein Warnhinweis nicht vom Markenakzent zu unterscheiden. Grün und Rot bleiben.
+- Grautöne neutral statt bläulich (iOS); Nebentext `#555555`, Beschriftungen Grey `#888888`.
+- Kürzel der Sachbearbeiter grau, damit Orange nur für Aktionen steht.
+- **Schrift Poppins** steht vorn in der Schriftliste und greift nur, wenn sie installiert ist; sonst Segoe UI. Für den Betrieb Poppins selbst ausliefern, nicht über Google Fonts einbinden: Das Nachladen von Google-Servern überträgt die IP-Adresse an Google (LG München I, Urteil vom 20.01.2022, Az. 3 O 17493/20).
