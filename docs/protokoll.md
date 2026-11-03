@@ -352,6 +352,13 @@ Lücke geschlossen (Freigabe Paul Graß), Details: `docs/entscheidungen/2026-11-
 
 - Steuersatz je Position nur noch als Anzeige; geändert wird über den Steuerschlüssel. Passt ein von Hand gewählter Schlüssel nicht zum Satz der Rechnung, bietet der Hinweis „Rechnung falsch gelesen? Steuersatz auf X % korrigieren“ an; die Korrektur lässt sich mit „zurück auf … %“ aufheben.
 
+## 03.11.2026 – Design aufgeräumt (weniger „KI-Look“)
+
+- Design-Tokens in `style.css`: Farben nur noch aus einer Liste (Flächen, Text, ein Akzent, drei Statusfarben), Schriftgrößen von 21 auf 5 Stufen, Eckenradien von 9 auf 3. Ein späterer Styleguide wird an dieser einen Stelle eingesetzt.
+- Entfernt: farbige Symbol-Kästchen vor den Abschnitten, alle Farbverläufe, eingefärbte Kontofelder (Ampelpunkt reicht), farbige Marken für Vorsteuer/Umsatzsteuer, „Sicher %“, „gelernt“ und Kreditornummer in der Belegliste.
+- Jede Aussage einmal: Prüfhinweise nur oben, „Summen stimmen“ nur im Fehlerfall, grüner Haken ohne „vorhanden“. Erklärsätze (Nummernkreis, Inland-Vorsteuer, „Sonst bleibt es bei …“) gekürzt oder im Tooltip.
+- Funktionen und Schnittstellen unverändert; 159 Tests grün. Entscheidung: `docs/entscheidungen/2026-11-03_design-aufraeumen.md`.
+
 ## Nächste Schritte
 
 Die aktuelle Aufgabenliste steht in `docs/projektplan.md`, Abschnitt 10. Die Liste unten ist der Stand vom 28.10.2026 vor dem Projektplan.

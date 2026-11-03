@@ -474,13 +474,12 @@ function zelle(e) {
   if (!e.bereit) return `<li class="zelle"><span class="punkt grau"></span><span class="z1">${esc(e.id)} wird gelesen …</span><span></span>
     <span class="z2">${esc(e.mandant)}</span></li>`;
   const art = { xml: "E-Rechnung", scan: "Scan", foto: "Foto", pdf: "PDF" }[e.art] || e.art;
+  // Ruhige Liste: der Punkt zeigt den Status, Marken nur für das, was zu tun ist
   const marken = [];
-  if (e.bereich === "sicher") marken.push(`<span class="marke gruen">Sicher ${prozent(e.sicherheit)}</span>`);
-  for (const a of e.ausnahmen || []) marken.push(`<span class="marke orange">${esc(a.split(" (")[0].split(" – ")[0])}</span>`);
-  if (e.gelernt) marken.push(`<span class="marke blau">${e.gelernt}/${e.positionen} gelernt</span>`);
+  const gruende = (e.ausnahmen || []).map((a) => a.split(" (")[0].split(" – ")[0]);
+  if (gruende.length) marken.push(`<span class="marke orange" title="${esc(gruende.join(" · "))}">${esc(gruende[0])}${gruende.length > 1 ? ` +${gruende.length - 1}` : ""}</span>`);
   if (e.frei) marken.push(`<span class="marke orange">${e.frei} ohne Konto</span>`);
-  if (e.kreditor) marken.push(`<span class="marke">Kreditor ${esc(e.kreditor)}</span>`);
-  marken.push(`<span class="marke">${art}</span>`);
+  if (e.art === "xml") marken.push(`<span class="marke">${art}</span>`);
   return `<li class="zelle ${e.key === zustand.key ? "gewaehlt" : ""}" data-key="${esc(e.key)}">
     <span class="punkt ${e.bereich === "erledigt" ? "grau" : e.ampel}"></span>
     <span class="z1">${esc(e.lieferant || e.id)}</span>
@@ -540,8 +539,9 @@ function zeigeBeleg(b) {
     k.invoice_number || "ohne Rechnungsnummer"].join(" · ");
   $("b-brutto").textContent = geld(k.gross_total, w);
   $("b-steuer").textContent = `Netto ${geld(k.net_total, w)} · USt ${geld(k.tax_total, w)}`;
-  $("b-summen").textContent = b.steuerlogik.ok ? "✓ Summen stimmen" : "⚠ Summen passen nicht zusammen";
-  $("b-summen").className = b.steuerlogik.ok ? "summen-ok" : "summen-fehler";
+  $("b-summen").textContent = b.steuerlogik.ok ? "" : "Summen passen nicht zusammen";
+  $("b-summen").className = "summen-fehler";
+  $("b-summen").hidden = b.steuerlogik.ok;
   const fakten = [
     ["Rechnungsdatum", datum(k.invoice_date)],
     ["Leistungsdatum", leistungText(k.leistung, true), !k.leistung],
@@ -554,7 +554,7 @@ function zeigeBeleg(b) {
 
   const aus = $("b-ausnahmen");
   aus.hidden = fertig || !b.ausnahmen.length;
-  aus.innerHTML = `<b>Zur Prüfung:</b>${b.ausnahmen.map((a) => `<span class="grund">${esc(a)}</span>`).join("")}`;
+  aus.innerHTML = `<b>Prüfen:</b>${b.ausnahmen.map((a) => `<span class="grund">${esc(a)}</span>`).join("")}`;
 
   zeigeKreditor(b, fertig);
 
@@ -571,11 +571,11 @@ function zeigeBeleg(b) {
         <div class="konto-feld ${p.ampel}">
           <input data-pos="${p.pos}" ${fertig ? "disabled" : ""} autocomplete="off"
             value="${p.konto ? esc(p.konto.nr + " · " + p.konto.name) : ""}"
-            placeholder="Konto wählen: Nummer oder Begriff, z. B. „War“">
+            placeholder="Konto: Nummer oder Begriff">
         </div>
         ${buWahl(p, fertig)}
         <div class="ampel ${p.ampel}" title="${esc(p.grund)}"><span class="punkt ${p.ampel}"></span>
-          <span class="ampel-text"><b>${AMPEL[p.ampel]}</b><small>${esc(p.grund)}</small></span></div>
+          <span class="ampel-text"><b>${AMPEL[p.ampel]}</b>${p.ampel === "gruen" ? "" : `<small>${esc(p.grund)}</small>`}</span></div>
       </div>
       ${satzKorrektur(p, fertig)}
       ${aufteilungZeile(p, w, fertig)}
@@ -606,14 +606,14 @@ function zeigeBeleg(b) {
     knopf.className = "knopf grau gross";
     knopf.disabled = false;
     $("a-hinweis").innerHTML = `Freigegeben am ${new Date(b.freigegeben_am).toLocaleString("de-DE")} · Kreditor ${esc(b.kreditor?.nr)}.
-      Wieder öffnen nimmt auch das dabei Gelernte zurück.`;
+`;
+    knopf.title = "Wieder öffnen nimmt auch das dabei Gelernte zurück";
   } else {
     knopf.textContent = "Freigeben";
     knopf.className = "knopf blau gross";
     knopf.disabled = !b.freigabe_moeglich;
     $("a-hinweis").innerHTML = !b.freigabe_moeglich ? "Noch offen: " + b.offen.map(esc).join(" · ")
-      : b.bereich === "sicher" ? "Alles sicher erkannt – ansehen und freigeben."
-      : "Freigabe möglich – gelbe Punkte bitte kurz prüfen.";
+      : b.bereich === "sicher" ? "" : "Gelb markierte Positionen prüfen";
   }
 }
 
@@ -651,9 +651,9 @@ function satzKorrektur(p, fertig) {
   const st = p.teile[0]?.steuer;
   if (fertig || !p.bu_manuell || !st || st.satz == null || st.automatik || (st.fall && st.fall !== "inland")
       || String(Number(st.satz)) === String(Number(p.steuersatz)) || Number(st.satz) === 0) return "";
-  return `<div class="satz-korrektur">Rechnung falsch gelesen?
-    <button class="link blau-link klein-link" data-satz-auf="${p.pos}" data-satz="${esc(String(Number(st.satz)))}">Steuersatz auf ${esc(String(Number(st.satz)))} % korrigieren</button>
-    <span class="klein">Sonst bleibt es bei ${esc(p.steuersatz)} % laut Rechnung und ${esc(String(Number(st.satz)))} % Vorsteuer.</span></div>`;
+  const neu = esc(String(Number(st.satz)));
+  return `<div class="satz-korrektur" title="Sonst bleibt es bei ${esc(p.steuersatz)} % laut Rechnung und ${neu} % Vorsteuer">Rechnung falsch gelesen?
+    <button class="link blau-link klein-link" data-satz-auf="${p.pos}" data-satz="${neu}">Auf ${neu} % korrigieren</button></div>`;
 }
 
 /* Aufteilung einer Position auf mehrere Konten, z. B. Bewirtung 70 % abziehbar / 30 % nicht abziehbar */
@@ -662,7 +662,7 @@ function aufteilungZeile(p, w, fertig) {
   const geteilt = p.teile.length > 1;
   const liste = geteilt ? p.teile.map((t) => `<span class="teil"><b>${esc(t.konto.nr)}</b> ${esc(t.konto.name)} · ${esc(t.prozent)} % · ${geld(t.netto, w)}</span>`).join("") : "";
   return `<div class="aufteilung ${geteilt ? "aktiv" : ""}">
-    ${geteilt ? `<span class="klein">Aufgeteilt${p.aufteilung_manuell ? "" : " (automatisch)"}:</span>${liste}` : ""}
+    ${geteilt ? liste : ""}
     ${fertig ? "" : `<button class="link blau-link klein-link" data-aufteilen="${p.pos}">${geteilt ? "Aufteilung ändern" : "Aufteilen"}</button>`}
   </div><div class="aufteilen-editor" data-editor="${p.pos}" hidden></div>`;
 }
@@ -683,7 +683,7 @@ function aufteilungEditor(b, p, li) {
         ${p.teile.length > 1 ? `<button class="link gefahr-link" data-ae="keine">Aufteilung entfernen</button>` : ""}
         <button class="link" data-ae="abbrechen">Abbrechen</button>
         <button class="knopf blau klein-knopf" data-ae="ok">Übernehmen</button></span></div>
-    <p class="klein">Anteile in Prozent vom Nettobetrag, zusammen 100 %. Jeder Teil bekommt den Steuerschlüssel seines Kontos.</p>`;
+    <p class="klein">Prozent vom Nettobetrag, zusammen 100 %.</p>`;
   ed.hidden = false;
   const senden = async (teile) => {
     try {
@@ -744,7 +744,8 @@ function markiere_position(pos) {
   }
 }
 
-const ART_MARKE = { vorsteuer: "Vorsteuer", umsatzsteuer: "Umsatzsteuer", kreditor: "Kreditor" };
+// Kontonamen sagen schon „Vorsteuer“ / „Umsatzsteuer“; markiert wird nur der Kreditor
+const ART_MARKE = { kreditor: "Kreditor" };
 
 function zeigeBuchungen(b) {
   const bu = b.buchungen;
@@ -761,7 +762,7 @@ function zeigeBuchungen(b) {
   const zeilen = bu.satz.map((z) => { const an = z.seite === "Haben" && erstesHaben; if (an) erstesHaben = false; return zeile(z, an); }).join("");
   $("buchungssatz").innerHTML = `<thead><tr><th></th><th>Konto</th><th>Bezeichnung</th><th class="zahl-sp">Soll</th><th class="zahl-sp">Haben</th></tr></thead>
     <tbody>${zeilen || `<tr><td colspan="5" class="klein">Noch keine Konten gewählt</td></tr>`}</tbody>
-    <tfoot><tr><td colspan="3">${bu.ausgeglichen ? "✓ Soll = Haben" : "⚠ Soll und Haben weichen ab"}</td>
+    <tfoot><tr><td colspan="3">${bu.ausgeglichen ? "Summe" : `<span class="kurz-warn">Soll und Haben weichen ab</span>`}</td>
       <td class="zahl-sp">${geld(bu.summe_soll, w)}</td><td class="zahl-sp">${geld(bu.summe_haben, w)}</td></tr></tfoot>`;
 
   // 2. Zeilen im DATEV-Buchungsstapel: Konto = Kreditor, Gegenkonto = Sachkonto, S/H bezogen auf das Konto
@@ -778,7 +779,6 @@ function zeigeBuchungen(b) {
     <tbody>${stapel || `<tr><td colspan="7" class="klein">Noch keine Konten gewählt</td></tr>`}</tbody>`;
 
   const hinweise = {
-    inland: "Umsatz brutto: DATEV bucht die Vorsteuer aus Automatikkonto oder Steuerschlüssel auf das Vorsteuerkonto.",
     "13b": "Umsatz netto: DATEV bucht Vorsteuer und Umsatzsteuer nach § 13b gleichzeitig; im Saldo keine Zahllast.",
     ige: "Umsatz netto: DATEV bucht Vorsteuer und Umsatzsteuer aus dem innergemeinschaftlichen Erwerb gleichzeitig.",
     ausland: "Ausländische Umsatzsteuer ist in Deutschland keine Vorsteuer: Brutto in den Aufwand. Erstattung nur über das Vorsteuer-Vergütungsverfahren (BZSt).",
@@ -793,7 +793,7 @@ function zeigeBuchungen(b) {
 }
 
 /* Rechnungsprüfung: Pflichtangaben nach § 14 UStG, §§ 31, 33 UStDV, § 14a UStG */
-const PFLICHT_STATUS = { ok: ["✓", "ok", "vorhanden"], fehlt: ["!", "fehlt", "fehlt"], hinweis: ["i", "hinweis", "fehlt (nur Hinweis)"],
+const PFLICHT_STATUS = { ok: ["✓", "ok", ""], fehlt: ["!", "fehlt", "fehlt"], hinweis: ["i", "hinweis", "fehlt (nur Hinweis)"],
   entfaellt: ["–", "entfaellt", "nicht nötig"] };
 
 function zeigePruefung(b) {
@@ -839,7 +839,7 @@ function zeigeValidierung(val) {
     ${val.fehler.length ? `<ul class="val-liste">${punkte(val.fehler, "fehler")}</ul>` : ""}
     ${val.warnungen.length ? `<div class="val-hinweise">Hinweise (kein Fehler):</div><ul class="val-liste">${punkte(val.warnungen, "warnung")}</ul>` : ""}
     ${val.gueltig ? "" : `<p class="val-tun"><b>Was tun?</b> Beim Lieferanten eine korrigierte E-Rechnung anfordern.</p>`}
-    ${technik ? `<details class="val-technik"><summary>Technische Details für Rückfragen beim Lieferanten</summary>
+    ${technik ? `<details class="val-technik"><summary>Technische Details</summary>
       <p class="klein">${esc(val.szenario || "kein passendes Prüfszenario")} · ${esc(val.regelwerk)}</p><ul>${technik}</ul></details>` : ""}`;
 }
 
@@ -867,8 +867,7 @@ function zeigeKreditor(b, fertig) {
         <input class="feld" id="k-land" value="${esc(kr.land || "")}" placeholder="Land" maxlength="2">
         <button class="knopf blau klein-knopf" id="k-ustid-ok">Sichern</button>
       </div>
-      <p class="klein kreditor-info">Kreditor ${esc(b.kreditor.nr)} ist fest zugeordnet für ${esc(b.mandant.name)}.
-      ${b.regeln.length ? "Gelernte Regeln für diesen Lieferanten, einzeln abschaltbar:" : "Noch keine gelernten Regeln."}</p>
+      <div class="unter-titel">${b.regeln.length ? "Gelernte Regeln" : `Gelernte Regeln <span class="klein">noch keine</span>`}</div>
       <div class="regeln">${regeln}</div>`;
     el.querySelectorAll("input[data-regel]").forEach((i) => i.addEventListener("change", async () => {
       try {
@@ -889,15 +888,13 @@ function zeigeKreditor(b, fertig) {
     return;
   }
   const v = b.kreditor_vorschlag;
-  $("kurz-kreditor").innerHTML = `<span class="kurz-warn">Neuer Lieferant – Kreditor anlegen</span>`;
+  $("kurz-kreditor").innerHTML = `<span class="kurz-warn">Kreditor anlegen</span>`;
   if (!fertig) setzeKlapp("kreditor", true);  // braucht eine Aktion: immer offen
-  el.innerHTML = `<div class="hinweis-zeile"><span class="punkt gelb"></span>Neuer Lieferant – bitte zuerst eine Kreditorennummer vergeben</div>
-    <div class="kreditor-neu">
-      <label>Kreditorennummer<input id="k-nr" class="feld" inputmode="numeric" value="${v.nr}" ${fertig ? "disabled" : ""}></label>
+  el.innerHTML = `<div class="kreditor-neu">
+      <label title="Nummernkreis ${v.von}–${v.bis}. Vorgeschlagen ist die nächste freie Nummer.">Kreditorennummer<input id="k-nr" class="feld" inputmode="numeric" value="${v.nr}" ${fertig ? "disabled" : ""}></label>
       <label>Name<input id="k-name" class="feld" value="${esc(v.name || "")}" ${fertig ? "disabled" : ""}></label>
       <button id="k-knopf" class="knopf blau" ${fertig ? "disabled" : ""}>Anlegen</button>
-    </div>
-    <div class="klein" style="margin-top:6px">Nummernkreis ${v.von}–${v.bis}. Vorgeschlagen ist die nächste freie Nummer. Nach dem Anlegen ist die Nummer fest.</div>`;
+    </div>`;
   $("k-knopf").addEventListener("click", async () => {
     try {
       const neu = await post("/api/beleg/kreditor", { key: b.key, nr: Number($("k-nr").value), name: $("k-name").value, modell: zustand.modell });

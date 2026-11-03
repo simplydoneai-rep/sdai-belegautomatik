@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Belegautomatik</title>
-  <link rel="stylesheet" href="style.css?v=24">
+  <link rel="stylesheet" href="style.css?v=25">
 </head>
 <body>
   <header class="topbar">
@@ -100,7 +100,6 @@
     <!-- Spalte 2: Rechnung bearbeiten -->
     <main class="detail">
       <div id="leer" class="leer-zustand">
-        <div class="leer-icon">📄</div>
         <p>Wählen Sie links eine Rechnung aus.</p>
       </div>
       <div id="beleg" hidden>
@@ -116,7 +115,7 @@
               <span class="klein">Brutto</span>
               <strong id="b-brutto"></strong>
               <span id="b-steuer" class="klein"></span>
-              <span id="b-summen" class="summen-ok"></span>
+              <span id="b-summen" class="summen-fehler" hidden></span>
             </div>
           </div>
           <div id="b-fakten" class="fakten"></div>
@@ -126,7 +125,7 @@
 
         <!-- Aufklappbare Abschnitte: die Kopfzeile zeigt auch zugeklappt das Wichtigste -->
         <details class="abschnitt" data-klapp="pruefung">
-          <summary class="abschnitt-kopf"><span class="ikon orange" data-ikon="haken"></span><span class="titel">Rechnungsprüfung</span>
+          <summary class="abschnitt-kopf"><span class="titel">Rechnungsprüfung</span>
             <span class="kurz" id="kurz-pruefung"></span></summary>
           <div class="abschnitt-inhalt">
             <div id="validierung" class="validierung" hidden></div>
@@ -137,35 +136,33 @@
         </details>
 
         <details class="abschnitt" data-klapp="kreditor">
-          <summary class="abschnitt-kopf"><span class="ikon lila" data-ikon="person"></span><span class="titel">Kreditor</span>
+          <summary class="abschnitt-kopf"><span class="titel">Kreditor</span>
             <span class="kurz" id="kurz-kreditor"></span></summary>
           <div id="kreditor-karte" class="abschnitt-inhalt"></div>
         </details>
 
         <details class="abschnitt" data-klapp="positionen">
-          <summary class="abschnitt-kopf"><span class="ikon gruen" data-ikon="liste"></span><span class="titel">Positionen und Konten</span>
+          <summary class="abschnitt-kopf"><span class="titel">Positionen und Konten</span>
             <span class="kurz" id="b-pos-info"></span></summary>
           <ul id="positionen" class="positionen abschnitt-inhalt"></ul>
         </details>
 
         <details class="abschnitt" data-klapp="buchungen">
-          <summary class="abschnitt-kopf"><span class="ikon indigo" data-ikon="buchung"></span><span class="titel">Buchungssätze</span>
+          <summary class="abschnitt-kopf"><span class="titel">Buchungssätze</span>
             <span class="kurz" id="kurz-buchungen"></span></summary>
           <div class="abschnitt-inhalt">
-            <div class="unter-titel">Buchungssatz <span class="klein">so bucht DATEV den Beleg</span></div>
+            <div class="unter-titel">Buchungssatz</div>
             <table id="buchungssatz" class="buchungssatz"></table>
             <p id="buchungen-hinweis" class="klein buchungen-hinweis"></p>
             <details class="datev-zeile">
-              <summary>So geht der Beleg an DATEV (Exportzeile im Buchungsstapel)</summary>
-              <p class="klein">Dieselbe Buchung im DATEV-Format: Konto = Kreditor, Gegenkonto = Sachkonto mit Steuerschlüssel.
-                Die Vorsteuer bucht DATEV daraus selbst.</p>
+              <summary title="Konto = Kreditor, Gegenkonto = Sachkonto mit Steuerschlüssel. Die Vorsteuer bucht DATEV daraus selbst.">Zeile im DATEV-Buchungsstapel</summary>
               <div class="tabelle-rahmen"><table id="buchungen" class="buchungen"></table></div>
             </details>
           </div>
         </details>
 
         <details class="abschnitt" data-klapp="daten">
-          <summary class="abschnitt-kopf"><span class="ikon grau" data-ikon="beleg"></span><span class="titel">Rechnungsdaten</span>
+          <summary class="abschnitt-kopf"><span class="titel">Rechnungsdaten</span>
             <span class="kurz" id="kurz-daten"></span></summary>
           <table id="kopf" class="kv abschnitt-inhalt"></table>
         </details>
@@ -296,6 +293,6 @@
   </div>
 
   <div id="toast" class="toast" hidden></div>
-  <script src="app.js?v=24"></script>
+  <script src="app.js?v=25"></script>
 </body>
 </html>
