@@ -8,6 +8,8 @@ const prozent = (x) => `${Math.round((x || 0) * 100)} %`;
 const anzahl = (n, eins, mehr) => `${n} ${n === 1 ? eins : mehr}`;
 const AMPEL = { gruen: "Sicher", gelb: "Unsicher", rot: "Frei" };
 const MONATE = ["Jan.", "Feb.", "März", "Apr.", "Mai", "Juni", "Juli", "Aug.", "Sept.", "Okt.", "Nov.", "Dez."];
+const MONATSNAMEN = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
+const kursText = (k) => Number(k).toLocaleString("de-DE", { minimumFractionDigits: 4, maximumFractionDigits: 6 });
 const HERKUNFT = { inland: "Inland", eu: "EU-Ausland", drittland: "Drittland" };
 const BEREICH_TEXT = {
   sicher: (n, s) => `<b>${anzahl(n, "Rechnung", "Rechnungen")}</b> sicher vorkontiert · ${geld(s)}`,
@@ -291,6 +293,8 @@ function oeffneMandant(id) {
   const [kurz, lang] = s.sachkontenlaenge, laenge = Number(m?.sachkontenlaenge || kurz);
   f.sachkontenlaenge.innerHTML = Array.from({ length: lang - kurz + 1 }, (_, i) => kurz + i).map((n) =>
     `<option value="${n}" ${n === laenge ? "selected" : ""}>${n} Stellen · Kreditoren ${7 * 10 ** n}–${10 ** (n + 1) - 1}</option>`).join("");
+  const wj = Number(m?.wj_beginn || 1);
+  f.wj_beginn.innerHTML = MONATSNAMEN.map((name, i) => `<option value="${i + 1}" ${i + 1 === wj ? "selected" : ""}>${name}${i === 0 ? " (Kalenderjahr)" : ""}</option>`).join("");
   f.ansprechpartner.value = m?.ansprechpartner || "";
   f.ustid.value = m?.ustid || "";
   const rahmen = m?.kontenrahmen || "SKR03";
@@ -321,6 +325,7 @@ async function sichereMandant(e) {
   const daten = {
     id: f.dataset.id || null, name: f.name.value, beraternummer: f.beraternummer.value, nummer: f.nummer.value, ansprechpartner: f.ansprechpartner.value, ustid: f.ustid.value,
     kontenrahmen: document.querySelector("#f-kontenrahmen .aktiv").dataset.wert, sachkontenlaenge: f.sachkontenlaenge.value,
+    wj_beginn: f.wj_beginn.value,
     zustaendig: f.zustaendig.value || null, vertretung: f.vertretung.value || null,
   };
   try {
@@ -675,6 +680,7 @@ function zeigeBeleg(b) {
   const chip = $("b-status");
   $("b-entfernen").hidden = b.status !== "offen";
   $("b-entfernen-form").hidden = true;
+  zeigeKurs(b, fertig);
   if (b.status === "entfernt") { chip.className = "status-chip"; chip.innerHTML = `Entfernt · ${esc(b.entfernt?.grund || "")}`; }
   else if (fertig) { chip.className = "status-chip fertig"; chip.innerHTML = b.export ? "✓ Exportiert" : "✓ Freigegeben"; }
   else if (b.bereich === "sicher") { chip.className = "status-chip gruen"; chip.innerHTML = `<span class="punkt gruen"></span>Sicher vorkontiert · ${prozent(b.sicherheit)}`; }
@@ -958,7 +964,7 @@ function zeigeBuchungen(b) {
 
   // 2. Zeilen im DATEV-Buchungsstapel: Konto = Kreditor, Gegenkonto = Sachkonto, S/H bezogen auf das Konto
   const stapel = bu.stapel.map((z) => `<tr>
-      <td class="zahl-sp">${geld(z.umsatz, z.waehrung)}</td>
+      <td class="zahl-sp">${geld(z.umsatz, z.waehrung)}${z.kurs ? `<small>Kurs ${esc(kursText(z.kurs))}</small>` : ""}</td>
       <td title="${z.soll_haben === "H" ? "Kreditor im Haben (Rechnung)" : "Kreditor im Soll (Gutschrift)"}">${z.soll_haben}</td>
       <td>${z.konto ? `<b>${esc(z.konto)}</b><small>${esc(z.konto_name)}</small>` : `<span class="fehlt">Kreditor fehlt</span>`}${z.eu_ustid ? `<small>USt-IdNr. ${esc(z.eu_ustid)}</small>` : ""}</td>
       <td><b>${esc(z.gegenkonto)}</b><small>${esc(z.gegenkonto_name)}</small></td>
@@ -1562,8 +1568,10 @@ function zeigeExport() {
         <span><small>Rechnungen</small><b>${x.anzahl}</b></span>
         <span><small>Summe brutto</small><b>${geld(x.summe)}</b></span></div>
     </div>
-    ${x.fremdwaehrung.length ? `<p class="export-warnung">${anzahl(x.fremdwaehrung.length, "Rechnung", "Rechnungen")} in Fremdwährung
-      (${x.fremdwaehrung.map((f) => `${esc(f.lieferant)}: ${geld(f.brutto, f.waehrung)}`).join(", ")}): nicht in der Summe; die Umrechnung in Euro fehlt noch.</p>` : ""}
+    ${x.fremdwaehrung.length ? `<p class="export-hinweis-fw">${anzahl(x.fremdwaehrung.length, "Rechnung", "Rechnungen")} in Fremdwährung:
+      ${x.fremdwaehrung.map((f) => `${esc(f.lieferant)} ${geld(f.brutto, f.waehrung)}` + (f.wert
+        ? ` · Kurs ${esc(kursText(f.wert))} (${esc(f.quelle)}) = ${geld(f.brutto_eur)}` : " · Kurs fehlt")).join("; ")}.
+      Im Stapel steht der Betrag in ${esc(x.fremdwaehrung[0].waehrung)} mit Kurs; DATEV rechnet beim Import in Euro um.</p>` : ""}
     ${x.grund ? `<p class="export-warnung">${esc(x.grund)}. Exportiert wird ein Monat erst, wenn dort alle Belege erledigt sind.</p>` : ""}
     <div class="export-liste">${belege || `<p class="klein mitte">Keine Rechnungen zum Exportieren.</p>`}</div>
     ${frueher ? `<details class="export-frueher"><summary>Bisherige Exporte</summary><ul>${frueher}</ul></details>` : ""}`;
@@ -1597,4 +1605,35 @@ async function exportieren() {
     await ladeListe();
     if (zustand.key) oeffne(zustand.key, false);
   } catch (e) { toast(e.message, true); $("export-ok").disabled = false; }
+}
+
+/* ---------- Fremdwährung: Umrechnungskurs je Beleg ---------- */
+/* Maßgeblich ist der BMF-Monatskurs für den Monat der Leistung (§ 16 Abs. 6 UStG). Fehlt er in der Tabelle, wird der
+   Kurs hier eingetragen (z. B. aus dem BMF-Schreiben oder ein genehmigter Tageskurs). 1 Euro = Kurs Fremdwährung. */
+
+function zeigeKurs(b, fertig) {
+  const el = $("b-kurs"), k = b.kurs;
+  el.hidden = !k;
+  if (!k) return;
+  const monat = k.monat ? monatText(k.monat) : "Leistungsmonat unbekannt";
+  el.className = `kurs-zeile ${k.wert ? "" : "fehlt"}`;
+  el.innerHTML = `<span class="kurs-titel">Umrechnung</span>
+    <span>1 EUR =</span>
+    <input id="kurs-wert" class="feld kurs-feld" inputmode="decimal" value="${k.wert ? esc(kursText(k.wert)) : ""}"
+      placeholder="Kurs" ${fertig ? "disabled" : ""} aria-label="Umrechnungskurs">
+    <span>${esc(k.waehrung)}</span>
+    <span class="klein">${k.wert ? `${esc(k.quelle)} · ${esc(monat)} · ${geld(b.kopf.gross_total, k.waehrung)} = <b>${geld(k.brutto_eur)}</b>`
+      : `BMF-Monatskurs ${esc(monat)} fehlt in der Tabelle – Kurs aus dem BMF-Schreiben eintragen (§ 16 Abs. 6 UStG)`}</span>
+    ${fertig ? "" : `<button class="knopf blau klein-knopf" id="kurs-ok">Übernehmen</button>`}
+    ${!fertig && k.quelle === "von Hand" ? `<button class="link blau-link klein-link" id="kurs-zurueck">${k.bmf ? "zurück auf BMF-Kurs" : "Kurs entfernen"}</button>` : ""}`;
+  const senden = async (wert) => {
+    try {
+      zeigeBeleg(await post("/api/beleg/kurs", { key: b.key, wert, modell: zustand.modell }));
+      ladeListe();
+      toast(wert ? `Kurs ${wert} übernommen` : "Kurs zurückgesetzt");
+    } catch (e) { toast(e.message, true); }
+  };
+  $("kurs-ok")?.addEventListener("click", () => senden($("kurs-wert").value.trim()));
+  $("kurs-wert")?.addEventListener("keydown", (e) => { if (e.key === "Enter") senden(e.target.value.trim()); });
+  $("kurs-zurueck")?.addEventListener("click", () => senden(null));
 }

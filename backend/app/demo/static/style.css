@@ -637,3 +637,12 @@ select.feld:disabled { cursor: default; opacity: .6; }
 .export-frueher li { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 8px 12px; border-top: 1px solid var(--trenn); }
 .export-frueher li:first-child { border-top: 0; }
 .export-frueher small { display: block; color: var(--text3); font-size: var(--t1); }
+
+/* Umrechnungskurs am Beleg */
+.kurs-zeile { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin-top: 10px; padding: 8px 10px;
+  background: var(--bg); border-radius: var(--r1); font-size: var(--t3); }
+.kurs-zeile.fehlt { background: var(--gelb-hell); color: var(--gelb-text); }
+.kurs-zeile .klein { color: inherit; opacity: .85; }
+.kurs-titel { font-weight: 600; margin-right: 4px; }
+.kurs-feld { width: 110px; padding: 6px 9px; background-color: #fff; text-align: right; font-variant-numeric: tabular-nums; }
+.export-hinweis-fw { margin: 0; background: var(--bg); border-radius: var(--r1); padding: 8px 10px; font-size: var(--t2); color: var(--text2); }

@@ -1,0 +1,8 @@
+{
+  "beschreibung": "Umsatzsteuer-Umrechnungskurse: monatliche Durchschnittskurse des BMF, 1 Euro = Kurs Fremdwährung (Mengennotierung). Maßgeblich ist der Monat der Leistung (§ 16 Abs. 6 Satz 1 UStG, Abschn. 16.4 UStAE).",
+  "quelle": "Bundesministerium der Finanzen, Umsatzsteuer-Umrechnungskurse (monatliche BMF-Schreiben, Datenportal Offene Daten)",
+  "url": "https://www.bundesfinanzministerium.de/Datenportal/Daten/offene-daten/steuern-zoelle/umsatzsteuer-umrechnungskurse/umsatzsteuer-umrechnungskurse.html",
+  "stand": "2026-11-04",
+  "hinweis": "Werte nur aus dem BMF-Schreiben übernehmen, nie schätzen. Fehlt ein Monat, trägt der Sachbearbeiter den Kurs am Beleg ein. Ein Tageskurs ist nur mit Genehmigung des Finanzamts zulässig (§ 16 Abs. 6 Satz 2 UStG).",
+  "kurse": {}
+}

@@ -392,6 +392,14 @@ Lücke geschlossen (Freigabe Paul Graß), Details: `docs/entscheidungen/2026-11-
 - Eingabefeld Beraternummer breiter; Zeile „Zahlung“ in den Rechnungsdaten entfernt.
 - Entscheidung: `docs/entscheidungen/2026-11-04_entfernen-und-datev-export.md`.
 
+## 04.11.2026 – Export vervollständigt: Leistungsdatum, USt-IdNr., Beleginfo, Wirtschaftsjahr, Fremdwährung
+
+- Buchungsstapel jetzt mit allen 124 Spalten; belegt zusätzlich: Kurs (4), Beleglink (20, erst nach Belegtransfer), Beleginfo Beleg-ID + SHA-256 (21/22), Leistungsdatum (115), USt-IdNr. des Lieferanten „Ursprung“ (123).
+- Wirtschaftsjahresbeginn als Monat in den Mandanten-Stammdaten; Kopfsatz Feld 13 daraus (abweichendes Wirtschaftsjahr berücksichtigt).
+- Fremdwährung: Kurs nach § 16 Abs. 6 UStG (BMF-Monatskurs des Leistungsmonats) aus Konfigurationstabelle, sonst von Hand am Beleg; ohne Kurs keine Freigabe und kein Export; Export-Fenster zeigt Kurs und Euro-Betrag, die Summe enthält umgerechnete Beträge.
+- Die BMF-Tabelle ist noch leer: Kurse für Oktober/November 2026 waren nicht verlässlich abrufbar (BMF-Datenportal antwortete nicht) und werden nicht geschätzt.
+- Format und Quellen: `docs/datev/buchungsstapel.md`; Entscheidung: `docs/entscheidungen/2026-11-04_export-zusatzfelder-fremdwaehrung.md`.
+
 ## Nächste Schritte
 
 Die aktuelle Aufgabenliste steht in `docs/projektplan.md`, Abschnitt 10. Die Liste unten ist der Stand vom 28.10.2026 vor dem Projektplan.

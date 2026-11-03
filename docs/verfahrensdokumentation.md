@@ -1,6 +1,6 @@
 # Verfahrensdokumentation (GoBD) – Entwurf
 
-Stand: 04.11.2026 · Grundlage: Demo-Stand (Phase 2/3), noch nicht der Betrieb auf Hetzner (Phase 5) · CLAUDE.md Regel 14
+Stand: 04.11.2026 (Fremdwährung ergänzt) · Grundlage: Demo-Stand (Phase 2/3), noch nicht der Betrieb auf Hetzner (Phase 5) · CLAUDE.md Regel 14
 
 Dieses Dokument beschreibt, wie Belege verarbeitet werden. Es wird bei jeder Änderung der Verarbeitung nachgeführt. Vor dem Pilot wird es um Betrieb, Rollen, Zwei-Faktor-Anmeldung, Datensicherung und Aufbewahrung ergänzt.
 
@@ -31,6 +31,13 @@ Ein Beleg, der nicht in die Buchhaltung dieses Mandanten gehört (anderer Mandan
 - Jeder Export wird als Exportstapel festgehalten: Mandant, Monat, Belege, Dateiname, SHA-256 der Datei, Person, Zeitpunkt. Die Datei wird gespeichert und nie überschrieben; erneutes Herunterladen prüft den Hash.
 - Exportierte Belege lassen sich nicht mehr wieder öffnen. Korrekturen erfolgen in DATEV per Storno und neuer Buchung.
 - Festschreibung im Stapel: keine. Die Kanzlei schreibt in DATEV fest.
+- Je Buchung zusätzlich: Leistungsdatum, bei i. g. Erwerb und § 13b aus dem EU-Ausland die USt-IdNr. des Lieferanten, Beleg-ID und SHA-256 des Originals (Beleginfo); Beleglink erst nach dem Belegtransfer an DATEV.
+- Wirtschaftsjahresbeginn je Mandant (Stammdaten), auch abweichendes Wirtschaftsjahr.
+
+## 3a. Fremdwährung
+- Umrechnung nach § 16 Abs. 6 UStG mit dem BMF-Monatskurs des Leistungsmonats aus einer Konfigurationstabelle (Quelle: BMF-Schreiben).
+- Fehlt der Monat in der Tabelle, trägt der Sachbearbeiter den Kurs am Beleg ein (Quelle „von Hand“, z. B. genehmigter Tageskurs). Jede Eingabe steht im Protokoll.
+- Ohne Kurs ist keine Freigabe und kein Export möglich. Im Stapel steht der Betrag in Belegwährung mit Kurs (Mengennotierung); DATEV rechnet beim Import um.
 
 ## 4. Protokoll
 Append-only; im Betrieb Tabelle `audit_log` ohne UPDATE und DELETE für die Anwendung (CLAUDE.md Regel 10). Logs enthalten keine Belegtexte (Regel 7).

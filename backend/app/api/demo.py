@@ -112,6 +112,7 @@ class MandantDaten(BaseModel):
     nummer: int | str
     kontenrahmen: str
     sachkontenlaenge: int | str | None = None
+    wj_beginn: int | str | None = None
     ansprechpartner: str = ""
     ustid: str | None = None
     zustaendig: str | None = None
@@ -369,6 +370,21 @@ def wiederherstellen(a: BelegAktion) -> dict[str, Any]:
 @app.get("/api/beleg/entfernen/gruende")
 def entfern_gruende() -> list[str]:
     return list(zustand.ENTFERN_GRUENDE)
+
+
+class Kurs(BaseModel):
+    key: str
+    wert: str | None = None
+    modell: str = ansicht.STANDARD_MODELL
+
+
+@app.post("/api/beleg/kurs")
+def kurs_setzen(k: Kurs) -> dict[str, Any]:
+    """Umrechnungskurs von Hand (1 Euro = Kurs Fremdwährung); leer = BMF-Monatskurs."""
+    try:
+        return ansicht.kurs_setzen(_key(k.key), k.wert, _modell(k.modell))
+    except ValueError as exc:
+        raise _fehler(exc) from exc
 
 
 class ExportAuftrag(BaseModel):

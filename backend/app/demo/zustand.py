@@ -348,3 +348,18 @@ def export_merken(mandant: str, monat: str, keys: list[str], datei: str, daten: 
 
 def exporte(mandant: str) -> list[dict[str, Any]]:
     return [e for e in laden().get("exporte", []) if e["mandant"] == mandant]
+
+
+def kurs_setzen(key: str, wert: str | None, vorher: str | None) -> None:
+    """Umrechnungskurs von Hand (1 Euro = Kurs Fremdwährung); None = wieder BMF-Monatskurs bzw. offen."""
+    with _LOCK:
+        z = laden()
+        b = z["belege"].setdefault(key, {"status": "offen", "konten": {}})
+        if b.get("status") != "offen":
+            raise ValueError("Beleg ist nicht offen")
+        if wert is None:
+            b.pop("kurs", None)
+        else:
+            b["kurs"] = wert
+        _protokoll(z, key, "Umrechnungskurs", vorher, wert or "BMF-Monatskurs", "Sachbearbeiter")
+        _speichern(z)

@@ -4,8 +4,8 @@
   eine davon ist der Standard für neue Mandanten. Jeder Mandant gehört zu genau einer Beraternummer, wie in DATEV.
   Sie steht später im Kopf des Buchungsstapels (CLAUDE.md Abschnitt 7).
 - Ein Mandant hat Firmenname, Beraternummer, Mandantennummer (DATEV 1–99999, eindeutig je Beraternummer), Kontenrahmen
-  (SKR03/SKR04), Sachkontenlänge (4–8; Kreditoren haben eine Stelle mehr), Ansprechpartner beim Unternehmen und bis zu
-  zwei Sachbearbeiter: zuständig und Vertretung.
+  (SKR03/SKR04), Sachkontenlänge (4–8; Kreditoren haben eine Stelle mehr), Beginn des Wirtschaftsjahres (Monat),
+  Ansprechpartner beim Unternehmen und bis zu zwei Sachbearbeiter: zuständig und Vertretung.
 - Ein Sachbearbeiter hat Kürzel, Namen und Rolle. Die Kanzleileitung sieht alle Mandanten und pflegt die Rechte.
 - Zugriff je Sachbearbeiter und Mandant: „an“ (darf bearbeiten), „aus“ (kein Zugriff) oder „gesperrt“
   (darf diesem Mandanten nie zugeordnet werden, z. B. bei Interessenkonflikt). Zuständige und Vertretungen haben
@@ -53,7 +53,7 @@ def _start() -> dict[str, Any]:
     for i, (mid, m) in enumerate(testmandanten().items()):
         haupt, vertretung = _START_ZUSTAENDIG.get(mid, [None, None])
         mandanten[mid] = {"id": mid, "name": m["name"], "beraternummer": _START_BERATER["nr"], "nummer": 10001 + i,
-                          "kontenrahmen": "SKR03", "sachkontenlaenge": SACHKONTENLAENGE[0],
+                          "kontenrahmen": "SKR03", "sachkontenlaenge": SACHKONTENLAENGE[0], "wj_beginn": 1,
                           "ansprechpartner": m.get("person", ""), "branche": m.get("branche", ""),
                           "ustid": m.get("vat_id"),
                           "zustaendig": haupt, "vertretung": vertretung, "angelegt": jetzt}
@@ -78,6 +78,7 @@ def _ergaenzen(k: dict[str, Any]) -> dict[str, Any]:
     for m in k["mandanten"].values():
         m.setdefault("beraternummer", k["kanzlei"]["standard"])
         m.setdefault("sachkontenlaenge", SACHKONTENLAENGE[0])
+        m.setdefault("wj_beginn", 1)
     return k
 
 
@@ -209,6 +210,12 @@ def mandant_speichern(nutzer: str, daten: dict[str, Any]) -> dict[str, Any]:
         raise ValueError("Sachkontenlänge muss eine Zahl sein") from None
     if not SACHKONTENLAENGE[0] <= laenge <= SACHKONTENLAENGE[1]:
         raise ValueError(f"Sachkontenlänge {SACHKONTENLAENGE[0]} bis {SACHKONTENLAENGE[1]} Stellen (DATEV)")
+    try:
+        wj_beginn = int(daten.get("wj_beginn") or 1)
+    except (TypeError, ValueError):
+        raise ValueError("Beginn des Wirtschaftsjahres: Monat 1–12") from None
+    if not 1 <= wj_beginn <= 12:
+        raise ValueError("Beginn des Wirtschaftsjahres: Monat 1–12")
     rahmen = daten.get("kontenrahmen")
     if rahmen not in KONTENRAHMEN:
         raise ValueError("Kontenrahmen SKR03 oder SKR04 wählen")
@@ -237,7 +244,7 @@ def mandant_speichern(nutzer: str, daten: dict[str, Any]) -> dict[str, Any]:
                              "Kreditoren mit der bisherigen Länge.")
         neu = {**(alt or {"angelegt": datetime.now().isoformat(timespec="seconds"), "branche": ""}),
                "id": mid, "name": name, "beraternummer": berater, "nummer": nummer, "kontenrahmen": rahmen,
-               "sachkontenlaenge": laenge,
+               "sachkontenlaenge": laenge, "wj_beginn": wj_beginn,
                "ansprechpartner": str(daten.get("ansprechpartner") or "").strip(),
                "ustid": (re.sub(r"\s", "", str(daten.get("ustid") or "")).upper() or None),
                "zustaendig": haupt, "vertretung": vertretung}

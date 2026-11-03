@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Belegautomatik</title>
   <link rel="icon" href="marke/logo.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="style.css?v=38">
+  <link rel="stylesheet" href="style.css?v=39">
 </head>
 <body>
   <header class="topbar">
@@ -140,6 +140,7 @@
             </div>
           </div>
           <div id="b-fakten" class="fakten"></div>
+          <div id="b-kurs" class="kurs-zeile" hidden></div>
           <div id="b-entfernen-form" class="entfernen-form" hidden></div>
         </section>
 
@@ -278,6 +279,7 @@
             <button type="button" data-wert="SKR04">SKR04</button>
           </div>
           <label>Sachkontenlänge<select name="sachkontenlaenge" class="feld"></select></label>
+          <label>Wirtschaftsjahr beginnt im<select name="wj_beginn" class="feld"></select></label>
         </div>
         <div class="form-gruppe">
           <label>Sachbearbeiter (zuständig)<select name="zustaendig" class="feld" required></select></label>
@@ -352,6 +354,6 @@
   </div>
 
   <div id="toast" class="toast" hidden></div>
-  <script src="app.js?v=38"></script>
+  <script src="app.js?v=39"></script>
 </body>
 </html>

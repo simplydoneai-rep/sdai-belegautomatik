@@ -26,6 +26,7 @@ from typing import Any
 from app.demo import kanzlei, zustand
 from app.demo.verarbeitung import MODELLE, TESTDATEN, aufzeichnungen, testbelege, verarbeite
 from app.kontierung import steuerschluessel
+from app.kontierung import waehrung
 from app.kontierung.betraege import parse_amount, q2
 from app.kontierung.konten import umschluesseln
 from app.kontierung.kontensuche import konto, oeffentlich
@@ -338,7 +339,7 @@ def _ausnahmen(kopf: dict[str, Any], r: dict[str, Any], kreditor: dict[str, Any]
     elif fall == "ausland":
         aus.append("Ausländische Umsatzsteuer – keine deutsche Vorsteuer (ggf. Vorsteuer-Vergütungsverfahren)")
     if (kopf.get("currency") or "EUR") != "EUR":
-        aus.append(f'Fremdwährung {kopf["currency"]} – Umrechnung in Euro nötig')
+        aus.append(f'Fremdwährung {kopf["currency"]}')
     beleg_ustid = kopf.get("lieferant_ustid")
     if kreditor and kreditor.get("ustid") and beleg_ustid and kreditor["ustid"] != beleg_ustid:
         aus.append(f'USt-IdNr. auf der Rechnung ({beleg_ustid}) weicht vom Kreditor ab ({kreditor["ustid"]})')
@@ -369,13 +370,14 @@ def _konto_lang(nr: str | None, laenge: int) -> str | None:
 
 
 def _buchungssaetze(positionen: list[dict[str, Any]], kopf: dict[str, Any], kreditor: dict[str, Any] | None,
-                    fall: str, laenge: int = 4) -> dict[str, Any]:
+                    fall: str, laenge: int = 4, kurs: str | None = None) -> dict[str, Any]:
     """Buchungssatz eines Belegs in zwei Sichten (CLAUDE.md Abschnitt 6, 7):
 
     - **stapel**: Zeilen wie im DATEV-Buchungsstapel, eine je Sachkonto und Steuerschlüssel. Konto = Kreditor,
       Gegenkonto = Sachkonto, Soll/Haben-Kennzeichen bezogen auf das Konto: Rechnung „H“ (Kreditor im Haben),
       Gutschrift „S“. Umsatz brutto im Inland und bei ausländischer USt, netto bei § 13b und i. g. Erwerb.
-      Sachkonten in der Sachkontenlänge des Mandanten (``laenge``).
+      Sachkonten in der Sachkontenlänge des Mandanten (``laenge``). Fremdwährung: Umsatz in Belegwährung mit ``kurs``
+      (1 Euro = Kurs), DATEV rechnet um. Leistungsdatum: Ende des Leistungszeitraums.
       Wie in DATEV: Aus dem Bruttobetrag wird die Vorsteuer mit dem Satz von Automatikkonto bzw. Steuerschlüssel
       herausgerechnet, der Rest ist Aufwand. Ohne Vorsteuer (Schlüssel 40, kein Schlüssel, ausländische USt)
       bleibt die Umsatzsteuer der Rechnung im Aufwand; der Kreditor steht immer mit dem Rechnungsbetrag im Haben.
@@ -422,7 +424,8 @@ def _buchungssaetze(positionen: list[dict[str, Any]], kopf: dict[str, Any], kred
                        "konto": kreditor["nr"] if kreditor else None, "konto_name": kreditor["name"] if kreditor else None,
                        "gegenkonto": g["sachkonto"], "gegenkonto_name": g["sachkonto_name"], "bu": g["bu"],
                        "steuer": g["steuer"], "belegdatum": kopf.get("invoice_date"),
-                       "leistungsdatum": leistung.get("von"), "belegfeld1": kopf.get("invoice_number"),
+                       "leistungsdatum": leistung.get("bis") or leistung.get("von"), "belegfeld1": kopf.get("invoice_number"),
+                       "kurs": kurs if (kopf.get("currency") or "EUR") != "EUR" else None,
                        "buchungstext": (kopf.get("supplier_name") or "")[:60], "waehrung": kopf.get("currency") or "EUR"})
         buche(soll, g["sachkonto"], g["sachkonto_name"], aufwand, "aufwand")
         if vst_konto and steuer:
@@ -478,9 +481,12 @@ def ansicht(key: str, modell: str = STANDARD_MODELL) -> dict[str, Any]:
     positionen = [_position(i, p, modell, je_modell, st, regeln, fall, bewirtung)
                   for i, p in enumerate(r["positionen"])]
 
+    kurs = waehrung.kurs_fuer(kopf, st.get("kurs"))
     offen = []
     if not kreditor:
         offen.append("Kreditor anlegen")
+    if kurs and not kurs["wert"]:
+        offen.append("Umrechnungskurs fehlt")
     frei = sum(1 for p in positionen if p["ampel"] == "rot")
     if frei:
         offen.append(f"{frei} Position{'en' if frei > 1 else ''} ohne Konto")
@@ -520,7 +526,8 @@ def ansicht(key: str, modell: str = STANDARD_MODELL) -> dict[str, Any]:
                     "konto_name": (konto(rg["konto"]) or {}).get("name", "")} for rg in regeln],
         "positionen": positionen, "ampel": ampel, "ausnahmen": ausnahmen,
         "steuerfall": {"id": fall, "text": steuerschluessel.FALL_TEXT[fall]},
-        "buchungen": _buchungssaetze(positionen, kopf, kreditor, fall, laenge),
+        "buchungen": _buchungssaetze(positionen, kopf, kreditor, fall, laenge, kurs and kurs["wert"]),
+        "kurs": kurs,
         "pflichtangaben": r["pflichtangaben"], "validierung": r.get("validierung"), "bewirtung": bewirtung,
         "sicherheit": round(sicherheit, 2), "gelernt": gelernt,
         "offen": offen, "freigabe_moeglich": not offen and status == "offen",
@@ -862,20 +869,24 @@ def export_vorschau(mandant: str, monat: str | None = None, modell: str = STANDA
         if _monat(e) != monat or e["bereich"] != "erledigt" or e.get("export"):
             continue
         a = ansicht(e["key"], modell)
-        belege.append({"key": e["key"], "lieferant": a["kopf"].get("supplier_name"), "nummer": a["kopf"].get("invoice_number"),
+        belege.append({"key": e["key"], "id": a["id"], "kurs": a["kurs"],
+                       "lieferant": a["kopf"].get("supplier_name"), "nummer": a["kopf"].get("invoice_number"),
                        "datum": a["kopf"].get("invoice_date"), "brutto": a["kopf"].get("gross_total"),
                        "waehrung": a["kopf"].get("currency") or "EUR", "kreditor": a["kreditor"],
                        "zeilen": a["buchungen"]["stapel"]})
     belege.sort(key=lambda b: (b["datum"] or "", b["lieferant"] or ""))
-    euro = [b for b in belege if b["waehrung"] == "EUR"]
+    ohne_kurs = [b["lieferant"] or b["id"] for b in belege if b["kurs"] and not b["kurs"]["wert"]]
     grund = ("Kein freigegebener Beleg zum Exportieren" if not belege else
-             f"{g['offen']} Beleg{'e' if g['offen'] != 1 else ''} in diesem Monat noch offen" if g["offen"] else None)
+             f"{g['offen']} Beleg{'e' if g['offen'] != 1 else ''} in diesem Monat noch offen" if g["offen"] else
+             f"Umrechnungskurs fehlt bei {', '.join(ohne_kurs)} (Beleg wieder öffnen und Kurs eintragen)" if ohne_kurs else None)
+    in_eur = [parse_amount(b["brutto"]) if b["waehrung"] == "EUR" else parse_amount((b["kurs"] or {}).get("brutto_eur"))
+              for b in belege]
     return {
         "mandant": kanzlei.mandant_oeffentlich(kanzlei.mandant(mandant)), "monat": monat,
         "monate": [x for x in sorted(monate.values(), key=lambda x: x["monat"] or "") if x["bereit"] or x["exportiert"]],
         "belege": belege, "anzahl": len(belege),
-        "summe": str(sum((parse_amount(b["brutto"]) or Decimal(0) for b in euro), Decimal(0))),
-        "fremdwaehrung": [{"lieferant": b["lieferant"], "waehrung": b["waehrung"], "brutto": b["brutto"]}
+        "summe": str(sum((x or Decimal(0) for x in in_eur), Decimal(0))),
+        "fremdwaehrung": [{"lieferant": b["lieferant"], "waehrung": b["waehrung"], "brutto": b["brutto"], **(b["kurs"] or {})}
                           for b in belege if b["waehrung"] != "EUR"],
         "offen": g["offen"], "moeglich": grund is None, "grund": grund,
         "exporte": list(reversed(zustand.exporte(mandant)))[:5],
@@ -885,6 +896,7 @@ def export_vorschau(mandant: str, monat: str | None = None, modell: str = STANDA
 def exportieren(mandant: str, monat: str, modell: str = STANDARD_MODELL) -> dict[str, Any]:
     """DATEV-Buchungsstapel des Monats schreiben, gegen das Prüfskript prüfen und als Exportstapel festhalten."""
     import calendar
+    import hashlib
     from datetime import date, datetime
 
     from app.export import datev
@@ -894,14 +906,32 @@ def exportieren(mandant: str, monat: str, modell: str = STANDARD_MODELL) -> dict
         raise ValueError(f"Export nicht möglich: {v['grund']}")
     m = kanzlei.mandant(mandant)
     jahr, mon = (int(x) for x in monat.split("-"))
-    kopf = datev.Kopf(beraternummer=int(m["beraternummer"]), mandantennummer=int(m["nummer"]), wj_beginn=date(jahr, 1, 1),
+    wj_monat = int(m.get("wj_beginn", 1))  # abweichendes Wirtschaftsjahr: Beginn im Vorjahr, wenn der Monat davor liegt
+    wj_beginn = date(jahr if mon >= wj_monat else jahr - 1, wj_monat, 1)
+    kopf = datev.Kopf(beraternummer=int(m["beraternummer"]), mandantennummer=int(m["nummer"]), wj_beginn=wj_beginn,
                       sachkontenlaenge=int(m.get("sachkontenlaenge", 4)), datum_von=date(jahr, mon, 1),
                       datum_bis=date(jahr, mon, calendar.monthrange(jahr, mon)[1]),
                       bezeichnung=f"Eingangsrechnungen {mon:02d}/{jahr}", kontenrahmen=m["kontenrahmen"], erzeugt=datetime.now())
-    daten = datev.buchungsstapel(kopf, [z for b in v["belege"] for z in b["zeilen"]])
+    zeilen = []
+    for b in v["belege"]:
+        # Verweis auf das Original: Beleg-ID und SHA-256 (GoBD); Beleglink erst mit GUID aus dem DATEV-Belegtransfer
+        hash_ = hashlib.sha256(pfad(b["key"]).read_bytes()).hexdigest()
+        link = zustand.beleg_zustand(b["key"]).get("datev_beleglink")
+        zeilen += [{**z, "beleginfo": ("Beleg-ID", f"{b['id']} · SHA-256 {hash_}"), "beleglink": link} for z in b["zeilen"]]
+    daten = datev.buchungsstapel(kopf, zeilen)
     fehler = datev.pruefe(daten)
     if fehler:
         raise ValueError("Exportdatei fehlerhaft: " + "; ".join(fehler[:3]))
     datei = f"EXTF_Buchungsstapel_{m['beraternummer']}_{m['nummer']}_{jahr}{mon:02d}_{kopf.erzeugt:%Y%m%d-%H%M%S}.csv"
     eintrag = zustand.export_merken(mandant, monat, [b["key"] for b in v["belege"]], datei, daten, v["anzahl"], v["summe"])
     return {"datei": datei, "daten": daten, "export": eintrag}
+
+
+def kurs_setzen(key: str, wert: str | None, modell: str = STANDARD_MODELL) -> dict[str, Any]:
+    """Umrechnungskurs von Hand; leer setzt zurück auf den BMF-Monatskurs (oder offen, wenn es keinen gibt)."""
+    a = ansicht(key, modell)
+    if not a["kurs"]:
+        raise ValueError("Rechnung ist in Euro")
+    neu = str(waehrung.kurs_pruefen(wert)) if wert not in (None, "") else None
+    zustand.kurs_setzen(key, neu, a["kurs"]["wert"])
+    return ansicht(key, modell)
