@@ -201,3 +201,30 @@ def test_buchungssatz_folgt_konto_und_schluessel(leerer_zustand) -> None:  # typ
     a = ansicht.konto_waehlen(key, 0, "4980")  # Kontowechsel setzt den Schlüssel zurück → BU 9
     assert not a["positionen"][0]["bu_manuell"] and a["buchungen"]["stapel"][0]["bu"] == "9"
     assert satz(a)[("Soll", "4980")] == "680.00" and a["buchungen"]["summe_haben"] == "809.20"
+
+
+def test_konto_lang() -> None:
+    from app.demo.ansicht import _konto_lang
+
+    assert _konto_lang("4650", 4) == "4650" and _konto_lang("4650", 5) == "46500" and _konto_lang("1576", 6) == "157600"
+    assert _konto_lang("70001", 4) == "70001" and _konto_lang(None, 5) is None
+
+
+@pytest.mark.skipif(not (TESTDATEN / "folgemonat" / "gold").exists(), reason="Belege November fehlen")
+def test_fundstellen_und_sachkontenlaenge_im_buchungssatz(leerer_zustand) -> None:  # type: ignore[no-untyped-def]
+    from app.demo import ansicht, kanzlei
+    from app.demo.verarbeitung import feldrahmen
+
+    ansicht.demo_november()
+    key = {b["id"]: b["key"] for b in ansicht.eingang()}["F22"]
+    a = ansicht.ansicht(key)
+    f = feldrahmen(ansicht.pfad(key), ansicht.feldsuche(a))
+    assert f["nummer"]["text"].endswith("R-2026-11-0418") and "Rechnungsbetrag" in f["brutto"]["text"]
+    assert "Leistungsdatum" in f["leistungszeit"]["text"] and "Leistung" not in f["datum"]["text"]
+    assert len(f["steuer"]["rahmen"]) == 2 and f["empfaenger"]["text"].startswith("Pixelwerk Design GmbH")
+    assert all(0 <= r["y0"] < r["y1"] <= 1 for v in f.values() for r in v["rahmen"])
+    # Sachkontenlänge 5: Sachkonten im Buchungssatz und Stapel mit angehängter Null, Kreditoren 6-stellig
+    kanzlei.mandant_speichern("AK", {**kanzlei.mandant("M4"), "sachkontenlaenge": 5})
+    a = ansicht.ansicht(key)
+    assert {z["konto"] for z in a["buchungen"]["satz"] if z["art"] != "kreditor"} >= {"46500", "15710", "15760"}
+    assert a["buchungen"]["stapel"][0]["gegenkonto"] == "46500" and a["kreditor_vorschlag"]["nr"] == 700000

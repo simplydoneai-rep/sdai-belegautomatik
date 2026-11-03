@@ -111,6 +111,9 @@ async function init() {
   });
   $("ue-neu").addEventListener("click", () => oeffneMandant(null));
   $("ue-rechte").addEventListener("click", oeffneRechte);
+  document.querySelectorAll(".ue-spalten [data-sort]").forEach((k) => k.addEventListener("click", () => sortiere(k.dataset.sort)));
+  ["ue-filter", "ue-sb"].forEach((id) => $(id).addEventListener("change", () => { merke(id, $(id).value); zeigeUebersicht(); }));
+  bindeTrennlinie();
   $("ue-kanzlei").addEventListener("click", oeffneBerater);
   $("berater-form").addEventListener("submit", sichereBerater);
   // Beleg ein- und ausblenden (gemerkt): ausgeblendet hat die Bearbeitung die volle Breite
@@ -199,7 +202,24 @@ function zeigeUebersicht() {
     + (s.leitung ? "Kanzleileitung: Sie sehen alle Mandanten" : `${anzahl(u.mandanten.length, "Mandant", "Mandanten")} zugeordnet`);
   $("ue-titel").textContent = s.leitung ? "Alle Mandanten" : "Meine Mandanten";
   const q = $("ue-suche").value.trim().toLowerCase();
-  const zeilen = u.mandanten.filter((m) => !q || `${m.name} ${m.nummer} ${m.ansprechpartner}`.toLowerCase().includes(q));
+  // Filter: offene Belege und Sachbearbeiter (nur die Kanzleileitung sieht fremde Mandanten)
+  $("ue-sb").hidden = !s.leitung;
+  if (s.leitung && !$("ue-sb").options.length) {
+    $("ue-sb").innerHTML = `<option value="">Alle Sachbearbeiter</option>`
+      + s.sachbearbeiter.map((p) => `<option value="${esc(p.kuerzel)}">${esc(p.kuerzel)} · ${esc(p.name)}</option>`).join("");
+    $("ue-sb").value = lies("ue-sb") || "";
+  }
+  if (!$("ue-filter").dataset.geladen) { $("ue-filter").value = lies("ue-filter") || "alle"; $("ue-filter").dataset.geladen = "1"; }
+  const filter = $("ue-filter").value, sb = s.leitung ? $("ue-sb").value : "";
+  const passt = { alle: () => true, offen: (m) => m.offen > 0, pruefen: (m) => m.pruefen > 0, nichts: (m) => !m.offen }[filter] || (() => true);
+  const zeilen = u.mandanten
+    .filter((m) => !q || `${m.name} ${m.nummer} ${m.ansprechpartner}`.toLowerCase().includes(q))
+    .filter(passt).filter((m) => !sb || m.team.some((p) => p.kuerzel === sb))
+    .sort(vergleiche);
+  document.querySelectorAll(".ue-spalten [data-sort]").forEach((k) => {
+    k.classList.toggle("aktiv", k.dataset.sort === sortierung.feld);
+    k.dataset.richtung = k.dataset.sort === sortierung.feld ? sortierung.richtung : "";
+  });
   $("ue-tabelle").innerHTML = zeilen.map((m) => `
     <div class="ue-zeile" data-mandant="${esc(m.id)}" tabindex="0">
       <span class="m-avatar">${esc(initialen(m.name))}</span>
@@ -225,6 +245,31 @@ function zeigeUebersicht() {
   $("ue-tabelle").querySelectorAll("[data-bearbeiten]").forEach((b) => b.addEventListener("click", () => oeffneMandant(b.dataset.bearbeiten)));
 }
 
+/* Sortierung der Übersicht: Klick auf die Spalte, nochmal Klick dreht die Richtung (gemerkt) */
+const SORTIERWERT = {
+  name: (m) => m.name.toLocaleLowerCase("de"),
+  nummer: (m) => Number(m.beraternummer) * 1e6 + Number(m.nummer),
+  kontenrahmen: (m) => m.kontenrahmen,
+  team: (m) => m.team[0]?.name.toLocaleLowerCase("de") || "~",
+  zuletzt: (m) => m.zuletzt_bearbeitet || "",
+  offen: (m) => m.offen,
+};
+let sortierung = (() => { try { return JSON.parse(lies("sortierung")) || { feld: "name", richtung: "auf" }; } catch { return { feld: "name", richtung: "auf" }; } })();
+
+function sortiere(feld) {
+  const neu = sortierung.feld === feld ? (sortierung.richtung === "auf" ? "ab" : "auf") : (["zuletzt", "offen"].includes(feld) ? "ab" : "auf");
+  sortierung = { feld, richtung: neu };
+  merke("sortierung", JSON.stringify(sortierung));
+  zeigeUebersicht();
+}
+
+function vergleiche(a, b) {
+  const wert = SORTIERWERT[sortierung.feld] || SORTIERWERT.name;
+  const x = wert(a), y = wert(b);
+  const r = typeof x === "number" ? x - y : String(x).localeCompare(String(y), "de");
+  return (sortierung.richtung === "ab" ? -r : r) || SORTIERWERT.name(a).localeCompare(SORTIERWERT.name(b), "de");
+}
+
 /* ---------- Mandant erfassen und bearbeiten ---------- */
 function oeffneMandant(id) {
   const s = zustand.stamm;
@@ -240,6 +285,9 @@ function oeffneMandant(id) {
     ${b.nr} · ${esc(b.bezeichnung)}${b.nr === k.standard ? " (Standard)" : ""}</option>`).join("");
   f.beraternummer.onchange = () => { if (!id) f.nummer.value = naechsteNummer(Number(f.beraternummer.value)); };
   f.nummer.value = m?.nummer || naechsteNummer(berater);
+  const [kurz, lang] = s.sachkontenlaenge, laenge = Number(m?.sachkontenlaenge || kurz);
+  f.sachkontenlaenge.innerHTML = Array.from({ length: lang - kurz + 1 }, (_, i) => kurz + i).map((n) =>
+    `<option value="${n}" ${n === laenge ? "selected" : ""}>${n} Stellen · Kreditoren ${7 * 10 ** n}–${10 ** (n + 1) - 1}</option>`).join("");
   f.ansprechpartner.value = m?.ansprechpartner || "";
   f.ustid.value = m?.ustid || "";
   const rahmen = m?.kontenrahmen || "SKR03";
@@ -269,7 +317,7 @@ async function sichereMandant(e) {
   const f = e.target;
   const daten = {
     id: f.dataset.id || null, name: f.name.value, beraternummer: f.beraternummer.value, nummer: f.nummer.value, ansprechpartner: f.ansprechpartner.value, ustid: f.ustid.value,
-    kontenrahmen: document.querySelector("#f-kontenrahmen .aktiv").dataset.wert,
+    kontenrahmen: document.querySelector("#f-kontenrahmen .aktiv").dataset.wert, sachkontenlaenge: f.sachkontenlaenge.value,
     zustaendig: f.zustaendig.value || null, vertretung: f.vertretung.value || null,
   };
   try {
@@ -355,18 +403,52 @@ function zeigeRechte() {
   $("rechte-liste").innerHTML = treffer.map((m) => {
     const wert = p.zugriff[m.id] || "aus";
     const rolle = m.zustaendig === p.kuerzel ? "zuständig" : m.vertretung === p.kuerzel ? "Vertretung" : null;
-    const knopf = (w, text) => `<button data-wert="${w}" class="${wert === w ? "aktiv " + w : ""}" ${rolle && w !== "an" ? "disabled" : ""}>${text}</button>`;
+    const knopf = (w, text) => `<button data-wert="${w}" class="${wert === w ? "aktiv " + w : ""}">${text}</button>`;
     return `<li data-mandant="${esc(m.id)}">
       <span><b>${esc(m.name)}</b><small>${esc(m.nummer)} · ${esc(m.kontenrahmen)}${rolle ? ` · <span class="rolle-marke">${rolle}</span>` : ""}</small></span>
       <div class="segment klein-segment">${knopf("an", "Zugriff")}${knopf("aus", "Kein Zugriff")}${knopf("gesperrt", "Gesperrt")}</div>
     </li>`;
   }).join("") || `<li><span class="klein">Kein Mandant zu „${esc(q)}“</span></li>`;
-  $("rechte-liste").querySelectorAll("li").forEach((li) => li.querySelectorAll("button").forEach((b) => b.addEventListener("click", async () => {
-    try {
-      zustand.stamm = { ...zustand.stamm, ...(await post("/api/kanzlei/zugriff", { kuerzel: p.kuerzel, mandant: li.dataset.mandant, wert: b.dataset.wert })) };
-      zeigeRechte();
-    } catch (e) { toast(e.message, true); }
-  })));
+  $("rechte-liste").querySelectorAll("li[data-mandant]").forEach((li) => li.querySelectorAll(".klein-segment button").forEach((b) =>
+    b.addEventListener("click", () => {
+      const m = s.alle_mandanten.find((x) => x.id === li.dataset.mandant);
+      const rolle = m.zustaendig === p.kuerzel ? "zuständig" : m.vertretung === p.kuerzel ? "Vertretung" : null;
+      if (rolle && b.dataset.wert !== "an" && (p.zugriff[m.id] || "aus") !== b.dataset.wert) return rueckfrage(li, p, m, rolle, b.dataset.wert);
+      zugriffSenden(p, m.id, b.dataset.wert, false);
+    })));
+}
+
+/* Zuständige oder Vertretung verliert den Zugriff: Zuständigkeit gleich mit anpassen (nach Rückfrage in der Zeile) */
+function rueckfrage(li, p, m, rolle, wert) {
+  document.querySelectorAll("#rechte-liste .rueckfrage").forEach((r) => r.remove());
+  const vertretung = zustand.stamm.sachbearbeiter.find((x) => x.kuerzel === m.vertretung);
+  const was = wert === "gesperrt" ? "sperren" : "Zugriff entziehen";
+  const moeglich = rolle === "Vertretung" || vertretung;
+  const text = rolle === "Vertretung" ? `${p.name} ist Vertretung für ${m.name}. Vertretung entfernen und ${was}?`
+    : vertretung ? `${p.name} ist zuständig für ${m.name}. Zuständigkeit an ${vertretung.name} übergeben und ${was}?`
+    : `${p.name} ist die einzige zuständige Person für ${m.name}. Zuerst im Mandanten eine andere Person eintragen.`;
+  const div = document.createElement("div");
+  div.className = "rueckfrage";
+  div.innerHTML = `<span>${esc(text)}</span><span class="rueckfrage-knoepfe">
+    <button class="link klein-link" data-nein>Abbrechen</button>
+    ${moeglich ? `<button class="knopf blau klein-knopf" data-ja>${rolle === "Vertretung" ? "Vertretung entfernen" : "Übergeben"}</button>`
+      : `<button class="knopf blau klein-knopf" data-mandant-oeffnen>Mandant bearbeiten</button>`}</span>`;
+  li.appendChild(div);
+  div.querySelector("[data-nein]").addEventListener("click", () => div.remove());
+  div.querySelector("[data-ja]")?.addEventListener("click", () => zugriffSenden(p, m.id, wert, true));
+  div.querySelector("[data-mandant-oeffnen]")?.addEventListener("click", () => { $("rechte-blatt").hidden = true; oeffneMandant(m.id); });
+}
+
+async function zugriffSenden(p, mid, wert, anpassen) {
+  try {
+    zustand.stamm = { ...zustand.stamm, ...(await post("/api/kanzlei/zugriff",
+      { kuerzel: p.kuerzel, mandant: mid, wert, zustaendigkeit_anpassen: anpassen })) };
+    zeigeRechte();
+    if (anpassen) {
+      toast("Zugriff und Zuständigkeit geändert");
+      if (zustand.seite === "uebersicht") ladeUebersicht();
+    }
+  } catch (e) { toast(e.message, true); }
 }
 
 async function sichereSachbearbeiter(e) {
@@ -598,13 +680,14 @@ function zeigeBeleg(b) {
   $("b-summen").className = "summen-fehler";
   $("b-summen").hidden = b.steuerlogik.ok;
   const fakten = [
-    ["Rechnungsdatum", datum(k.invoice_date)],
-    ["Leistungsdatum", leistungText(k.leistung, true), !k.leistung],
+    ["Rechnungsdatum", datum(k.invoice_date), false, null, "datum"],
+    ["Leistungsdatum", leistungText(k.leistung, true), !k.leistung, null, "leistungszeit"],
     ["Währung", w === "EUR" ? "EUR" : `${w} (Fremdwährung)`, w !== "EUR"],
     ["Steuerfall", { inland: "Inland", ige: "i. g. Erwerb", "13b": "§ 13b UStG" }[b.steuerfall.id] || b.steuerfall.text, b.steuerfall.id !== "inland",
       `${b.steuerfall.text}${k.herkunft ? ` · Lieferant: ${HERKUNFT[k.herkunft]}` : ""}`],
   ];
-  $("b-fakten").innerHTML = fakten.map(([t, v, auffaellig, titel]) => `<div class="fakt ${auffaellig ? "auffaellig" : ""}" title="${esc(titel || v)}">
+  $("b-fakten").innerHTML = fakten.map(([t, v, auffaellig, titel, feld]) => `<div class="fakt ${auffaellig ? "auffaellig" : ""}"
+    title="${esc(titel || v)}" ${feld ? `data-feld="${feld}"` : ""}>
     <span>${t}</span><b>${esc(v)}</b></div>`).join("");
 
   const aus = $("b-ausnahmen");
@@ -642,18 +725,21 @@ function zeigeBeleg(b) {
   zeigePruefung(b);
 
   const lief = `${HERKUNFT[k.herkunft] || "–"}${k.lieferant_ustid ? ` · USt-IdNr. ${k.lieferant_ustid}` : ""}`;
-  $("kopf").innerHTML = [["Lieferant", esc(k.supplier_name)], ["Sitz des Lieferanten", esc(lief)],
-    ["Rechnungsnummer", esc(k.invoice_number ?? "–")], ["Rechnungsdatum", datum(k.invoice_date)],
-    ["Leistungsdatum / -zeitraum", esc(leistungText(k.leistung, true))], ["Währung", esc(w)],
-    ["Netto", geld(k.net_total, w)], ["Umsatzsteuer", geld(k.tax_total, w)], ["Brutto", geld(k.gross_total, w)],
-    ["Steuerfall", esc(b.steuerfall.text)],
-    ["Mandant", esc(`${b.mandant.name} · ${b.mandant.nummer} · ${b.mandant.kontenrahmen}`)]]
-    .map(([a, c]) => `<tr><td>${a}</td><td>${c}</td></tr>`).join("");
+  $("kopf").innerHTML = [["Lieferant", esc(k.supplier_name), "leistender"], ["Sitz des Lieferanten", esc(lief), "steuernummer"],
+    ["Rechnungsnummer", esc(k.invoice_number ?? "–"), "nummer"], ["Rechnungsdatum", datum(k.invoice_date), "datum"],
+    ["Leistungsdatum / -zeitraum", esc(leistungText(k.leistung, true)), "leistungszeit"], ["Währung", esc(w)],
+    ["Netto", geld(k.net_total, w), "entgelt"], ["Umsatzsteuer", geld(k.tax_total, w), "steuer"],
+    ["Brutto", geld(k.gross_total, w), "brutto"], ["Steuerfall", esc(b.steuerfall.text)],
+    ["Mandant", esc(`${b.mandant.name} · ${b.mandant.beraternummer} / ${b.mandant.nummer} · ${b.mandant.kontenrahmen}`), "empfaenger"]]
+    .map(([a, c, feld]) => `<tr ${feld ? `data-feld="${feld}"` : ""}><td>${a}</td><td>${c}</td></tr>`).join("");
+  zeigeZahlung();
   $("kurz-daten").textContent = [k.invoice_number && `Nr. ${k.invoice_number}`, HERKUNFT[k.herkunft],
     k.lieferant_ustid && `USt-IdNr. ${k.lieferant_ustid}`].filter(Boolean).join(" · ");
   $("verlauf").innerHTML = b.protokoll.slice().reverse().map((e) => `<li><span><b>${esc(e.feld)}</b>: ${esc(e.alt ?? "–")} → ${esc(e.neu ?? "–")}
     <small>${new Date(e.zeit).toLocaleString("de-DE")} · ${esc(e.nutzer)} · ${esc(e.quelle)}</small></span></li>`).join("")
     || `<li><span class="klein">Noch keine Änderungen</span></li>`;
+
+  bindeFeldHover();
 
   const knopf = $("a-knopf");
   if (fertig) {
@@ -783,13 +869,12 @@ function bindePositionsWahl(b) {
   });
 }
 
-function markiere_position(pos) {
+/* Stellen im Beleg hervorheben: Rechtecke auf den Seitenbildern (PDF) oder Elemente im Belegbild (E-Rechnung) */
+function markiereImBeleg(rahmen, elemente = []) {
   document.querySelectorAll("#vorschau .markierung").forEach((m) => m.remove());
-  // E-Rechnung: Zeile im Belegbild hervorheben
-  document.querySelectorAll("#vorschau .eb-pos tr.markiert").forEach((z) => z.classList.remove("markiert"));
-  const ebZeile = pos == null ? null : document.querySelector(`#vorschau .eb-pos tr[data-pos="${pos}"]`);
-  if (ebZeile) { ebZeile.classList.add("markiert"); ebZeile.scrollIntoView({ block: "nearest", behavior: "smooth" }); }
-  const rahmen = pos == null ? [] : (zustand.markierungen || [])[pos] || [];
+  document.querySelectorAll("#vorschau .markiert").forEach((z) => z.classList.remove("markiert"));
+  const v = $("vorschau");
+  let erste = null;
   for (const r of rahmen) {
     const seite = document.querySelector(`#vorschau .seite[data-seite="${r.seite + 1}"]`);
     if (!seite) continue;
@@ -797,10 +882,46 @@ function markiere_position(pos) {
     m.className = "markierung";
     Object.assign(m.style, { left: `${r.x0 * 100}%`, width: `${(r.x1 - r.x0) * 100}%`, top: `${r.y0 * 100}%`, height: `${(r.y1 - r.y0) * 100}%` });
     seite.appendChild(m);
-    const v = $("vorschau");
     const oben = seite.offsetTop + seite.offsetHeight * r.y0, unten = seite.offsetTop + seite.offsetHeight * r.y1;
-    if (oben < v.scrollTop || unten > v.scrollTop + v.clientHeight) v.scrollTo({ top: oben - v.clientHeight / 3, behavior: "smooth" });
+    erste = erste || { oben, unten };
   }
+  if (erste && (erste.oben < v.scrollTop || erste.unten > v.scrollTop + v.clientHeight)) {
+    v.scrollTo({ top: erste.oben - v.clientHeight / 3, behavior: "smooth" });
+  }
+  elemente.forEach((el) => el.classList.add("markiert"));
+  elemente[0]?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+}
+
+function markiere_position(pos) {
+  markiereImBeleg(pos == null ? [] : (zustand.markierungen || [])[pos] || [],
+    pos == null ? [] : [...document.querySelectorAll(`#vorschau .eb-pos tr[data-pos="${pos}"]`)]);
+}
+
+/* Kopfangaben (Rechnungsprüfung, Rechnungsdaten): wo stehen sie im Beleg? „Rechnerisch richtig“ zeigt alle Summen. */
+const FELD_GRUPPEN = { rechnerisch: ["entgelt", "steuer", "brutto"] };
+
+function markiereFeld(feld) {
+  if (!feld) return markiereImBeleg([]);
+  const felder = FELD_GRUPPEN[feld] || [feld];
+  const rahmen = feld === "menge_art" ? (zustand.markierungen || []).flat() : felder.flatMap((f) => zustand.felder?.[f]?.rahmen || []);
+  const elemente = felder.flatMap((f) => [...document.querySelectorAll(`#vorschau [data-feld~="${f}"]`)]);
+  markiereImBeleg(rahmen, elemente);
+}
+
+function bindeFeldHover() {
+  document.querySelectorAll("#beleg [data-feld]").forEach((el) => {
+    el.onmouseenter = () => markiereFeld(el.dataset.feld);
+    el.onmouseleave = () => markiereFeld(null);
+  });
+}
+
+/* Zahlungsangaben in den Rechnungsdaten (aus dem Beleg gelesen, nur zur Information) */
+function zeigeZahlung() {
+  const z = zustand.felder?.zahlung?.text;
+  document.querySelector('#kopf tr[data-feld="zahlung"]')?.remove();
+  if (!z) return;
+  $("kopf").insertAdjacentHTML("beforeend", `<tr data-feld="zahlung"><td>Zahlung</td><td>${esc(z.split("\n").slice(0, 3).join(" · "))}</td></tr>`);
+  bindeFeldHover();
 }
 
 // Kontonamen sagen schon „Vorsteuer“ / „Umsatzsteuer“; markiert wird nur der Kreditor
@@ -861,7 +982,7 @@ function zeigePruefung(b) {
     // Kurz: Punkt, Haken, „vorhanden“ – die Rechtsgrundlage nur beim Überfahren
     const [zeichen, klasse, wort] = PFLICHT_STATUS[p.status];
     const wert = p.status !== "ok" ? "" : p.key === "datum" ? datum(p.detail) : p.detail;
-    return `<li class="${klasse}" title="${esc(p.grundlage)}"><span class="pf-zeichen">${zeichen}</span>
+    return `<li class="${klasse}" title="${esc(p.grundlage)}" data-feld="${esc(p.key)}"><span class="pf-zeichen">${zeichen}</span>
       <span>${esc(p.text)} <span class="pf-wort">${wort}</span></span><span class="pf-wert">${esc(wert)}</span></li>`;
   }).join("");
   const fehlt = pf.punkte.filter((p) => p.status === "fehlt").length;
@@ -1134,6 +1255,7 @@ function leereVorschau() {
 async function ladeVorschau(b) {
   const v = $("vorschau");
   ansichtZ.zoom = 1;
+  zustand.felder = {};
   v.classList.toggle("xml", b.art === "xml");  // ohne Werkzeugleiste: volle Breite
   if (b.art === "xml") {
     // Belegbild aus dem XML; das Original-XML bleibt aufklappbar darunter (maßgeblich ist das XML)
@@ -1145,12 +1267,17 @@ async function ladeVorschau(b) {
       + `<details class="eb-xml" ${bild ? "" : "open"}><summary>Original-XML</summary><pre>${esc(xml)}</pre></details>`;
     $("v-seiten").textContent = bild ? bild.format : "E-Rechnung (XML)";
     $("werkzeuge").hidden = true;
+    const z = bild?.zahlung || {};
+    zustand.felder = { zahlung: { rahmen: [], text: [z.art, z.bedingungen, z.iban && `IBAN ${z.iban}`].filter(Boolean).join("\n") } };
+    zeigeZahlung();
     return;
   }
   const { anzahl: n } = await api(`/api/beleg/seiten?${new URLSearchParams({ key: b.key })}`);
   zustand.markierungen = [];
   api(`/api/beleg/markierungen?${new URLSearchParams({ key: b.key, modell: zustand.modell })}`)
     .then((m) => { if (zustand.key === b.key) zustand.markierungen = m; }).catch(() => {});
+  api(`/api/beleg/feldrahmen?${new URLSearchParams({ key: b.key, modell: zustand.modell })}`)
+    .then((f) => { if (zustand.key === b.key) { zustand.felder = f; zeigeZahlung(); } }).catch(() => {});
   ansichtZ.seiten = n; ansichtZ.seite = 1;
   v.innerHTML = [...Array(n).keys()].map((i) => `<div class="seite" data-seite="${i + 1}">
     <img src="/api/beleg/seite?${new URLSearchParams({ key: b.key, i, nutzer: zustand.nutzer })}" alt="Seite ${i + 1} von ${n}" draggable="false"></div>`).join("");
@@ -1168,7 +1295,9 @@ function belegbildHtml(e) {
   const v = e.verkaeufer, k = e.kaeufer, z = e.zahlung;
   const anschrift = (p) => [p.street, [p.postcode, p.city].filter(Boolean).join(" "), p.country && p.country !== "DE" ? p.country : ""]
     .filter(Boolean).map(esc).join("<br>");
-  const zeile = (label, wert) => wert ? `<tr><td>${label}</td><td>${wert}</td></tr>` : "";
+  const zeile = (label, wert, feld = "") => wert ? `<tr data-feld="${feld}"><td>${label}</td><td>${wert}</td></tr>` : "";
+  const SUMME_FELD = { "Summe Positionen netto": "entgelt", "Gesamt netto": "entgelt", Umsatzsteuer: "steuer",
+    "Gesamt brutto": "brutto", Zahlbetrag: "brutto zahlung" };
   const kontakt = [v.contact, v.phone, v.email].filter(Boolean).map(esc).join(" · ");
   const positionen = e.positionen.map((p, i) => `<tr data-pos="${i}">
       <td>${esc(p.nr && p.nr !== p.bezeichnung && p.nr.length <= 8 ? p.nr : i + 1)}</td>
@@ -1186,25 +1315,25 @@ function belegbildHtml(e) {
     .filter(Boolean).join(" · ");
   return `<article class="eb-blatt">
     <header class="eb-kopf">
-      <div><b class="eb-name">${esc(v.name || "–")}</b><div>${anschrift(v)}</div>${kontakt ? `<small>${kontakt}</small>` : ""}</div>
+      <div data-feld="leistender"><b class="eb-name">${esc(v.name || "–")}</b><div>${anschrift(v)}</div>${kontakt ? `<small>${kontakt}</small>` : ""}</div>
       <div class="eb-art"><b>${esc(e.art)}</b><small>E-Rechnung</small></div>
     </header>
-    <div class="eb-empfaenger"><small>Rechnungsempfänger</small><b>${esc(k.name || "–")}</b><div>${anschrift(k)}</div></div>
+    <div class="eb-empfaenger" data-feld="empfaenger"><small>Rechnungsempfänger</small><b>${esc(k.name || "–")}</b><div>${anschrift(k)}</div></div>
     <table class="eb-daten">
-      ${zeile("Rechnungsnummer", esc(e.nummer))}${zeile("Rechnungsdatum", datum(e.datum))}
-      ${zeile("Leistung", e.leistung ? esc(leistungText(e.leistung, true)) : "")}${zeile("Fällig am", e.faellig ? datum(e.faellig) : "")}
+      ${zeile("Rechnungsnummer", esc(e.nummer), "nummer")}${zeile("Rechnungsdatum", datum(e.datum), "datum")}
+      ${zeile("Leistung", e.leistung ? esc(leistungText(e.leistung, true)) : "", "leistungszeit")}${zeile("Fällig am", e.faellig ? datum(e.faellig) : "", "zahlung")}
       ${e.referenzen.map((r) => zeile(esc(r.label), esc(r.wert))).join("")}${w !== "EUR" ? zeile("Währung", esc(w)) : ""}
     </table>
-    <table class="eb-pos"><thead><tr><th>Pos.</th><th>Bezeichnung</th><th class="zahl-sp">Menge</th><th class="zahl-sp">Einzelpreis</th>
+    <table class="eb-pos" data-feld="menge_art"><thead><tr><th>Pos.</th><th>Bezeichnung</th><th class="zahl-sp">Menge</th><th class="zahl-sp">Einzelpreis</th>
       <th class="zahl-sp">USt</th><th class="zahl-sp">Netto</th></tr></thead><tbody>${positionen}${zuschlaege}</tbody></table>
-    <table class="eb-summen">${e.summen.map((s) => `<tr class="${s.fett ? "fett" : ""}"><td>${esc(s.label)}</td>
+    <table class="eb-summen">${e.summen.map((s) => `<tr class="${s.fett ? "fett" : ""}" data-feld="${SUMME_FELD[s.label] || ""}"><td>${esc(s.label)}</td>
       <td class="zahl-sp">${geld(s.betrag, w)}</td></tr>`).join("")}</table>
-    <table class="eb-steuern"><thead><tr><th>Umsatzsteuer</th><th class="zahl-sp">Satz</th><th class="zahl-sp">Grundlage</th><th class="zahl-sp">Steuer</th></tr></thead>
+    <table class="eb-steuern" data-feld="steuer hinweis_13b"><thead><tr><th>Umsatzsteuer</th><th class="zahl-sp">Satz</th><th class="zahl-sp">Grundlage</th><th class="zahl-sp">Steuer</th></tr></thead>
       <tbody>${e.steuern.map((s) => `<tr><td>${esc(s.kategorie)}${s.grund ? `<small>${esc(s.grund)}</small>` : ""}</td>
         <td class="zahl-sp">${esc(s.satz)} %</td><td class="zahl-sp">${geld(s.basis, w)}</td><td class="zahl-sp">${geld(s.betrag, w)}</td></tr>`).join("")}</tbody></table>
-    ${zahlung.length ? `<div class="eb-block"><small>Zahlung</small>${zahlung.map((t) => `<div>${t}</div>`).join("")}</div>` : ""}
-    ${e.hinweise.length ? `<div class="eb-block"><small>Hinweise</small>${e.hinweise.map((h) => `<p>${esc(h)}</p>`).join("")}</div>` : ""}
-    ${fuss ? `<footer class="eb-fuss">${fuss}</footer>` : ""}
+    ${zahlung.length ? `<div class="eb-block" data-feld="zahlung"><small>Zahlung</small>${zahlung.map((t) => `<div>${t}</div>`).join("")}</div>` : ""}
+    ${e.hinweise.length ? `<div class="eb-block" data-feld="hinweis_13b"><small>Hinweise</small>${e.hinweise.map((h) => `<p>${esc(h)}</p>`).join("")}</div>` : ""}
+    ${fuss ? `<footer class="eb-fuss" data-feld="steuernummer ustid_beide">${fuss}</footer>` : ""}
   </article>`;
 }
 
@@ -1312,3 +1441,30 @@ async function hochladen(e) {
 }
 
 init();
+
+/* ---------- Trennlinie zwischen Bearbeitung und Beleg ---------- */
+/* Ziehen ändert die Breite des Belegs (gemerkt), z. B. Bearbeitung auf dem linken, Beleg auf dem rechten Bildschirm.
+   Doppelklick: zurück auf die Standardaufteilung. */
+function bindeTrennlinie() {
+  const app = $("seite-belege"), griff = $("v-griff");
+  const setze = (px) => { if (px) app.style.setProperty("--beleg-breite", `${px}px`); else app.style.removeProperty("--beleg-breite"); };
+  setze(Number(lies("belegBreite")) || 0);
+  griff.addEventListener("mousedown", (e) => {
+    e.preventDefault();
+    document.body.classList.add("zieht-breite");
+    const bewege = (ev) => {
+      const r = app.getBoundingClientRect();
+      const px = Math.round(Math.max(300, Math.min(r.right - ev.clientX, r.width - 340 - 420)));
+      setze(px);
+      merke("belegBreite", px);
+    };
+    const los = () => {
+      document.body.classList.remove("zieht-breite");
+      window.removeEventListener("mousemove", bewege);
+      window.removeEventListener("mouseup", los);
+    };
+    window.addEventListener("mousemove", bewege);
+    window.addEventListener("mouseup", los);
+  });
+  griff.addEventListener("dblclick", () => { setze(0); merke("belegBreite", ""); });
+}

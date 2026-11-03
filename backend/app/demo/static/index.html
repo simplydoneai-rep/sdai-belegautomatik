@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Belegautomatik</title>
   <link rel="icon" href="marke/logo.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="style.css?v=33">
+  <link rel="stylesheet" href="style.css?v=35">
 </head>
 <body>
   <header class="topbar">
@@ -42,11 +42,21 @@
       <div class="karte ue-liste">
         <div class="ue-listenkopf">
           <b id="ue-titel">Mandanten</b>
-          <input id="ue-suche" class="feld suchfeld" type="search" placeholder="Mandant, Nummer oder Ansprechpartner">
+          <div class="ue-filter-leiste">
+            <select id="ue-filter" class="feld ue-filter" aria-label="Mandanten filtern">
+              <option value="alle">Alle Mandanten</option>
+              <option value="offen">Mit offenen Belegen</option>
+              <option value="pruefen">Mit Belegen zum Prüfen</option>
+              <option value="nichts">Nichts offen</option>
+            </select>
+            <select id="ue-sb" class="feld ue-filter" aria-label="Nach Sachbearbeiter filtern"></select>
+            <input id="ue-suche" class="feld suchfeld" type="search" placeholder="Mandant, Nummer oder Ansprechpartner">
+          </div>
         </div>
         <div class="ue-zeile ue-spalten">
-          <span></span><span>Mandant</span><span>Nummer</span><span>Kontenrahmen</span><span>Sachbearbeiter</span>
-          <span>Zuletzt bearbeitet</span><span>Offene Belege</span><span></span>
+          <span></span><button data-sort="name">Mandant</button><button data-sort="nummer">Nummer</button>
+          <button data-sort="kontenrahmen">Kontenrahmen</button><button data-sort="team">Sachbearbeiter</button>
+          <button data-sort="zuletzt">Zuletzt bearbeitet</button><button data-sort="offen">Offene Belege</button><span></span>
         </div>
         <div id="ue-tabelle"></div>
       </div>
@@ -179,6 +189,7 @@
 
     <!-- Spalte 3: Beleg -->
     <section class="vorschau">
+      <div id="v-griff" class="v-griff" title="Ziehen: Breite des Belegs ändern · Doppelklick: zurücksetzen"></div>
       <button id="v-auf" class="v-auf" title="Beleg einblenden"><span>‹</span> Beleg</button>
       <div class="vorschau-kopf">
         <span>Beleg</span>
@@ -256,6 +267,7 @@
             <button type="button" data-wert="SKR03" class="aktiv">SKR03</button>
             <button type="button" data-wert="SKR04">SKR04</button>
           </div>
+          <label>Sachkontenlänge<select name="sachkontenlaenge" class="feld"></select></label>
         </div>
         <div class="form-gruppe">
           <label>Sachbearbeiter (zuständig)<select name="zustaendig" class="feld" required></select></label>
@@ -315,6 +327,6 @@
   </div>
 
   <div id="toast" class="toast" hidden></div>
-  <script src="app.js?v=34"></script>
+  <script src="app.js?v=36"></script>
 </body>
 </html>

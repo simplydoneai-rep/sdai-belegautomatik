@@ -375,6 +375,15 @@ Lücke geschlossen (Freigabe Paul Graß), Details: `docs/entscheidungen/2026-11-
 - Der Beleg rechts lässt sich ausblenden („Ausblenden ›“), die Bearbeitung bekommt dann die volle Breite; ein schmaler Streifen „‹ Beleg“ blendet ihn wieder ein. Die Einstellung wird gemerkt.
 - Sammelfreigabe: Der Knopf „Ansehen und freigeben“ rutscht bei wenig Platz unter den Text und bleibt im Kasten.
 
+## 03.11.2026 – Übersicht sortierbar, Rechte, Sachkontenlänge, Fundstellen im Beleg
+
+- Übersicht: Spalten per Klick sortierbar (Name, Nummer, Kontenrahmen, Sachbearbeiter, zuletzt bearbeitet, offene Belege), Filter nach offenen Belegen und Sachbearbeiter.
+- Rechte: Zuständigen und Vertretungen lässt sich der Zugriff entziehen; nach Rückfrage geht die Zuständigkeit an die Vertretung bzw. die Vertretung entfällt. Einzige zuständige Person: erst im Mandanten ändern.
+- Mandant: Sachkontenlänge 4–8 (Kreditoren eine Stelle mehr); Buchungssatz und DATEV-Zeile zeigen Sachkonten in dieser Länge. Änderung gesperrt, sobald Kreditoren angelegt sind. Wertebereich vor Phase 4 gegen DATEV prüfen.
+- Belegverarbeitung: Trennlinie zwischen Bearbeitung und Beleg verschiebbar; Überfahren von Rechnungsprüfung und Rechnungsdaten markiert die Stelle im Beleg (PDF und E-Rechnung); neue Zeile „Zahlung“.
+- Auswahlfelder einheitlich mit eigenem Pfeil; Formular „Sachbearbeiter erfassen“ breiter.
+- Entscheidung: `docs/entscheidungen/2026-11-03_rechte-sachkontenlaenge-fundstellen.md`.
+
 ## Nächste Schritte
 
 Die aktuelle Aufgabenliste steht in `docs/projektplan.md`, Abschnitt 10. Die Liste unten ist der Stand vom 28.10.2026 vor dem Projektplan.

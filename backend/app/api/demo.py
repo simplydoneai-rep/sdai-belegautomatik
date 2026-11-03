@@ -18,7 +18,7 @@ from lxml import etree
 from pydantic import BaseModel
 
 from app.demo import ansicht, kanzlei, zustand
-from app.demo.verarbeitung import MODELLE, aufzeichnungen, positionsrahmen, seitenbilder
+from app.demo.verarbeitung import MODELLE, aufzeichnungen, feldrahmen, positionsrahmen, seitenbilder
 from app.erechnung.belegbild import belegbild
 from app.erechnung.parser import ERechnungFehler
 from app.kontierung.kontensuche import alle_konten, suchen
@@ -87,12 +87,11 @@ def _mandant(mid: str) -> str:
 
 @app.get("/api/stammdaten")
 def stammdaten() -> dict[str, Any]:
-    lo, hi = zustand.kreditor_bereich(ansicht.SACHKONTENLAENGE)
     return {
         **kanzlei.stammdaten(zustand.NUTZER.get()),
         "modelle": [{"id": k, **v} for k, v in MODELLE.items()],
         "standard_modell": ansicht.STANDARD_MODELL,
-        "kreditoren_bereich": [lo, hi],
+        "sachkontenlaenge": list(kanzlei.SACHKONTENLAENGE),
     }
 
 
@@ -112,6 +111,7 @@ class MandantDaten(BaseModel):
     beraternummer: int | str | None = None
     nummer: int | str
     kontenrahmen: str
+    sachkontenlaenge: int | str | None = None
     ansprechpartner: str = ""
     ustid: str | None = None
     zustaendig: str | None = None
@@ -134,6 +134,7 @@ class Zugriff(BaseModel):
     kuerzel: str
     mandant: str
     wert: str
+    zustaendigkeit_anpassen: bool = False
 
 
 def _kanzlei(aufruf: Any) -> dict[str, Any]:
@@ -168,7 +169,8 @@ def beraternummer_entfernen(b: BeraterDaten) -> dict[str, Any]:
 
 @app.post("/api/kanzlei/zugriff")
 def zugriff_setzen(z: Zugriff) -> dict[str, Any]:
-    return _kanzlei(lambda: kanzlei.zugriff_setzen(zustand.NUTZER.get(), z.kuerzel, z.mandant, z.wert))
+    return _kanzlei(lambda: kanzlei.zugriff_setzen(zustand.NUTZER.get(), z.kuerzel, z.mandant, z.wert,
+                                                   z.zustaendigkeit_anpassen))
 
 
 @app.get("/api/beleg")
@@ -194,6 +196,13 @@ def beleg_markierungen(key: str, modell: str = ansicht.STANDARD_MODELL) -> list[
     """Fundstellen der Positionen im Beleg für die Hervorhebung beim Überfahren."""
     a = ansicht.ansicht(_key(key), _modell(modell))
     return positionsrahmen(ansicht.pfad(key), tuple(p["bezeichnung"] or "" for p in a["positionen"]))
+
+
+@app.get("/api/beleg/feldrahmen")
+def beleg_feldrahmen(key: str, modell: str = ansicht.STANDARD_MODELL) -> dict[str, dict[str, Any]]:
+    """Fundstellen der Kopfangaben im Beleg (Lieferant, Mandant, Datum, Beträge, Zahlung …) für die Hervorhebung."""
+    a = ansicht.ansicht(_key(key), _modell(modell))
+    return feldrahmen(ansicht.pfad(key), ansicht.feldsuche(a))
 
 
 @app.get("/api/beleg/belegbild")

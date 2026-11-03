@@ -33,7 +33,6 @@ from app.lernen import regeln as lernregeln
 
 STANDARD_MODELL = "ionos_qwen"
 MIN_STIMMEN = 3
-SACHKONTENLAENGE = 4  # je Mandant konfigurierbar, Demo: alle Mandanten 4-stellig
 STANDARD_JE_SATZ = {"19": "3400", "7": "3300"}
 STANDARD_JE_FALL = {"ige": ("3425",), "13b": ("3125", "3123")}  # Automatikkonten für i. g. Erwerb und § 13b
 # Bewirtung (§ 4 Abs. 5 Nr. 2 EStG): 70 % abziehbare Betriebsausgabe, 30 % nicht abziehbar; Vorsteuer voll abziehbar
@@ -364,13 +363,19 @@ def _ausnahmen(kopf: dict[str, Any], r: dict[str, Any], kreditor: dict[str, Any]
     return aus
 
 
+def _konto_lang(nr: str | None, laenge: int) -> str | None:
+    """DATEV: Bei längeren Sachkonten wird die Kontonummer hinten mit Nullen aufgefüllt (4650 → 46500 bei 5 Stellen)."""
+    return nr + "0" * (laenge - len(nr)) if nr and nr.isdigit() and len(nr) < laenge else nr
+
+
 def _buchungssaetze(positionen: list[dict[str, Any]], kopf: dict[str, Any], kreditor: dict[str, Any] | None,
-                    fall: str) -> dict[str, Any]:
+                    fall: str, laenge: int = 4) -> dict[str, Any]:
     """Buchungssatz eines Belegs in zwei Sichten (CLAUDE.md Abschnitt 6, 7):
 
     - **stapel**: Zeilen wie im DATEV-Buchungsstapel, eine je Sachkonto und Steuerschlüssel. Konto = Kreditor,
       Gegenkonto = Sachkonto, Soll/Haben-Kennzeichen bezogen auf das Konto: Rechnung „H“ (Kreditor im Haben),
       Gutschrift „S“. Umsatz brutto im Inland und bei ausländischer USt, netto bei § 13b und i. g. Erwerb.
+      Sachkonten in der Sachkontenlänge des Mandanten (``laenge``).
       Wie in DATEV: Aus dem Bruttobetrag wird die Vorsteuer mit dem Satz von Automatikkonto bzw. Steuerschlüssel
       herausgerechnet, der Rest ist Aufwand. Ohne Vorsteuer (Schlüssel 40, kein Schlüssel, ausländische USt)
       bleibt die Umsatzsteuer der Rechnung im Aufwand; der Kreditor steht immer mit dem Rechnungsbetrag im Haben.
@@ -382,7 +387,7 @@ def _buchungssaetze(positionen: list[dict[str, Any]], kopf: dict[str, Any], kred
         for t in p["teile"]:
             st = t["steuer"]
             g = gruppen.setdefault((t["konto"]["nr"], st["bu"]), {
-                "sachkonto": t["konto"]["nr"], "sachkonto_name": t["konto"]["name"], "bu": st["bu"], "steuer": st["text"],
+                "sachkonto": _konto_lang(t["konto"]["nr"], laenge), "sachkonto_name": t["konto"]["name"], "bu": st["bu"], "steuer": st["text"],
                 "satz": st["satz"], "automatik": st["automatik"], "fall": st.get("fall") or fall,
                 "netto": Decimal(0), "beleg_steuer": Decimal(0), "positionen": 0})
             netto = parse_amount(t["netto"]) or Decimal(0)
@@ -409,7 +414,8 @@ def _buchungssaetze(positionen: list[dict[str, Any]], kopf: dict[str, Any], kred
             umsatz = netto + g["beleg_steuer"]
             steuer = q2(umsatz * satz / (100 + satz)) if g_fall == "inland" and satz else Decimal(0)
             aufwand = umsatz - steuer
-        vst_konto, ust_konto = steuerschluessel.steuerkonten(g_fall, satz) if g_fall != "ausland" else (None, None)
+        vst_basis, ust_basis = steuerschluessel.steuerkonten(g_fall, satz) if g_fall != "ausland" else (None, None)
+        vst_konto, ust_konto = _konto_lang(vst_basis, laenge), _konto_lang(ust_basis, laenge)
         stapel.append({"umsatz": str(abs(umsatz)), "soll_haben": "S" if gutschrift else "H",
                        "eu_ustid": ((kreditor or {}).get("ustid") or kopf.get("lieferant_ustid")) if g_fall in ("ige", "13b") else None,
                        "vorsteuer": str(abs(steuer)) if vst_konto and steuer else None, "vorsteuer_konto": vst_konto,
@@ -420,12 +426,12 @@ def _buchungssaetze(positionen: list[dict[str, Any]], kopf: dict[str, Any], kred
                        "buchungstext": (kopf.get("supplier_name") or "")[:60], "waehrung": kopf.get("currency") or "EUR"})
         buche(soll, g["sachkonto"], g["sachkonto_name"], aufwand, "aufwand")
         if vst_konto and steuer:
-            buche(soll, vst_konto, (konto(vst_konto) or {}).get("name", "Vorsteuer"), steuer, "vorsteuer")
+            buche(soll, vst_konto, (konto(vst_basis) or {}).get("name", "Vorsteuer"), steuer, "vorsteuer")
             soll[vst_konto].setdefault("aus", [])
             if g["automatik"] and g["sachkonto"] not in soll[vst_konto]["aus"]:
                 soll[vst_konto]["aus"].append(g["sachkonto"])  # „aus Automatikkonto 3400“
         if ust_konto and steuer:
-            buche(haben, ust_konto, (konto(ust_konto) or {}).get("name", "Umsatzsteuer"), steuer, "umsatzsteuer")
+            buche(haben, ust_konto, (konto(ust_basis) or {}).get("name", "Umsatzsteuer"), steuer, "umsatzsteuer")
         an_kreditor = umsatz
         buche(haben, kreditor["nr"] if kreditor else "—", kreditor["name"] if kreditor else "Kreditor fehlt",
               an_kreditor, "kreditor")
@@ -493,7 +499,8 @@ def ansicht(key: str, modell: str = STANDARD_MODELL) -> dict[str, Any]:
         bereich = "sicher"
     else:
         bereich = "pruefen"
-    lo, hi = zustand.kreditor_bereich(SACHKONTENLAENGE)
+    laenge = kanzlei.sachkontenlaenge(mandant)
+    lo, hi = zustand.kreditor_bereich(laenge)
     gelernt = sum(1 for p in positionen if p["quelle"] == "regel")
     return {
         "key": key, "id": b["id"], "nr": b["nr"], "art": b["art"], "datei": b["datei"], "merkmale": b["merkmale"],
@@ -504,13 +511,13 @@ def ansicht(key: str, modell: str = STANDARD_MODELL) -> dict[str, Any]:
         "quelle": r["quelle"], "pseudonymisiert": r["pseudonymisiert"], "platzhalter": r["platzhalter"], "soll": r["soll"],
         "kreditor": kreditor and {"nr": kreditor["nr"], "name": kreditor["name"], "ustid": kreditor.get("ustid"),
                                   "land": kreditor.get("land")},
-        "kreditor_vorschlag": None if kreditor else {"nr": zustand.naechste_kreditornummer(mandant, SACHKONTENLAENGE),
+        "kreditor_vorschlag": None if kreditor else {"nr": zustand.naechste_kreditornummer(mandant, laenge),
                                                    "name": lieferant, "von": lo, "bis": hi},
         "regeln": [{**rg, "sicher": lernregeln.ist_sicher(rg),
                     "konto_name": (konto(rg["konto"]) or {}).get("name", "")} for rg in regeln],
         "positionen": positionen, "ampel": ampel, "ausnahmen": ausnahmen,
         "steuerfall": {"id": fall, "text": steuerschluessel.FALL_TEXT[fall]},
-        "buchungen": _buchungssaetze(positionen, kopf, kreditor, fall),
+        "buchungen": _buchungssaetze(positionen, kopf, kreditor, fall, laenge),
         "pflichtangaben": r["pflichtangaben"], "validierung": r.get("validierung"), "bewirtung": bewirtung,
         "sicherheit": round(sicherheit, 2), "gelernt": gelernt,
         "offen": offen, "freigabe_moeglich": not offen and status != "freigegeben",
@@ -698,7 +705,8 @@ def kreditor_anlegen(key: str, nr: int, name: str, modell: str = STANDARD_MODELL
     kopf = ansicht(key, modell)["kopf"]
     ustid = kopf.get("lieferant_ustid")  # aus der Rechnung, beim Kreditor änderbar
     land = ustid[:2] if ustid else ("DE" if kopf.get("herkunft") == "inland" else None)
-    zustand.kreditor_anlegen(b["client_id"], nr, name, key, SACHKONTENLAENGE, alias=lieferant, ustid=ustid, land=land)
+    zustand.kreditor_anlegen(b["client_id"], nr, name, key, kanzlei.sachkontenlaenge(b["client_id"]), alias=lieferant,
+                             ustid=ustid, land=land)
     return ansicht(key, modell)
 
 
@@ -735,8 +743,9 @@ def demo_oktober(modell: str = STANDARD_MODELL) -> dict[str, int]:
             continue
         a = ansicht(b["key"], modell)
         if not a["kreditor"]:
-            zustand.kreditor_anlegen(b["client_id"], zustand.naechste_kreditornummer(b["client_id"], SACHKONTENLAENGE),
-                                     a["kopf"]["supplier_name"], b["key"], SACHKONTENLAENGE)
+            laenge = kanzlei.sachkontenlaenge(b["client_id"])
+            zustand.kreditor_anlegen(b["client_id"], zustand.naechste_kreditornummer(b["client_id"], laenge),
+                                     a["kopf"]["supplier_name"], b["key"], laenge)
             anzahl["kreditoren"] += 1
             a = ansicht(b["key"], modell)
         soll = [ln.get("account_skr03") for ln in (b["erwartet"] or {}).get("lines", [])]
@@ -756,3 +765,53 @@ def demo_november(modell: str = STANDARD_MODELL) -> int:
     keys = [b["key"] for b in _folgemonat()]
     _im_hintergrund(keys, modell)
     return len(keys)
+
+
+# --------------------------------------------------------------------------- Fundstellen der Kopfangaben
+
+
+def _betrag_texte(wert: Any) -> list[str]:
+    """Betrag so, wie er auf deutschen Rechnungen steht: 1.234,56 und 1234,56."""
+    d = parse_amount(wert)
+    if d is None:
+        return []
+    d = abs(d)
+    ohne = f"{d:.2f}".replace(".", ",")
+    mit = f"{d:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+    return list(dict.fromkeys([mit, ohne]))
+
+
+def _datum_texte(iso: str | None) -> list[str]:
+    if not iso or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", iso):
+        return []
+    j, m, t = iso.split("-")
+    return list(dict.fromkeys([f"{t}.{m}.{j}", f"{int(t)}.{int(m)}.{j}", f"{t}.{m}.{j[2:]}"]))
+
+
+def feldsuche(a: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    """Wonach im Beleg gesucht wird, um eine Kopfangabe zu zeigen (Schlüssel wie bei den Pflichtangaben).
+
+    werte: Text der Angabe; worte: Stichwörter in derselben Zeile (Rechnungsdatum statt Leistungsdatum);
+    muster: Zeilen nach Muster; art: zeile (beste Zeile), alle (alle Zeilen), block (Absatz, z. B. Anschrift)."""
+    k = a["kopf"]
+    m = kanzlei.mandant(a["mandant"]["id"])
+    leistung = k.get("leistung") or {}
+    return {
+        "leistender": {"werte": [k.get("supplier_name")], "art": "block"},
+        "empfaenger": {"werte": [m["name"]], "art": "block"},
+        "steuernummer": {"werte": [k.get("lieferant_ustid")], "muster": r"(?i)steuer-?nr|steuernummer|st\.-?nr",
+                         "art": "alle"},
+        "datum": {"werte": _datum_texte(k.get("invoice_date")), "worte": ["rechnungsdatum", "datum", "date"],
+                  "nicht": ["leistung", "liefer", "zahlbar", "fällig"], "art": "zeile"},
+        "nummer": {"werte": [k.get("invoice_number")], "worte": ["rechnung", "nr", "nummer"], "art": "zeile"},
+        "leistungszeit": {"werte": _datum_texte(leistung.get("von")) + _datum_texte(leistung.get("bis")),
+                          "worte": ["leistung", "liefer", "zeitraum"], "art": "zeile"},
+        "entgelt": {"werte": _betrag_texte(k.get("net_total")), "worte": ["netto", "zwischensumme", "summe"], "art": "zeile"},
+        "steuer": {"muster": r"(?i)\b(umsatzsteuer|mehrwertsteuer|mwst|ust)\b.*\d[,.]\d{2}", "art": "alle"},
+        "brutto": {"werte": _betrag_texte(k.get("gross_total")),
+                   "worte": ["gesamt", "brutto", "rechnungsbetrag", "endbetrag", "zahlbetrag", "total"],
+                   "art": "zeile", "letzte": True},
+        "zahlung": {"muster": r"(?i)\biban\b|zahlbar|zahlungsziel|skonto|\bbic\b|bankverbindung", "art": "alle"},
+        "hinweis_13b": {"muster": r"(?i)steuerschuldnerschaft|reverse\s+charge", "art": "alle"},
+        "ustid_beide": {"werte": [k.get("lieferant_ustid"), m.get("ustid")], "art": "alle"},
+    }

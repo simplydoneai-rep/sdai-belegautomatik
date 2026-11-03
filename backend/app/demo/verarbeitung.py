@@ -274,6 +274,92 @@ def positionsrahmen(path: Path, beschreibungen: tuple[str, ...]) -> list[list[di
     return out
 
 
+def _rahmen(nr: int, box: tuple[float, float, float, float], w: float, h: float) -> dict[str, float]:
+    x0, y0, x1, y1 = box
+    return {"seite": nr, "x0": max(0.0, (x0 - 3) / w), "x1": min(1.0, (x1 + 3) / w),
+            "y0": max(0.0, (y0 - 2) / h), "y1": min(1.0, (y1 + 2) / h)}
+
+
+def _vereinen(boxen: list[tuple[float, float, float, float]]) -> tuple[float, float, float, float]:
+    return min(b[0] for b in boxen), min(b[1] for b in boxen), max(b[2] for b in boxen), max(b[3] for b in boxen)
+
+
+def feldrahmen(path: Path, suche: dict[str, dict[str, Any]]) -> dict[str, dict[str, Any]]:
+    """Wo stehen die Kopfangaben auf dem Beleg? Für die Hervorhebung beim Überfahren der Rechnungsprüfung.
+
+    Liest die Zeilen des PDF-Textlayers; eine Zeile zählt mit allen Zeilen auf gleicher Höhe (Tabellen: Bezeichnung
+    links, Wert rechts). Ergebnis je Schlüssel: Rechtecke relativ zur Seite (0–1) und der gefundene Text.
+    Scans, Fotos und E-Rechnungen: leer (E-Rechnungen markiert das Belegbild selbst)."""
+    import pymupdf
+
+    if path.suffix.lower() != ".pdf":
+        return {}
+    zeilen: list[tuple[int, tuple[float, float, float, float], str, float, float]] = []
+    bloecke: list[tuple[int, tuple[float, float, float, float], str, float, float]] = []
+    with pymupdf.open(path) as doc:
+        for nr, page in enumerate(doc):
+            w, h = page.rect.width, page.rect.height
+            for b in page.get_text("dict")["blocks"]:
+                if b.get("type") != 0:
+                    continue
+                texte = []
+                for ln in b["lines"]:
+                    t = "".join(s["text"] for s in ln["spans"]).strip()
+                    if t:
+                        zeilen.append((nr, tuple(ln["bbox"]), t, w, h))
+                        texte.append(t)
+                if texte:
+                    bloecke.append((nr, tuple(b["bbox"]), "\n".join(texte), w, h))
+    if not zeilen:
+        return {}
+    zeilen.sort(key=lambda z: (z[0], round(z[1][1]), z[1][0]))
+    bloecke.sort(key=lambda z: (z[0], z[1][1], z[1][0]))
+    kompakt = lambda t: re.sub(r"\s+", "", t).lower()  # noqa: E731
+
+    def reihe(z: tuple[Any, ...]) -> list[tuple[Any, ...]]:
+        """Alle Zeilen auf gleicher Höhe (Mitte innerhalb der Zeile)."""
+        y0, y1 = z[1][1], z[1][3]
+        return [o for o in zeilen if o[0] == z[0] and y0 - 1 <= (o[1][1] + o[1][3]) / 2 <= y1 + 1]
+
+    out: dict[str, dict[str, Any]] = {}
+    for key, s in suche.items():
+        werte = [kompakt(v) for v in s.get("werte", []) if v]
+        muster = re.compile(s["muster"]) if s.get("muster") else None
+        if not werte and not muster:
+            continue
+        if s.get("art") == "block":
+            treffer_b = next((b for b in bloecke if any(v in kompakt(b[2]) for v in werte)), None)
+            if not treffer_b:
+                continue
+            boxen = [treffer_b[1]]
+            for b in bloecke:  # Anschrift: direkt folgende Absätze darunter gehören dazu
+                if b[0] == treffer_b[0] and b[1][1] > boxen[-1][1] and 0 <= b[1][1] - boxen[-1][3] < 6 \
+                        and b[1][0] < treffer_b[1][2] and b[1][2] > treffer_b[1][0]:
+                    boxen.append(b[1])
+            out[key] = {"rahmen": [_rahmen(treffer_b[0], _vereinen(boxen), treffer_b[3], treffer_b[4])],
+                        "text": treffer_b[2]}
+            continue
+        kandidaten = [z for z in zeilen if any(v in kompakt(z[2]) for v in werte) or (muster and muster.search(z[2]))]
+        if not kandidaten:
+            continue
+        if s.get("art") == "alle":
+            out[key] = {"rahmen": [_rahmen(z[0], _vereinen([o[1] for o in reihe(z)]), z[3], z[4]) for z in kandidaten],
+                        "text": "\n".join(z[2] for z in kandidaten[:4])}
+            continue
+
+        def punkte(z: tuple[Any, ...]) -> int:
+            text = " ".join(o[2] for o in reihe(z)).lower()
+            return sum(w in text for w in s.get("worte", [])) - 2 * sum(w in text for w in s.get("nicht", []))
+
+        beste = max(punkte(z) for z in kandidaten)
+        gewaehlt = [z for z in kandidaten if punkte(z) == beste]
+        z = gewaehlt[-1] if s.get("letzte") else gewaehlt[0]
+        r = reihe(z)
+        out[key] = {"rahmen": [_rahmen(z[0], _vereinen([o[1] for o in r]), z[3], z[4])],
+                    "text": " ".join(o[2] for o in r)}
+    return out
+
+
 @lru_cache(maxsize=64)
 def seitenbilder(path: Path, dpi: int = 110) -> list[bytes]:
     """Belegseiten als PNG für die Vorschau (unabhängig vom PDF-Betrachter des Browsers). 200 dpi beim Vergrößern."""

@@ -4,7 +4,8 @@
   eine davon ist der Standard für neue Mandanten. Jeder Mandant gehört zu genau einer Beraternummer, wie in DATEV.
   Sie steht später im Kopf des Buchungsstapels (CLAUDE.md Abschnitt 7).
 - Ein Mandant hat Firmenname, Beraternummer, Mandantennummer (DATEV 1–99999, eindeutig je Beraternummer), Kontenrahmen
-  (SKR03/SKR04), Ansprechpartner beim Unternehmen und bis zu zwei Sachbearbeiter: zuständig und Vertretung.
+  (SKR03/SKR04), Sachkontenlänge (4–8; Kreditoren haben eine Stelle mehr), Ansprechpartner beim Unternehmen und bis zu
+  zwei Sachbearbeiter: zuständig und Vertretung.
 - Ein Sachbearbeiter hat Kürzel, Namen und Rolle. Die Kanzleileitung sieht alle Mandanten und pflegt die Rechte.
 - Zugriff je Sachbearbeiter und Mandant: „an“ (darf bearbeiten), „aus“ (kein Zugriff) oder „gesperrt“
   (darf diesem Mandanten nie zugeordnet werden, z. B. bei Interessenkonflikt). Zuständige und Vertretungen haben
@@ -32,6 +33,9 @@ ZUGRIFF = ("an", "aus", "gesperrt")
 # Beraternummer im DATEV-Kopfsatz: 1001–9999999 (höchstens 7 Stellen). Quelle bisher nur Sekundärliteratur;
 # vor dem Export (Phase 4) gegen die DATEV-Formatbeschreibung in docs/datev/ prüfen.
 BERATERNUMMER = (1001, 9999999)
+# Sachkontenlänge 4–8 Stellen; längere Sachkonten werden hinten mit Nullen aufgefüllt (4650 → 46500). Quelle bisher
+# DATEV-Community; vor Phase 4 gegen die DATEV-Formatbeschreibung prüfen.
+SACHKONTENLAENGE = (4, 8)
 _LOCK = threading.Lock()
 
 # Erfundene Startbelegung für die Demo (keine echten Personen)
@@ -49,7 +53,7 @@ def _start() -> dict[str, Any]:
     for i, (mid, m) in enumerate(testmandanten().items()):
         haupt, vertretung = _START_ZUSTAENDIG.get(mid, [None, None])
         mandanten[mid] = {"id": mid, "name": m["name"], "beraternummer": _START_BERATER["nr"], "nummer": 10001 + i,
-                          "kontenrahmen": "SKR03",
+                          "kontenrahmen": "SKR03", "sachkontenlaenge": SACHKONTENLAENGE[0],
                           "ansprechpartner": m.get("person", ""), "branche": m.get("branche", ""),
                           "ustid": m.get("vat_id"),
                           "zustaendig": haupt, "vertretung": vertretung, "angelegt": jetzt}
@@ -73,7 +77,13 @@ def _ergaenzen(k: dict[str, Any]) -> dict[str, Any]:
     k.setdefault("kanzlei", {"beraternummern": [dict(_START_BERATER)], "standard": _START_BERATER["nr"]})
     for m in k["mandanten"].values():
         m.setdefault("beraternummer", k["kanzlei"]["standard"])
+        m.setdefault("sachkontenlaenge", SACHKONTENLAENGE[0])
     return k
+
+
+def sachkontenlaenge(mid: str) -> int:
+    """Sachkontenlänge des Mandanten (DATEV); bestimmt auch den Nummernkreis der Kreditoren."""
+    return int(laden()["mandanten"].get(mid, {}).get("sachkontenlaenge", SACHKONTENLAENGE[0]))
 
 
 def beraternummer(mid: str) -> int:
@@ -193,6 +203,12 @@ def mandant_speichern(nutzer: str, daten: dict[str, Any]) -> dict[str, Any]:
         berater = int(daten.get("beraternummer") or 0)
     except (TypeError, ValueError):
         raise ValueError("Beraternummer muss eine Zahl sein") from None
+    try:
+        laenge = int(daten.get("sachkontenlaenge") or SACHKONTENLAENGE[0])
+    except (TypeError, ValueError):
+        raise ValueError("Sachkontenlänge muss eine Zahl sein") from None
+    if not SACHKONTENLAENGE[0] <= laenge <= SACHKONTENLAENGE[1]:
+        raise ValueError(f"Sachkontenlänge {SACHKONTENLAENGE[0]} bis {SACHKONTENLAENGE[1]} Stellen (DATEV)")
     rahmen = daten.get("kontenrahmen")
     if rahmen not in KONTENRAHMEN:
         raise ValueError("Kontenrahmen SKR03 oder SKR04 wählen")
@@ -216,8 +232,12 @@ def mandant_speichern(nutzer: str, daten: dict[str, Any]) -> dict[str, Any]:
             if kuerzel and k["sachbearbeiter"][kuerzel]["zugriff"].get(mid) == "gesperrt":
                 raise ValueError(f'{k["sachbearbeiter"][kuerzel]["name"]} ist für diesen Mandanten gesperrt')
         alt = k["mandanten"].get(mid)
+        if alt and int(alt.get("sachkontenlaenge", SACHKONTENLAENGE[0])) != laenge and zustand.laden()["kreditoren"].get(mid):
+            raise ValueError("Die Sachkontenlänge lässt sich nicht mehr ändern: Für diesen Mandanten gibt es schon "
+                             "Kreditoren mit der bisherigen Länge.")
         neu = {**(alt or {"angelegt": datetime.now().isoformat(timespec="seconds"), "branche": ""}),
                "id": mid, "name": name, "beraternummer": berater, "nummer": nummer, "kontenrahmen": rahmen,
+               "sachkontenlaenge": laenge,
                "ansprechpartner": str(daten.get("ansprechpartner") or "").strip(),
                "ustid": (re.sub(r"\s", "", str(daten.get("ustid") or "")).upper() or None),
                "zustaendig": haupt, "vertretung": vertretung}
@@ -231,7 +251,8 @@ def mandant_speichern(nutzer: str, daten: dict[str, Any]) -> dict[str, Any]:
 
 
 def _kurz(m: dict[str, Any]) -> str:
-    return (f'{m["name"]} · Berater {m.get("beraternummer", "–")} · {m["kontenrahmen"]} · zuständig {m.get("zustaendig") or "–"}'
+    return (f'{m["name"]} · Berater {m.get("beraternummer", "–")} · {m["kontenrahmen"]}'
+            f' · {m.get("sachkontenlaenge", 4)}-stellig · zuständig {m.get("zustaendig") or "–"}'
             f' · Vertretung {m.get("vertretung") or "–"}')
 
 
@@ -267,7 +288,10 @@ def sachbearbeiter_speichern(nutzer: str, kuerzel: str, name: str, rolle: str) -
     return neu
 
 
-def zugriff_setzen(nutzer: str, kuerzel: str, mid: str, wert: str) -> dict[str, Any]:
+def zugriff_setzen(nutzer: str, kuerzel: str, mid: str, wert: str, zustaendigkeit_anpassen: bool = False) -> dict[str, Any]:
+    """Zugriff setzen. Ist die Person zuständig oder Vertretung, wird die Zuständigkeit mit angepasst, wenn gewünscht:
+    Vertretung entfällt; Zuständigkeit geht an die Vertretung. Ohne Vertretung muss erst eine andere Person
+    zuständig werden (ein Mandant braucht immer eine zuständige Person)."""
     _nur_leitung(nutzer)
     if wert not in ZUGRIFF:
         raise ValueError("Zugriff: an, aus oder gesperrt")
@@ -276,12 +300,24 @@ def zugriff_setzen(nutzer: str, kuerzel: str, mid: str, wert: str) -> dict[str, 
         sb, m = k["sachbearbeiter"].get(kuerzel), k["mandanten"].get(mid)
         if not sb or not m:
             raise ValueError("Sachbearbeiter oder Mandant nicht gefunden")
+        team_alt = _kurz(m)
         if wert != "an" and kuerzel in (m.get("zustaendig"), m.get("vertretung")):
             rolle = "zuständig" if kuerzel == m.get("zustaendig") else "Vertretung"
-            raise ValueError(f'{sb["name"]} ist für {m["name"]} {rolle}. Zuerst beim Mandanten die Zuständigkeit ändern.')
+            if rolle == "zuständig" and not m.get("vertretung"):
+                raise ValueError(f'{sb["name"]} ist die einzige zuständige Person für {m["name"]}. '
+                                 "Zuerst beim Mandanten eine andere Person als zuständig eintragen.")
+            if not zustaendigkeit_anpassen:
+                raise ValueError(f'{sb["name"]} ist für {m["name"]} {rolle}.')
+            if rolle == "zuständig":
+                m["zustaendig"], m["vertretung"] = m["vertretung"], None
+            else:
+                m["vertretung"] = None
         alt = sb["zugriff"].get(mid, "aus")
         sb["zugriff"][mid] = wert
+        team_neu = _kurz(m)
         _speichern(k)
+    if team_neu != team_alt:
+        _protokoll(f'Mandant {m["nummer"]}', team_alt, team_neu, nutzer)
     _protokoll(f'Zugriff {kuerzel} auf {m["name"]}', alt, wert, nutzer)
     return sb
 

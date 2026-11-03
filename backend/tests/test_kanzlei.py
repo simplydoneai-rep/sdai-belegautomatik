@@ -45,7 +45,7 @@ def test_zugriff_und_sperre(leer) -> None:  # type: ignore[no-untyped-def]
     assert kanzlei.darf("JN", "M3")
     kanzlei.zugriff_setzen("AK", "JN", "M3", "gesperrt")
     assert not kanzlei.darf("JN", "M3")
-    with pytest.raises(ValueError, match="Zuständigkeit"):  # Zuständige können nicht ausgesperrt werden
+    with pytest.raises(ValueError, match="zuständig"):  # ohne Zustimmung keine Änderung der Zuständigkeit
         kanzlei.zugriff_setzen("AK", "MB", "M1", "aus")
     with pytest.raises(ValueError, match="Kanzleileitung"):
         kanzlei.sachbearbeiter_speichern("AK", "AK", "Anna Keller", "sachbearbeitung")
@@ -93,3 +93,29 @@ def test_alte_stammdaten_bekommen_beraternummer(leer) -> None:  # type: ignore[n
     kanzlei.DATEI.write_text(json.dumps(alt), encoding="utf-8")
     assert kanzlei.beraternummer("M3") == 29098
     assert kanzlei.stammdaten("AK")["kanzlei"]["beraternummern"][0]["mandanten"] == 6
+
+
+def test_zugriff_entziehen_passt_zustaendigkeit_an(leer) -> None:  # type: ignore[no-untyped-def]
+    """Sophie Lang ist bei Bäckerei Kornfeld (M5) zuständig, Markus Bauer Vertretung."""
+    kanzlei.zugriff_setzen("AK", "SL", "M5", "aus", zustaendigkeit_anpassen=True)
+    m = kanzlei.mandant("M5")
+    assert (m["zustaendig"], m["vertretung"]) == ("MB", None) and not kanzlei.darf("SL", "M5")
+    # Vertretung: entfällt, Zuständigkeit bleibt
+    kanzlei.zugriff_setzen("AK", "TW", "M2", "gesperrt", zustaendigkeit_anpassen=True)
+    assert (kanzlei.mandant("M2")["zustaendig"], kanzlei.mandant("M2")["vertretung"]) == ("SL", None)
+    assert kanzlei.sachbearbeiter("TW")["zugriff"]["M2"] == "gesperrt"
+    # einzige zuständige Person (M6: nur Tim Wagner): erst andere Person eintragen
+    with pytest.raises(ValueError, match="einzige zuständige Person"):
+        kanzlei.zugriff_setzen("AK", "TW", "M6", "aus", zustaendigkeit_anpassen=True)
+    assert "Mandant 10005" in [e["feld"] for e in zustand.protokoll()]
+
+
+def test_sachkontenlaenge(leer) -> None:  # type: ignore[no-untyped-def]
+    assert kanzlei.sachkontenlaenge("M1") == 4
+    m = kanzlei.mandant_speichern("AK", {**kanzlei.mandant("M3"), "sachkontenlaenge": 5})
+    assert kanzlei.sachkontenlaenge(m["id"]) == 5 and zustand.kreditor_bereich(5) == (700000, 999999)
+    with pytest.raises(ValueError, match="4 bis 8"):
+        kanzlei.mandant_speichern("AK", {**kanzlei.mandant("M3"), "sachkontenlaenge": 9})
+    zustand.kreditor_anlegen("M3", 700000, "Holzhandel Waldmark GmbH", None, 5)
+    with pytest.raises(ValueError, match="nicht mehr ändern"):  # Kreditoren haben schon die bisherige Länge
+        kanzlei.mandant_speichern("AK", {**kanzlei.mandant("M3"), "sachkontenlaenge": 4})

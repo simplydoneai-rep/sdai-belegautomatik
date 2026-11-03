@@ -62,7 +62,7 @@ h2 { font-size: 21px; margin: 0; letter-spacing: -.01em; }
 
 /* ---------- Gemeinsame Bausteine ---------- */
 .feld { width: 100%; border: 0; background: var(--feld); border-radius: var(--r2); padding: 9px 12px; outline: none; }
-.feld:focus { box-shadow: 0 0 0 3px var(--akzent-hell); background: #fff; }
+.feld:focus { box-shadow: 0 0 0 3px var(--akzent-hell); background-color: #fff; }
 .suchfeld { padding-left: 34px; background: var(--feld) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%238e8e93'%3E%3Cpath d='M11.7 10.3a6 6 0 1 0-1.4 1.4l3.6 3.6 1.4-1.4-3.6-3.6zM7 11a4 4 0 1 1 0-8 4 4 0 0 1 0 8z'/%3E%3C/svg%3E") no-repeat 12px center; }
 .karte { background: var(--karte); border-radius: var(--radius); box-shadow: var(--schatten); border: 1px solid var(--rand); }
 .knopf { border: 0; border-radius: 999px; white-space: nowrap; padding: 10px 16px; font-weight: 600; cursor: pointer; }
@@ -124,7 +124,7 @@ h2 { font-size: 21px; margin: 0; letter-spacing: -.01em; }
 .chevron { color: var(--text3); font-size: 20px; }
 
 /* ---------- Belegverarbeitung: drei Spalten, farblich getrennt ---------- */
-.app { display: grid; grid-template-columns: 340px minmax(540px, 1fr) minmax(330px, 0.85fr); height: calc(100vh - 52px); }
+.app { display: grid; grid-template-columns: 340px minmax(420px, 1fr) var(--beleg-breite, minmax(330px, 0.85fr)); height: calc(100vh - 52px); }
 
 /* Spalte 1: Eingang (Seitenleiste) */
 .eingang { border-right: 1px solid var(--linie-stark); background: var(--bg); display: flex; flex-direction: column; min-height: 0; }
@@ -338,7 +338,7 @@ details[open] > .abschnitt-kopf::after { transform: rotate(90deg); }
 .fehlertext { color: var(--rot-text); background: var(--rot-hell); border-radius: var(--r2); padding: 9px 12px; margin: 0; font-size: var(--t3); }
 
 /* Sachbearbeiter und Rechte */
-.rechte { display: grid; grid-template-columns: 310px 1fr; flex: 1; min-height: 0; }
+.rechte { display: grid; grid-template-columns: 350px 1fr; flex: 1; min-height: 0; }
 .rechte-links { border-right: 1px solid var(--trenn); display: flex; flex-direction: column; min-height: 0; padding: 12px; gap: 12px; }
 .sb-liste { list-style: none; margin: 0; padding: 0; background: #fff; border-radius: var(--r2); overflow-y: auto; flex: 1; }
 .sb-liste li { display: flex; gap: 10px; align-items: center; padding: 10px 12px; border-top: 1px solid var(--trenn); cursor: pointer; }
@@ -346,7 +346,7 @@ details[open] > .abschnitt-kopf::after { transform: rotate(90deg); }
 .sb-liste li.gewaehlt { background: var(--akzent-hell); }
 .sb-liste small { display: block; color: var(--text2); font-size: var(--t2); }
 .sb-form { background: #fff; border-radius: var(--r2); padding: 12px; display: flex; flex-direction: column; gap: 8px; }
-.sb-form-zeile { display: grid; grid-template-columns: 80px 1fr; gap: 8px; }
+.sb-form-zeile { display: grid; grid-template-columns: 70px 1fr; gap: 8px; }
 .sb-form-zeile:last-child { grid-template-columns: 1fr auto; }
 .rechte-rechts { display: flex; flex-direction: column; min-height: 0; padding: 12px 14px; }
 .rechte-kopf { padding: 2px 4px 8px; }
@@ -561,3 +561,37 @@ details[open] > .abschnitt-kopf::after { transform: rotate(90deg); }
 /* Beraternummern */
 .berater-liste li { grid-template-columns: 1fr auto auto; }
 .berater-form { display: grid; grid-template-columns: 130px 1fr auto; gap: 8px; padding: 12px 16px 16px; }
+
+/* Auswahlfelder einheitlich: eigener Pfeil, der beim Öffnen nicht grau wird */
+select.feld, .menue-zeile select { appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5 6 8l3.5-3.5' fill='none' stroke='%23555555' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 11px center; background-size: 12px; padding-right: 32px; cursor: pointer; }
+select.feld:disabled { cursor: default; opacity: .6; }
+
+/* Übersicht: sortierbare Spalten und Filter */
+.ue-filter-leiste { display: flex; gap: 8px; align-items: center; flex: 1; justify-content: flex-end; }
+.ue-filter { width: auto; max-width: 220px; }
+.ue-listenkopf .ue-filter-leiste .suchfeld { max-width: 300px; }
+.ue-spalten button { border: 0; background: none; padding: 0; font: inherit; color: inherit; text-transform: inherit; letter-spacing: inherit;
+  text-align: left; cursor: pointer; display: inline-flex; gap: 4px; align-items: center; white-space: nowrap; }
+.ue-spalten button:hover, .ue-spalten button.aktiv { color: var(--text); }
+.ue-spalten button[data-richtung="auf"]::after { content: "▲"; font-size: 8px; }
+.ue-spalten button[data-richtung="ab"]::after { content: "▼"; font-size: 8px; }
+
+/* Rechte: Rückfrage in der Zeile */
+.rechte-liste li { flex-wrap: wrap; }
+.rueckfrage { flex-basis: 100%; display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap;
+  background: var(--gelb-hell); color: var(--gelb-text); border-radius: var(--r1); padding: 8px 10px; font-size: var(--t2); }
+.rueckfrage-knoepfe { display: flex; gap: 12px; align-items: center; }
+
+/* Trennlinie zwischen Bearbeitung und Beleg */
+.vorschau { position: relative; }
+.v-griff { position: absolute; left: -4px; top: 0; bottom: 0; width: 8px; cursor: col-resize; z-index: 6; }
+.v-griff:hover::after, .zieht-breite .v-griff::after { content: ""; position: absolute; left: 3px; top: 0; bottom: 0; width: 2px; background: var(--akzent); }
+.zieht-breite, .zieht-breite * { cursor: col-resize !important; user-select: none; }
+.app.ohne-beleg .v-griff { display: none; }
+
+/* Kopfangaben: Überfahren zeigt die Stelle im Beleg */
+#beleg [data-feld] { cursor: default; }
+#beleg tr[data-feld]:hover td, .pflicht-liste li[data-feld]:hover, .fakt[data-feld]:hover { background: var(--hover); }
+.eb-blatt .markiert, .eb-blatt .markiert td { background: var(--akzent-hell); }
+.eb-blatt div.markiert, .eb-blatt footer.markiert { box-shadow: 0 0 0 4px var(--akzent-hell); border-radius: 2px; }
