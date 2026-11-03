@@ -14,10 +14,13 @@ from typing import Any, AsyncIterator
 from fastapi import Depends, FastAPI, File, Form, Header, HTTPException, Request, UploadFile
 from fastapi.responses import FileResponse, PlainTextResponse, Response
 from fastapi.staticfiles import StaticFiles
+from lxml import etree
 from pydantic import BaseModel
 
 from app.demo import ansicht, kanzlei, zustand
 from app.demo.verarbeitung import MODELLE, aufzeichnungen, positionsrahmen, seitenbilder
+from app.erechnung.belegbild import belegbild
+from app.erechnung.parser import ERechnungFehler
 from app.kontierung.kontensuche import alle_konten, suchen
 
 STATIC = Path(__file__).resolve().parents[1] / "demo" / "static"
@@ -174,6 +177,18 @@ def beleg_markierungen(key: str, modell: str = ansicht.STANDARD_MODELL) -> list[
     """Fundstellen der Positionen im Beleg für die Hervorhebung beim Überfahren."""
     a = ansicht.ansicht(_key(key), _modell(modell))
     return positionsrahmen(ansicht.pfad(key), tuple(p["bezeichnung"] or "" for p in a["positionen"]))
+
+
+@app.get("/api/beleg/belegbild")
+def beleg_belegbild(key: str) -> dict[str, Any]:
+    """Lesbares Belegbild einer E-Rechnung; das Original-XML bleibt unter /api/beleg/datei."""
+    path = ansicht.pfad(_key(key))
+    if path.suffix != ".xml":
+        raise HTTPException(404, "Keine E-Rechnung (XML)")
+    try:
+        return belegbild(path)
+    except (ERechnungFehler, etree.XMLSyntaxError) as exc:
+        raise HTTPException(422, "E-Rechnung nicht lesbar") from exc
 
 
 @app.get("/api/beleg/datei", response_model=None)

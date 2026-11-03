@@ -508,3 +508,35 @@ details[open] > .abschnitt-kopf::after { transform: rotate(90deg); }
 .vorschau-rahmen.vollbild .werkzeuge { opacity: 1; right: 20px; }
 .w-zoom { border: 0; background: transparent; color: #fff; cursor: pointer; padding: 2px 4px; border-radius: var(--r1); }
 .w-zoom:hover { background: rgba(255,255,255,.16); }
+
+/* Belegbild einer E-Rechnung: wie ein Blatt Papier, Inhalt aus dem XML */
+.eb-blatt { background: var(--karte); border-radius: 4px; box-shadow: 0 2px 12px rgba(0,0,0,.14); padding: 26px 26px 18px; font-size: var(--t2);
+  color: var(--text); line-height: 1.45; }
+.eb-blatt small { display: block; color: var(--text3); font-size: var(--t1); }
+.eb-kopf { display: flex; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
+.eb-name { font-size: var(--t4); }
+.eb-art { text-align: right; flex: none; }
+.eb-art b { font-size: var(--t5); }
+.eb-empfaenger { margin-bottom: 14px; }
+.eb-empfaenger small, .eb-block > small { text-transform: uppercase; letter-spacing: .05em; margin-bottom: 2px; }
+.eb-blatt table { width: 100%; border-collapse: collapse; }
+.eb-blatt th { text-align: left; font-size: var(--t1); color: var(--text3); font-weight: 600; padding: 4px 6px; border-bottom: 1px solid var(--linie-stark); }
+.eb-blatt td { padding: 5px 6px; vertical-align: top; }
+.eb-blatt .zahl-sp { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.eb-daten { margin-bottom: 14px; }
+.eb-daten td { padding: 1px 0; }
+.eb-daten td:first-child { color: var(--text2); width: 46%; }
+.eb-pos td { border-bottom: 1px solid var(--trenn); }
+.eb-pos td:first-child { color: var(--text3); width: 34px; }
+.eb-pos tr.markiert td { background: var(--akzent-hell); }
+.eb-summen { width: auto !important; margin: 10px 0 14px auto; min-width: 60%; }
+.eb-summen td { padding: 2px 6px; }
+.eb-summen tr.fett td { font-weight: 700; border-top: 1px solid var(--linie-stark); }
+.eb-steuern { margin-bottom: 14px; }
+.eb-steuern td { border-bottom: 1px solid var(--trenn); }
+.eb-block { margin-bottom: 12px; }
+.eb-block p { margin: 0 0 4px; white-space: pre-line; overflow-wrap: anywhere; }
+.eb-fuss { border-top: 1px solid var(--trenn); padding-top: 8px; color: var(--text3); font-size: var(--t1); }
+.eb-xml { margin-top: 12px; font-size: var(--t2); }
+.eb-xml summary { cursor: pointer; color: var(--text2); padding: 4px 0; }
+.eb-xml pre { margin-top: 6px; }

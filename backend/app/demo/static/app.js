@@ -15,7 +15,7 @@ const BEREICH_TEXT = {
   erledigt: (n) => `<b>${anzahl(n, "Rechnung", "Rechnungen")}</b> freigegeben`,
 };
 
-/* Symbole (Linien, weiß auf farbigem Quadrat wie in den iOS-Einstellungen) */
+/* Symbole (Linien) */
 const PFADE = {
   person: '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',
   liste: '<path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/>',
@@ -730,6 +730,10 @@ function bindePositionsWahl(b) {
 
 function markiere_position(pos) {
   document.querySelectorAll("#vorschau .markierung").forEach((m) => m.remove());
+  // E-Rechnung: Zeile im Belegbild hervorheben
+  document.querySelectorAll("#vorschau .eb-pos tr.markiert").forEach((z) => z.classList.remove("markiert"));
+  const ebZeile = pos == null ? null : document.querySelector(`#vorschau .eb-pos tr[data-pos="${pos}"]`);
+  if (ebZeile) { ebZeile.classList.add("markiert"); ebZeile.scrollIntoView({ block: "nearest", behavior: "smooth" }); }
   const rahmen = pos == null ? [] : (zustand.markierungen || [])[pos] || [];
   for (const r of rahmen) {
     const seite = document.querySelector(`#vorschau .seite[data-seite="${r.seite + 1}"]`);
@@ -1077,9 +1081,14 @@ async function ladeVorschau(b) {
   ansichtZ.zoom = 1;
   v.classList.toggle("xml", b.art === "xml");  // ohne Werkzeugleiste: volle Breite
   if (b.art === "xml") {
-    const t = await (await fetch(`/api/beleg/datei?${new URLSearchParams({ key: b.key })}`, { headers: { "X-Nutzer": zustand.nutzer } })).text();
-    v.innerHTML = `<pre>${esc(t)}</pre>`;
-    $("v-seiten").textContent = "E-Rechnung (XML)";
+    // Belegbild aus dem XML; das Original-XML bleibt aufklappbar darunter (maßgeblich ist das XML)
+    const q = new URLSearchParams({ key: b.key });
+    const [bild, xml] = await Promise.all([api(`/api/beleg/belegbild?${q}`).catch(() => null),
+      fetch(`/api/beleg/datei?${q}`, { headers: { "X-Nutzer": zustand.nutzer } }).then((r) => r.text())]);
+    if (zustand.key !== b.key) return;  // inzwischen andere Rechnung gewählt
+    v.innerHTML = (bild ? belegbildHtml(bild) : `<p class="klein">Belegbild nicht verfügbar.</p>`)
+      + `<details class="eb-xml" ${bild ? "" : "open"}><summary>Original-XML</summary><pre>${esc(xml)}</pre></details>`;
+    $("v-seiten").textContent = bild ? bild.format : "E-Rechnung (XML)";
     $("werkzeuge").hidden = true;
     return;
   }
@@ -1096,6 +1105,52 @@ async function ladeVorschau(b) {
   wendeZoomAn();
   v.scrollTop = 0;
   zeigeSeitenzahl();
+}
+
+/* Belegbild einer E-Rechnung: aus dem XML aufbereitet wie eine Papierrechnung, für die Sichtprüfung */
+function belegbildHtml(e) {
+  const w = e.waehrung;
+  const v = e.verkaeufer, k = e.kaeufer, z = e.zahlung;
+  const anschrift = (p) => [p.street, [p.postcode, p.city].filter(Boolean).join(" "), p.country && p.country !== "DE" ? p.country : ""]
+    .filter(Boolean).map(esc).join("<br>");
+  const zeile = (label, wert) => wert ? `<tr><td>${label}</td><td>${wert}</td></tr>` : "";
+  const kontakt = [v.contact, v.phone, v.email].filter(Boolean).map(esc).join(" · ");
+  const positionen = e.positionen.map((p, i) => `<tr data-pos="${i}">
+      <td>${esc(p.nr && p.nr !== p.bezeichnung && p.nr.length <= 8 ? p.nr : i + 1)}</td>
+      <td><b>${esc(p.bezeichnung || "–")}</b>${p.beschreibung && p.beschreibung !== p.bezeichnung ? `<small>${esc(p.beschreibung)}</small>` : ""}</td>
+      <td class="zahl-sp">${p.menge ? `${esc(Number(p.menge).toLocaleString("de-DE"))} ${esc(p.einheit || "")}` : ""}</td>
+      <td class="zahl-sp">${geld(p.einzelpreis, w)}</td>
+      <td class="zahl-sp">${esc(p.satz)} %</td>
+      <td class="zahl-sp">${geld(p.netto, w)}</td></tr>`).join("");
+  const zuschlaege = e.zuschlaege.map((a) => `<tr><td></td><td>${esc(a.art)}${a.grund ? `: ${esc(a.grund)}` : ""}</td><td></td><td></td>
+      <td class="zahl-sp">${esc(a.satz)} %</td><td class="zahl-sp">${a.art === "Abschlag" ? "− " : ""}${geld(a.betrag, w)}</td></tr>`).join("");
+  const zahlung = [z.art && `<b>${esc(z.art)}</b>`, z.bedingungen && esc(z.bedingungen),
+    z.iban && `IBAN ${esc(z.iban)}${z.bic ? ` · BIC ${esc(z.bic)}` : ""}`, z.inhaber && `Kontoinhaber ${esc(z.inhaber)}`,
+    z.verwendungszweck && `Verwendungszweck ${esc(z.verwendungszweck)}`].filter(Boolean);
+  const fuss = [v.vat_id && `USt-IdNr. ${esc(v.vat_id)}`, v.steuernummer && `Steuernummer ${esc(v.steuernummer)}`, v.register && esc(v.register)]
+    .filter(Boolean).join(" · ");
+  return `<article class="eb-blatt">
+    <header class="eb-kopf">
+      <div><b class="eb-name">${esc(v.name || "–")}</b><div>${anschrift(v)}</div>${kontakt ? `<small>${kontakt}</small>` : ""}</div>
+      <div class="eb-art"><b>${esc(e.art)}</b><small>E-Rechnung</small></div>
+    </header>
+    <div class="eb-empfaenger"><small>Rechnungsempfänger</small><b>${esc(k.name || "–")}</b><div>${anschrift(k)}</div></div>
+    <table class="eb-daten">
+      ${zeile("Rechnungsnummer", esc(e.nummer))}${zeile("Rechnungsdatum", datum(e.datum))}
+      ${zeile("Leistung", e.leistung ? esc(leistungText(e.leistung, true)) : "")}${zeile("Fällig am", e.faellig ? datum(e.faellig) : "")}
+      ${e.referenzen.map((r) => zeile(esc(r.label), esc(r.wert))).join("")}${w !== "EUR" ? zeile("Währung", esc(w)) : ""}
+    </table>
+    <table class="eb-pos"><thead><tr><th>Pos.</th><th>Bezeichnung</th><th class="zahl-sp">Menge</th><th class="zahl-sp">Einzelpreis</th>
+      <th class="zahl-sp">USt</th><th class="zahl-sp">Netto</th></tr></thead><tbody>${positionen}${zuschlaege}</tbody></table>
+    <table class="eb-summen">${e.summen.map((s) => `<tr class="${s.fett ? "fett" : ""}"><td>${esc(s.label)}</td>
+      <td class="zahl-sp">${geld(s.betrag, w)}</td></tr>`).join("")}</table>
+    <table class="eb-steuern"><thead><tr><th>Umsatzsteuer</th><th class="zahl-sp">Satz</th><th class="zahl-sp">Grundlage</th><th class="zahl-sp">Steuer</th></tr></thead>
+      <tbody>${e.steuern.map((s) => `<tr><td>${esc(s.kategorie)}${s.grund ? `<small>${esc(s.grund)}</small>` : ""}</td>
+        <td class="zahl-sp">${esc(s.satz)} %</td><td class="zahl-sp">${geld(s.basis, w)}</td><td class="zahl-sp">${geld(s.betrag, w)}</td></tr>`).join("")}</tbody></table>
+    ${zahlung.length ? `<div class="eb-block"><small>Zahlung</small>${zahlung.map((t) => `<div>${t}</div>`).join("")}</div>` : ""}
+    ${e.hinweise.length ? `<div class="eb-block"><small>Hinweise</small>${e.hinweise.map((h) => `<p>${esc(h)}</p>`).join("")}</div>` : ""}
+    ${fuss ? `<footer class="eb-fuss">${fuss}</footer>` : ""}
+  </article>`;
 }
 
 function zeigeSeitenzahl() {

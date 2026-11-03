@@ -366,6 +366,8 @@ Lücke geschlossen (Freigabe Paul Graß), Details: `docs/entscheidungen/2026-11-
 - Von Hand geänderter Steuerschlüssel oder Steuersatz ist kein Warnfall mehr: neutral mit Rahmen und ✎. Gelb bleibt nur der Hinweis, wenn der Schlüssel nicht zum Satz der Rechnung passt.
 - Belegansicht: E-Rechnung (XML) bricht lange Werte im Rahmen um und nutzt die volle Breite. Der Knopf mit den vier Ecken öffnet jetzt ein Vollbild über das ganze Fenster (Esc beendet); vorher setzte er nur den Zoom zurück. Zurück auf Seitenbreite per Klick auf die Prozentanzeige. Die Fullscreen-API des Browsers wird bewusst nicht genutzt, weil eingebettete Browser sie sperren können.
 
+- E-Rechnungen haben jetzt ein lesbares Belegbild statt rohem XML: Parteien, Referenzen (Leitweg-ID u. a.), Positionen, Zu-/Abschläge, Summen, Steueraufschlüsselung, Zahlung, Hinweise; Original-XML aufklappbar darunter. Neues Modul `app/erechnung/belegbild.py`, Schnittstelle `/api/beleg/belegbild`, Tests für alle KoSIT-Testrechnungen (UBL = CII). Entscheidung: `docs/entscheidungen/2026-11-03_belegbild-e-rechnung.md`.
+
 ## Nächste Schritte
 
 Die aktuelle Aufgabenliste steht in `docs/projektplan.md`, Abschnitt 10. Die Liste unten ist der Stand vom 28.10.2026 vor dem Projektplan.
