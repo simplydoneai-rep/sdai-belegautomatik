@@ -111,6 +111,13 @@ async function init() {
   });
   $("ue-neu").addEventListener("click", () => oeffneMandant(null));
   $("ue-rechte").addEventListener("click", oeffneRechte);
+  $("ue-kanzlei").addEventListener("click", oeffneBerater);
+  $("berater-form").addEventListener("submit", sichereBerater);
+  // Beleg ein- und ausblenden (gemerkt): ausgeblendet hat die Bearbeitung die volle Breite
+  const belegZeigen = (an) => { $("seite-belege").classList.toggle("ohne-beleg", !an); merke("beleg", an ? "an" : "aus"); };
+  $("v-zu").addEventListener("click", () => belegZeigen(false));
+  $("v-auf").addEventListener("click", () => belegZeigen(true));
+  $("seite-belege").classList.toggle("ohne-beleg", lies("beleg") === "aus");
   $("mandant-form").addEventListener("submit", sichereMandant);
   document.querySelectorAll("#f-kontenrahmen button").forEach((b) => b.addEventListener("click", () => {
     document.querySelectorAll("#f-kontenrahmen button").forEach((x) => x.classList.toggle("aktiv", x === b));
@@ -197,7 +204,7 @@ function zeigeUebersicht() {
     <div class="ue-zeile" data-mandant="${esc(m.id)}" tabindex="0">
       <span class="m-avatar">${esc(initialen(m.name))}</span>
       <span class="m-name"><b>${esc(m.name)}</b><small>${esc(m.ansprechpartner || "Kein Ansprechpartner")}</small></span>
-      <span class="m-nr">${esc(m.nummer)}</span>
+      <span class="m-nr">${esc(m.nummer)}${mehrereBerater() ? `<small>Berater ${esc(m.beraternummer)}</small>` : ""}</span>
       <span><span class="marke">${esc(m.kontenrahmen)}</span></span>
       <span class="m-team">${team(m.team)}</span>
       <span class="m-zuletzt">${m.zuletzt_bearbeitet ? esc(monatText(m.zuletzt_bearbeitet)) : `<span class="klein">noch nichts gebucht</span>`}</span>
@@ -227,7 +234,12 @@ function oeffneMandant(id) {
   f.dataset.id = id || "";
   $("mandant-titel").textContent = m ? "Mandant bearbeiten" : "Neuer Mandant";
   f.name.value = m?.name || "";
-  f.nummer.value = m?.nummer || naechsteNummer();
+  const k = s.kanzlei;
+  const berater = Number(m?.beraternummer || k.standard);
+  f.beraternummer.innerHTML = k.beraternummern.map((b) => `<option value="${b.nr}" ${b.nr === berater ? "selected" : ""}>
+    ${b.nr} · ${esc(b.bezeichnung)}${b.nr === k.standard ? " (Standard)" : ""}</option>`).join("");
+  f.beraternummer.onchange = () => { if (!id) f.nummer.value = naechsteNummer(Number(f.beraternummer.value)); };
+  f.nummer.value = m?.nummer || naechsteNummer(berater);
   f.ansprechpartner.value = m?.ansprechpartner || "";
   f.ustid.value = m?.ustid || "";
   const rahmen = m?.kontenrahmen || "SKR03";
@@ -244,8 +256,9 @@ function oeffneMandant(id) {
   f.name.focus();
 }
 
-function naechsteNummer() {
-  const vergeben = new Set(zustand.stamm.alle_mandanten.map((m) => Number(m.nummer)));
+/* Nächste freie Mandantennummer – Mandantennummern sind je Beraternummer eindeutig */
+function naechsteNummer(berater) {
+  const vergeben = new Set(zustand.stamm.alle_mandanten.filter((m) => Number(m.beraternummer) === berater).map((m) => Number(m.nummer)));
   let n = 10001;
   while (vergeben.has(n)) n++;
   return n;
@@ -255,7 +268,7 @@ async function sichereMandant(e) {
   e.preventDefault();
   const f = e.target;
   const daten = {
-    id: f.dataset.id || null, name: f.name.value, nummer: f.nummer.value, ansprechpartner: f.ansprechpartner.value, ustid: f.ustid.value,
+    id: f.dataset.id || null, name: f.name.value, beraternummer: f.beraternummer.value, nummer: f.nummer.value, ansprechpartner: f.ansprechpartner.value, ustid: f.ustid.value,
     kontenrahmen: document.querySelector("#f-kontenrahmen .aktiv").dataset.wert,
     zustaendig: f.zustaendig.value || null, vertretung: f.vertretung.value || null,
   };
@@ -269,6 +282,47 @@ async function sichereMandant(e) {
     $("mandant-fehler").textContent = err.message;
     $("mandant-fehler").hidden = false;
   }
+}
+
+/* ---------- Beraternummern der Kanzlei (nur Kanzleileitung) ---------- */
+const mehrereBerater = () => (zustand.stamm.kanzlei?.beraternummern.length || 0) > 1;
+
+function oeffneBerater() {
+  zeigeBerater();
+  $("kanzlei-blatt").hidden = false;
+}
+
+function zeigeBerater() {
+  const k = zustand.stamm.kanzlei;
+  $("berater-liste").innerHTML = k.beraternummern.map((b) => `<li data-nr="${b.nr}">
+      <span><b>${b.nr}</b> · ${esc(b.bezeichnung)}<small>${anzahl(b.mandanten, "Mandant", "Mandanten")}</small></span>
+      ${b.nr === k.standard ? `<span class="marke">Standard</span>` : `<button class="link blau-link klein-link" data-standard>Als Standard</button>`}
+      ${b.nr !== k.standard && !b.mandanten ? `<button class="link gefahr-link klein-link" data-entfernen>Entfernen</button>` : "<span></span>"}
+    </li>`).join("");
+  $("berater-liste").querySelectorAll("li").forEach((li) => {
+    const b = k.beraternummern.find((x) => String(x.nr) === li.dataset.nr);
+    li.querySelector("[data-standard]")?.addEventListener("click", () =>
+      beraterSenden("/api/kanzlei/beraternummer", { nr: b.nr, bezeichnung: b.bezeichnung, standard: true }, `${b.nr} ist jetzt Standard`));
+    li.querySelector("[data-entfernen]")?.addEventListener("click", () =>
+      beraterSenden("/api/kanzlei/beraternummer/entfernen", { nr: b.nr }, `Beraternummer ${b.nr} entfernt`));
+  });
+}
+
+async function beraterSenden(url, daten, meldung) {
+  try {
+    zustand.stamm = { ...zustand.stamm, ...(await post(url, daten)) };
+    zeigeBerater();
+    if (zustand.seite === "uebersicht") zeigeUebersicht();
+    toast(meldung);
+    return true;
+  } catch (e) { toast(e.message, true); return false; }
+}
+
+async function sichereBerater(e) {
+  e.preventDefault();
+  const f = e.target;
+  if (await beraterSenden("/api/kanzlei/beraternummer", { nr: f.nr.value, bezeichnung: f.bezeichnung.value },
+    `Beraternummer ${f.nr.value.trim()} angelegt`)) f.reset();
 }
 
 /* ---------- Sachbearbeiter und Rechte ---------- */
@@ -443,7 +497,8 @@ function zeigeMandantKopf() {
   if (!m) return;
   $("mandant-name").textContent = m.name;
   $("mandant-avatar").textContent = initialen(m.name);
-  $("mandant-info").innerHTML = `Mandant ${esc(m.nummer)} · ${esc(m.kontenrahmen)} · ${team(m.team)}`;
+  $("mandant-info").innerHTML = `<span title="Beraternummer / Mandantennummer (DATEV)">${esc(m.beraternummer)} / ${esc(m.nummer)}</span>`
+    + ` · ${esc(m.kontenrahmen)} · ${team(m.team)}`;
   const h = $("mandant-hinweis");
   h.hidden = m.kontenrahmen !== "SKR04";
   h.textContent = "SKR04 ist in der Demo noch nicht hinterlegt – Kontovorschläge kommen aus dem SKR03.";
@@ -574,9 +629,9 @@ function zeigeBeleg(b) {
             placeholder="Konto: Nummer oder Begriff">
         </div>
         ${buWahl(p, fertig)}
-        <div class="ampel ${p.ampel}" title="${esc(p.grund)}"><span class="punkt ${p.ampel}"></span>
-          <span class="ampel-text"><b>${AMPEL[p.ampel]}</b>${p.ampel === "gruen" ? "" : `<small>${esc(p.grund)}</small>`}</span></div>
+        <div class="ampel ${p.ampel}" title="${esc(p.grund)}"><span class="punkt ${p.ampel}"></span><b>${AMPEL[p.ampel]}</b></div>
       </div>
+      ${p.ampel !== "gruen" && p.grund ? `<div class="p-grund">${esc(p.grund)}</div>` : ""}
       ${satzKorrektur(p, fertig)}
       ${aufteilungZeile(p, w, fertig)}
     </li>`).join("");

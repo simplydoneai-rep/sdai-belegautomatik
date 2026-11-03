@@ -109,6 +109,7 @@ def uebersicht(modell: str = ansicht.STANDARD_MODELL) -> dict[str, Any]:
 class MandantDaten(BaseModel):
     id: str | None = None
     name: str
+    beraternummer: int | str | None = None
     nummer: int | str
     kontenrahmen: str
     ansprechpartner: str = ""
@@ -121,6 +122,12 @@ class SachbearbeiterDaten(BaseModel):
     kuerzel: str
     name: str
     rolle: str = "sachbearbeitung"
+
+
+class BeraterDaten(BaseModel):
+    nr: int | str
+    bezeichnung: str = ""
+    standard: bool = False
 
 
 class Zugriff(BaseModel):
@@ -147,6 +154,16 @@ def mandant_speichern(m: MandantDaten) -> dict[str, Any]:
 @app.post("/api/kanzlei/sachbearbeiter")
 def sachbearbeiter_speichern(s: SachbearbeiterDaten) -> dict[str, Any]:
     return _kanzlei(lambda: kanzlei.sachbearbeiter_speichern(zustand.NUTZER.get(), s.kuerzel, s.name, s.rolle))
+
+
+@app.post("/api/kanzlei/beraternummer")
+def beraternummer_speichern(b: BeraterDaten) -> dict[str, Any]:
+    return _kanzlei(lambda: kanzlei.beraternummer_speichern(zustand.NUTZER.get(), b.nr, b.bezeichnung, b.standard))
+
+
+@app.post("/api/kanzlei/beraternummer/entfernen")
+def beraternummer_entfernen(b: BeraterDaten) -> dict[str, Any]:
+    return _kanzlei(lambda: kanzlei.beraternummer_entfernen(zustand.NUTZER.get(), b.nr))
 
 
 @app.post("/api/kanzlei/zugriff")

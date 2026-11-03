@@ -368,6 +368,13 @@ Lücke geschlossen (Freigabe Paul Graß), Details: `docs/entscheidungen/2026-11-
 
 - E-Rechnungen haben jetzt ein lesbares Belegbild statt rohem XML: Parteien, Referenzen (Leitweg-ID u. a.), Positionen, Zu-/Abschläge, Summen, Steueraufschlüsselung, Zahlung, Hinweise; Original-XML aufklappbar darunter. Neues Modul `app/erechnung/belegbild.py`, Schnittstelle `/api/beleg/belegbild`, Tests für alle KoSIT-Testrechnungen (UBL = CII). Entscheidung: `docs/entscheidungen/2026-11-03_belegbild-e-rechnung.md`.
 
+## 03.11.2026 – Beraternummer, mehr Platz in der Belegverarbeitung
+
+- Beraternummer: Die Kanzlei pflegt eine Liste ihrer Beraternummern (Standard für neue Mandanten), jeder Mandant gehört zu genau einer. Mandantennummern sind je Beraternummer eindeutig. Pflege unter Übersicht → „Beraternummern“, Auswahl im Mandanten-Formular. Wertebereich 1001–9999999 vorläufig (Sekundärquellen), vor Phase 4 gegen die DATEV-Formatbeschreibung prüfen. Entscheidung: `docs/entscheidungen/2026-11-03_beraternummer.md`.
+- Positionen: Neben dem Konto stehen nur Ampelpunkt und Wort; die Begründung („Bewirtung erkannt: 70 % abziehbar …“) steht ungekürzt in einer eigenen Zeile darunter.
+- Der Beleg rechts lässt sich ausblenden („Ausblenden ›“), die Bearbeitung bekommt dann die volle Breite; ein schmaler Streifen „‹ Beleg“ blendet ihn wieder ein. Die Einstellung wird gemerkt.
+- Sammelfreigabe: Der Knopf „Ansehen und freigeben“ rutscht bei wenig Platz unter den Text und bleibt im Kasten.
+
 ## Nächste Schritte
 
 Die aktuelle Aufgabenliste steht in `docs/projektplan.md`, Abschnitt 10. Die Liste unten ist der Stand vom 28.10.2026 vor dem Projektplan.

@@ -234,9 +234,7 @@ details[open] > .abschnitt-kopf::after { transform: rotate(90deg); }
   white-space: nowrap; cursor: help; font-variant-numeric: tabular-nums; }
 .bu-chip.auto { background: var(--feld); color: var(--text2); font-weight: 600; }
 .bu-chip.leer { background: transparent; color: var(--text3); box-shadow: inset 0 0 0 1px var(--linie-stark); font-weight: 500; }
-.ampel { display: flex; align-items: center; gap: 6px; font-size: var(--t2); color: var(--text2); width: 175px; flex: none; min-width: 0; }
-.ampel-text { display: flex; flex-direction: column; min-width: 0; line-height: 1.25; }
-.ampel-text small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: var(--t1); }
+.ampel { display: flex; align-items: center; gap: 6px; font-size: var(--t2); color: var(--text2); width: 92px; flex: none; min-width: 0; }
 .ampel b { font-weight: 600; } .ampel.gruen b { color: var(--gruen-text); } .ampel.gelb b { color: var(--gelb-text); } .ampel.rot b { color: var(--rot-text); }
 
 /* Buchungssätze */
@@ -540,3 +538,26 @@ details[open] > .abschnitt-kopf::after { transform: rotate(90deg); }
 .eb-xml { margin-top: 12px; font-size: var(--t2); }
 .eb-xml summary { cursor: pointer; color: var(--text2); padding: 4px 0; }
 .eb-xml pre { margin-top: 6px; }
+
+/* Begründung der Ampel ungekürzt unter dem Konto */
+.p-grund { grid-column: 1 / 3; font-size: var(--t2); color: var(--text2); margin-top: -1px; }
+.m-nr small { display: block; font-size: var(--t1); color: var(--text3); }
+
+/* Beleg ausblenden: Bearbeitung bekommt die Breite, rechts bleibt ein schmaler Streifen zum Einblenden */
+.v-kopf-rechts { display: flex; align-items: center; gap: 12px; }
+.v-auf { display: none; }
+.app.ohne-beleg { grid-template-columns: 340px minmax(540px, 1fr) 44px; }
+.app.ohne-beleg .vorschau > :not(.v-auf) { display: none; }
+.app.ohne-beleg .v-auf { display: flex; align-items: center; gap: 8px; writing-mode: vertical-rl; width: 100%; height: 100%; border: 0;
+  background: var(--bg); color: var(--text2); font-weight: 600; cursor: pointer; padding: 16px 0; }
+.app.ohne-beleg .v-auf:hover { background: var(--feld); color: var(--text); }
+.app.ohne-beleg .v-auf span { writing-mode: horizontal-tb; font-size: var(--t5); }
+@media (max-width: 1250px) { .app.ohne-beleg { grid-template-columns: 300px 1fr; } }
+
+/* Sammelfreigabe: Knopf bricht bei wenig Platz unter den Text und nutzt dann die volle Breite */
+.sammel { flex-wrap: wrap; }
+.sammel .knopf { flex: 1 0 auto; }
+
+/* Beraternummern */
+.berater-liste li { grid-template-columns: 1fr auto auto; }
+.berater-form { display: grid; grid-template-columns: 130px 1fr auto; gap: 8px; padding: 12px 16px 16px; }

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Belegautomatik</title>
   <link rel="icon" href="marke/logo.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="style.css?v=32">
+  <link rel="stylesheet" href="style.css?v=33">
 </head>
 <body>
   <header class="topbar">
@@ -34,6 +34,7 @@
           <p class="meta" id="ue-gruss"></p>
         </div>
         <div class="ue-aktionen" id="ue-aktionen">
+          <button id="ue-kanzlei" class="knopf grau">Beraternummern</button>
           <button id="ue-rechte" class="knopf grau">Sachbearbeiter und Rechte</button>
           <button id="ue-neu" class="knopf blau">＋ Mandant</button>
         </div>
@@ -178,9 +179,11 @@
 
     <!-- Spalte 3: Beleg -->
     <section class="vorschau">
+      <button id="v-auf" class="v-auf" title="Beleg einblenden"><span>‹</span> Beleg</button>
       <div class="vorschau-kopf">
         <span>Beleg</span>
-        <span id="v-seiten" class="klein"></span>
+        <span class="v-kopf-rechts"><span id="v-seiten" class="klein"></span>
+          <button id="v-zu" class="link blau-link klein-link" title="Beleg ausblenden – mehr Platz für die Bearbeitung">Ausblenden ›</button></span>
       </div>
       <div class="vorschau-rahmen">
         <div id="vorschau" class="vorschau-inhalt"><p class="klein mitte">Keine Rechnung gewählt</p></div>
@@ -242,6 +245,7 @@
       <div class="formular">
         <div class="form-gruppe">
           <label>Unternehmensname<input name="name" class="feld" required autocomplete="off"></label>
+          <label>Beraternummer<select name="beraternummer" class="feld"></select></label>
           <label>Mandantennummer<input name="nummer" class="feld" inputmode="numeric" required autocomplete="off"></label>
           <label>Ansprechpartner im Unternehmen<input name="ansprechpartner" class="feld" autocomplete="off"></label>
           <label>USt-IdNr. des Mandanten<input name="ustid" class="feld" autocomplete="off" placeholder="z. B. DE123456789"></label>
@@ -261,6 +265,23 @@
         <p id="mandant-fehler" class="fehlertext" hidden></p>
       </div>
     </form>
+  </div>
+
+  <div id="kanzlei-blatt" class="blatt-hintergrund" hidden>
+    <div class="blatt schmal" role="dialog" aria-modal="true">
+      <div class="blatt-kopf">
+        <span></span><b>Beraternummern</b>
+        <button class="link blau-link fett schliessen" data-schliessen="kanzlei-blatt">Fertig</button>
+      </div>
+      <p class="klein blatt-info">Jeder Mandant gehört zu einer Beraternummer; sie steht im Kopf des DATEV-Buchungsstapels.
+        Neue Mandanten bekommen den Standard.</p>
+      <ul id="berater-liste" class="blatt-liste berater-liste"></ul>
+      <form id="berater-form" class="berater-form">
+        <input name="nr" class="feld" placeholder="Beraternummer" inputmode="numeric" autocomplete="off" required>
+        <input name="bezeichnung" class="feld" placeholder="Bezeichnung, z. B. Zweigstelle" autocomplete="off">
+        <button class="knopf blau" type="submit">Anlegen</button>
+      </form>
+    </div>
   </div>
 
   <div id="rechte-blatt" class="blatt-hintergrund" hidden>
@@ -294,6 +315,6 @@
   </div>
 
   <div id="toast" class="toast" hidden></div>
-  <script src="app.js?v=33"></script>
+  <script src="app.js?v=34"></script>
 </body>
 </html>

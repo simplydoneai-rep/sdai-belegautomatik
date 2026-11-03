@@ -1,7 +1,10 @@
 """Kanzlei-Stammdaten der Demo: Mandanten, Sachbearbeiter und Berechtigungen.
 
-- Ein Mandant hat Firmenname, Mandantennummer (DATEV 1–99999), Kontenrahmen (SKR03/SKR04), Ansprechpartner
-  beim Unternehmen und bis zu zwei Sachbearbeiter: zuständig und Vertretung.
+- Die Kanzlei führt eine oder mehrere DATEV-Beraternummern (z. B. je Berufsträger oder nach Übernahme einer Kanzlei);
+  eine davon ist der Standard für neue Mandanten. Jeder Mandant gehört zu genau einer Beraternummer, wie in DATEV.
+  Sie steht später im Kopf des Buchungsstapels (CLAUDE.md Abschnitt 7).
+- Ein Mandant hat Firmenname, Beraternummer, Mandantennummer (DATEV 1–99999, eindeutig je Beraternummer), Kontenrahmen
+  (SKR03/SKR04), Ansprechpartner beim Unternehmen und bis zu zwei Sachbearbeiter: zuständig und Vertretung.
 - Ein Sachbearbeiter hat Kürzel, Namen und Rolle. Die Kanzleileitung sieht alle Mandanten und pflegt die Rechte.
 - Zugriff je Sachbearbeiter und Mandant: „an“ (darf bearbeiten), „aus“ (kein Zugriff) oder „gesperrt“
   (darf diesem Mandanten nie zugeordnet werden, z. B. bei Interessenkonflikt). Zuständige und Vertretungen haben
@@ -26,11 +29,15 @@ DATEI = zustand.ZUSTAND.parent / "kanzlei.json"
 KONTENRAHMEN = ("SKR03", "SKR04")
 ROLLEN = {"leitung": "Kanzleileitung", "sachbearbeitung": "Sachbearbeitung"}
 ZUGRIFF = ("an", "aus", "gesperrt")
+# Beraternummer im DATEV-Kopfsatz: 1001–9999999 (höchstens 7 Stellen). Quelle bisher nur Sekundärliteratur;
+# vor dem Export (Phase 4) gegen die DATEV-Formatbeschreibung in docs/datev/ prüfen.
+BERATERNUMMER = (1001, 9999999)
 _LOCK = threading.Lock()
 
 # Erfundene Startbelegung für die Demo (keine echten Personen)
 _START_SB = [("AK", "Anna Keller", "leitung"), ("MB", "Markus Bauer", "sachbearbeitung"),
              ("SL", "Sophie Lang", "sachbearbeitung"), ("TW", "Tim Wagner", "sachbearbeitung")]
+_START_BERATER = {"nr": 29098, "bezeichnung": "Hauptkanzlei"}  # erfunden
 _START_ZUSTAENDIG = {"M1": ["MB", "SL"], "M2": ["SL", "TW"], "M3": ["TW", "MB"], "M4": ["MB", "TW"],
                      "M5": ["SL", "MB"], "M6": ["TW", None]}
 
@@ -41,7 +48,8 @@ def _start() -> dict[str, Any]:
     mandanten = {}
     for i, (mid, m) in enumerate(testmandanten().items()):
         haupt, vertretung = _START_ZUSTAENDIG.get(mid, [None, None])
-        mandanten[mid] = {"id": mid, "name": m["name"], "nummer": 10001 + i, "kontenrahmen": "SKR03",
+        mandanten[mid] = {"id": mid, "name": m["name"], "beraternummer": _START_BERATER["nr"], "nummer": 10001 + i,
+                          "kontenrahmen": "SKR03",
                           "ansprechpartner": m.get("person", ""), "branche": m.get("branche", ""),
                           "ustid": m.get("vat_id"),
                           "zustaendig": haupt, "vertretung": vertretung, "angelegt": jetzt}
@@ -49,14 +57,28 @@ def _start() -> dict[str, Any]:
             if k:
                 sb[k]["zugriff"][mid] = "an"
     sb["SL"]["zugriff"]["M4"] = "gesperrt"  # Beispiel: Sophie Lang darf Pixelwerk Design nicht betreuen
-    return {"mandanten": mandanten, "sachbearbeiter": sb}
+    return {"kanzlei": {"beraternummern": [dict(_START_BERATER)], "standard": _START_BERATER["nr"]},
+            "mandanten": mandanten, "sachbearbeiter": sb}
 
 
 def laden() -> dict[str, Any]:
     if not DATEI.exists():
         return _start()
     data: dict[str, Any] = json.loads(DATEI.read_text(encoding="utf-8"))
-    return data
+    return _ergaenzen(data)
+
+
+def _ergaenzen(k: dict[str, Any]) -> dict[str, Any]:
+    """Ältere Stammdaten ohne Beraternummer: Startwert für die Kanzlei, Standard für jeden Mandanten."""
+    k.setdefault("kanzlei", {"beraternummern": [dict(_START_BERATER)], "standard": _START_BERATER["nr"]})
+    for m in k["mandanten"].values():
+        m.setdefault("beraternummer", k["kanzlei"]["standard"])
+    return k
+
+
+def beraternummer(mid: str) -> int:
+    """Beraternummer für den DATEV-Export eines Mandanten."""
+    return int(mandant(mid)["beraternummer"])
 
 
 def _speichern(k: dict[str, Any]) -> None:
@@ -132,8 +154,17 @@ def stammdaten(nutzer: str) -> dict[str, Any]:
         "mandanten": [mandant_oeffentlich(m, k) for m in sichtbare_mandanten(nutzer)],
         "alle_mandanten": [mandant_oeffentlich(m, k) for m in sorted(k["mandanten"].values(), key=lambda m: m["name"])]
         if ist_leitung(nutzer) else [],
+        "kanzlei": _kanzlei_oeffentlich(k),
         "kontenrahmen": list(KONTENRAHMEN), "rollen": ROLLEN,
     }
+
+
+def _kanzlei_oeffentlich(k: dict[str, Any]) -> dict[str, Any]:
+    anzahl: dict[int, int] = {}
+    for m in k["mandanten"].values():
+        anzahl[int(m["beraternummer"])] = anzahl.get(int(m["beraternummer"]), 0) + 1
+    return {"standard": k["kanzlei"]["standard"],
+            "beraternummern": [{**b, "mandanten": anzahl.get(b["nr"], 0)} for b in k["kanzlei"]["beraternummern"]]}
 
 
 # --------------------------------------------------------------------------- Ändern (nur Kanzleileitung)
@@ -158,6 +189,10 @@ def mandant_speichern(nutzer: str, daten: dict[str, Any]) -> dict[str, Any]:
     ustid = re.sub(r"\s", "", str(daten.get("ustid") or "")).upper()
     if ustid and not re.fullmatch(r"[A-Z]{2}[0-9A-Z]{2,12}", ustid):
         raise ValueError("USt-IdNr. des Mandanten: Ländercode und Nummer, z. B. DE123456789")
+    try:
+        berater = int(daten.get("beraternummer") or 0)
+    except (TypeError, ValueError):
+        raise ValueError("Beraternummer muss eine Zahl sein") from None
     rahmen = daten.get("kontenrahmen")
     if rahmen not in KONTENRAHMEN:
         raise ValueError("Kontenrahmen SKR03 oder SKR04 wählen")
@@ -169,9 +204,12 @@ def mandant_speichern(nutzer: str, daten: dict[str, Any]) -> dict[str, Any]:
     with _LOCK:
         k = laden()
         mid = daten.get("id") or _neue_id(k)
-        for anderer in k["mandanten"].values():
-            if anderer["id"] != mid and int(anderer["nummer"]) == nummer:
-                raise ValueError(f"Mandantennummer {nummer} ist schon an {anderer['name']} vergeben")
+        berater = berater or int(k["kanzlei"]["standard"])
+        if berater not in {b["nr"] for b in k["kanzlei"]["beraternummern"]}:
+            raise ValueError(f"Beraternummer {berater} ist für die Kanzlei nicht angelegt")
+        for anderer in k["mandanten"].values():  # Mandantennummern sind je Beraternummer eindeutig (DATEV)
+            if anderer["id"] != mid and int(anderer["nummer"]) == nummer and int(anderer["beraternummer"]) == berater:
+                raise ValueError(f"Mandantennummer {nummer} ist unter Beraternummer {berater} schon an {anderer['name']} vergeben")
         for kuerzel in (haupt, vertretung):
             if kuerzel and kuerzel not in k["sachbearbeiter"]:
                 raise ValueError(f"Sachbearbeiter {kuerzel} gibt es nicht")
@@ -179,7 +217,7 @@ def mandant_speichern(nutzer: str, daten: dict[str, Any]) -> dict[str, Any]:
                 raise ValueError(f'{k["sachbearbeiter"][kuerzel]["name"]} ist für diesen Mandanten gesperrt')
         alt = k["mandanten"].get(mid)
         neu = {**(alt or {"angelegt": datetime.now().isoformat(timespec="seconds"), "branche": ""}),
-               "id": mid, "name": name, "nummer": nummer, "kontenrahmen": rahmen,
+               "id": mid, "name": name, "beraternummer": berater, "nummer": nummer, "kontenrahmen": rahmen,
                "ansprechpartner": str(daten.get("ansprechpartner") or "").strip(),
                "ustid": (re.sub(r"\s", "", str(daten.get("ustid") or "")).upper() or None),
                "zustaendig": haupt, "vertretung": vertretung}
@@ -193,7 +231,7 @@ def mandant_speichern(nutzer: str, daten: dict[str, Any]) -> dict[str, Any]:
 
 
 def _kurz(m: dict[str, Any]) -> str:
-    return (f'{m["name"]} · {m["kontenrahmen"]} · zuständig {m.get("zustaendig") or "–"}'
+    return (f'{m["name"]} · Berater {m.get("beraternummer", "–")} · {m["kontenrahmen"]} · zuständig {m.get("zustaendig") or "–"}'
             f' · Vertretung {m.get("vertretung") or "–"}')
 
 
@@ -246,3 +284,53 @@ def zugriff_setzen(nutzer: str, kuerzel: str, mid: str, wert: str) -> dict[str, 
         _speichern(k)
     _protokoll(f'Zugriff {kuerzel} auf {m["name"]}', alt, wert, nutzer)
     return sb
+
+
+def beraternummer_speichern(nutzer: str, nr: Any, bezeichnung: str, standard: bool = False) -> dict[str, Any]:
+    """Beraternummer anlegen oder umbenennen; optional als Standard für neue Mandanten setzen."""
+    _nur_leitung(nutzer)
+    try:
+        nummer = int(str(nr).strip())
+    except (TypeError, ValueError):
+        raise ValueError("Beraternummer muss eine Zahl sein") from None
+    if not BERATERNUMMER[0] <= nummer <= BERATERNUMMER[1]:
+        raise ValueError(f"Beraternummer muss zwischen {BERATERNUMMER[0]} und {BERATERNUMMER[1]} liegen (DATEV)")
+    bezeichnung = bezeichnung.strip() or f"Beraternummer {nummer}"
+    with _LOCK:
+        k = laden()
+        liste = k["kanzlei"]["beraternummern"]
+        alt = next((b for b in liste if b["nr"] == nummer), None)
+        alte_bezeichnung = alt["bezeichnung"] if alt else None
+        if alt:
+            alt["bezeichnung"] = bezeichnung
+        else:
+            liste.append({"nr": nummer, "bezeichnung": bezeichnung})
+            liste.sort(key=lambda b: b["nr"])
+        alter_standard = k["kanzlei"]["standard"]
+        if standard:
+            k["kanzlei"]["standard"] = nummer
+        _speichern(k)
+    if alte_bezeichnung != bezeichnung:
+        _protokoll(f"Beraternummer {nummer}", alte_bezeichnung, bezeichnung, nutzer)
+    if standard and alter_standard != nummer:
+        _protokoll("Standard-Beraternummer", alter_standard, nummer, nutzer)
+    return _kanzlei_oeffentlich(k)
+
+
+def beraternummer_entfernen(nutzer: str, nr: Any) -> dict[str, Any]:
+    _nur_leitung(nutzer)
+    nummer = int(nr)
+    with _LOCK:
+        k = laden()
+        if nummer == k["kanzlei"]["standard"]:
+            raise ValueError("Die Standard-Beraternummer kann nicht entfernt werden. Zuerst eine andere als Standard setzen.")
+        belegt = [m["name"] for m in k["mandanten"].values() if int(m["beraternummer"]) == nummer]
+        if belegt:
+            raise ValueError(f"Beraternummer {nummer} hat noch {len(belegt)} Mandanten, z. B. {belegt[0]}")
+        vorher = len(k["kanzlei"]["beraternummern"])
+        k["kanzlei"]["beraternummern"] = [b for b in k["kanzlei"]["beraternummern"] if b["nr"] != nummer]
+        if len(k["kanzlei"]["beraternummern"]) == vorher:
+            raise ValueError(f"Beraternummer {nummer} gibt es nicht")
+        _speichern(k)
+    _protokoll(f"Beraternummer {nummer}", "angelegt", "entfernt", nutzer)
+    return _kanzlei_oeffentlich(k)

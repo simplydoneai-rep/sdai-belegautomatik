@@ -442,8 +442,8 @@ def _buchungssaetze(positionen: list[dict[str, Any]], kopf: dict[str, Any], kred
 
 def _mandant_kurz(mid: str) -> dict[str, Any]:
     m = kanzlei.mandant(mid)
-    return {"id": mid, "name": m["name"], "nummer": m["nummer"], "kontenrahmen": m["kontenrahmen"],
-            "branche": m.get("branche", "")}
+    return {"id": mid, "name": m["name"], "beraternummer": m["beraternummer"], "nummer": m["nummer"],
+            "kontenrahmen": m["kontenrahmen"], "branche": m.get("branche", "")}
 
 
 def _gesamt(positionen: list[dict[str, Any]], summen_ok: bool, kreditor_ok: bool) -> str:
